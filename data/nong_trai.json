@@ -1,0 +1,41 @@
+{
+  "users": {
+    "52530098038539431": {
+      "bag": {},
+      "plots": [
+        {
+          "crop_key": "",
+          "fertilized": [],
+          "last_watered_at": 1791565749446,
+          "planted_at": 0,
+          "status": "good",
+          "water_level": 100
+        },
+        {
+          "crop_key": "",
+          "fertilized": [],
+          "last_watered_at": 1791565749446,
+          "planted_at": 0,
+          "status": "good",
+          "water_level": 100
+        },
+        {
+          "crop_key": "",
+          "fertilized": [],
+          "last_watered_at": 1791565749446,
+          "planted_at": 0,
+          "status": "good",
+          "water_level": 100
+        },
+        {
+          "crop_key": "",
+          "fertilized": [],
+          "last_watered_at": 1791565749446,
+          "planted_at": 0,
+          "status": "good",
+          "water_level": 100
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,163 @@
+[  4%] Building CXX object CMakeFiles/zalo_bot.dir/src/main.cpp.obj
+[  9%] Building CXX object CMakeFiles/zalo_bot.dir/src/ZaloApi.cpp.obj
+[ 14%] Building CXX object CMakeFiles/zalo_bot.dir/src/ZaloBridge.cpp.obj
+[ 19%] Building CXX object CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj
+In file included from E:/zalo-bot-cpp/include/ZaloApi.hpp:2,
+                 from E:\zalo-bot-cpp\src\ZaloApi.cpp:1:
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:93: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   93 |     #pragma comment(lib, "winhttp.lib")
+In file included from E:/zalo-bot-cpp/include/ZaloApi.hpp:2,
+                 from E:\zalo-bot-cpp\src\main.cpp:1:
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:93: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   93 |     #pragma comment(lib, "winhttp.lib")
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:94: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   94 |     #pragma comment(lib, "secur32.lib")
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:94: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   94 |     #pragma comment(lib, "secur32.lib")
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:95: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   95 |     #pragma comment(lib, "crypt32.lib")
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:95: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   95 |     #pragma comment(lib, "crypt32.lib")
+In file included from E:/zalo-bot-cpp/include/ZaloApi.hpp:2,
+                 from E:/zalo-bot-cpp/include/CommandHandler.hpp:9,
+                 from E:\zalo-bot-cpp\src\CommandHandler.cpp:2:
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:93: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   93 |     #pragma comment(lib, "winhttp.lib")
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:94: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   94 |     #pragma comment(lib, "secur32.lib")
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:95: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   95 |     #pragma comment(lib, "crypt32.lib")
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In static member function 'static void nativeHTTP::Logger::log_last_error(const std::string&, Level)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:195:19: warning: unused variable 'size' [-Wunused-variable]
+  195 |             DWORD size = FormatMessageA(
+      |                   ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In constructor 'nativeHTTP::MultipartFormData::Part::Part(const std::string&, const std::vector<unsigned char>&, const std::string&, const std::string&)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:813:34: warning: 'nativeHTTP::MultipartFormData::Part::data' will be initialized after [-Wreorder]
+  813 |             std::vector<uint8_t> data;
+      |                                  ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:811:25: warning:   'std::string nativeHTTP::MultipartFormData::Part::filename' [-Wreorder]
+  811 |             std::string filename;
+      |                         ^~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:771:13: warning:   when initialized here [-Wreorder]
+  771 |             Part(const std::string& n, const std::vector<uint8_t>& d,
+      |             ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In constructor 'nativeHTTP::MultipartFormData::Part::Part(const std::string&, const std::string&, const std::string&, const std::string&)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:814:25: warning: 'nativeHTTP::MultipartFormData::Part::file_path' will be initialized after [-Wreorder]
+  814 |             std::string file_path;
+      |                         ^~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:811:25: warning:   'std::string nativeHTTP::MultipartFormData::Part::filename' [-Wreorder]
+  811 |             std::string filename;
+      |                         ^~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:776:13: warning:   when initialized here [-Wreorder]
+  776 |             Part(const std::string& n, const std::string& filepath,
+      |             ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In member function 'bool nativeHTTP::Client::WebSocket::connect()':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1144:23: warning: variable 'access_type' set but not used [-Wunused-but-set-variable]
+ 1144 |                 DWORD access_type = WINHTTP_ACCESS_TYPE_NO_PROXY;
+      |                       ^~~~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1145:25: warning: variable 'proxy_ptr' set but not used [-Wunused-but-set-variable]
+ 1145 |                 LPCWSTR proxy_ptr = WINHTTP_NO_PROXY_NAME;
+      |                         ^~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1146:25: warning: unused variable 'proxy_bypass_ptr' [-Wunused-variable]
+ 1146 |                 LPCWSTR proxy_bypass_ptr = WINHTTP_NO_PROXY_BYPASS;
+      |                         ^~~~~~~~~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In static member function 'static void nativeHTTP::Logger::log_last_error(const std::string&, Level)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:195:19: warning: unused variable 'size' [-Wunused-variable]
+  195 |             DWORD size = FormatMessageA(
+      |                   ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In constructor 'nativeHTTP::MultipartFormData::Part::Part(const std::string&, const std::vector<unsigned char>&, const std::string&, const std::string&)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:813:34: warning: 'nativeHTTP::MultipartFormData::Part::data' will be initialized after [-Wreorder]
+  813 |             std::vector<uint8_t> data;
+      |                                  ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:811:25: warning:   'std::string nativeHTTP::MultipartFormData::Part::filename' [-Wreorder]
+  811 |             std::string filename;
+      |                         ^~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:771:13: warning:   when initialized here [-Wreorder]
+  771 |             Part(const std::string& n, const std::vector<uint8_t>& d,
+      |             ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In constructor 'nativeHTTP::MultipartFormData::Part::Part(const std::string&, const std::string&, const std::string&, const std::string&)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:814:25: warning: 'nativeHTTP::MultipartFormData::Part::file_path' will be initialized after [-Wreorder]
+  814 |             std::string file_path;
+      |                         ^~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:811:25: warning:   'std::string nativeHTTP::MultipartFormData::Part::filename' [-Wreorder]
+  811 |             std::string filename;
+      |                         ^~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:776:13: warning:   when initialized here [-Wreorder]
+  776 |             Part(const std::string& n, const std::string& filepath,
+      |             ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In static member function 'static void nativeHTTP::Logger::log_last_error(const std::string&, Level)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:195:19: warning: unused variable 'size' [-Wunused-variable]
+  195 |             DWORD size = FormatMessageA(
+      |                   ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In member function 'bool nativeHTTP::Client::WebSocket::connect()':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1144:23: warning: variable 'access_type' set but not used [-Wunused-but-set-variable]
+ 1144 |                 DWORD access_type = WINHTTP_ACCESS_TYPE_NO_PROXY;
+      |                       ^~~~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1145:25: warning: variable 'proxy_ptr' set but not used [-Wunused-but-set-variable]
+ 1145 |                 LPCWSTR proxy_ptr = WINHTTP_NO_PROXY_NAME;
+      |                         ^~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1146:25: warning: unused variable 'proxy_bypass_ptr' [-Wunused-variable]
+ 1146 |                 LPCWSTR proxy_bypass_ptr = WINHTTP_NO_PROXY_BYPASS;
+      |                         ^~~~~~~~~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In constructor 'nativeHTTP::MultipartFormData::Part::Part(const std::string&, const std::vector<unsigned char>&, const std::string&, const std::string&)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:813:34: warning: 'nativeHTTP::MultipartFormData::Part::data' will be initialized after [-Wreorder]
+  813 |             std::vector<uint8_t> data;
+      |                                  ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:811:25: warning:   'std::string nativeHTTP::MultipartFormData::Part::filename' [-Wreorder]
+  811 |             std::string filename;
+      |                         ^~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:771:13: warning:   when initialized here [-Wreorder]
+  771 |             Part(const std::string& n, const std::vector<uint8_t>& d,
+      |             ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In constructor 'nativeHTTP::MultipartFormData::Part::Part(const std::string&, const std::string&, const std::string&, const std::string&)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:814:25: warning: 'nativeHTTP::MultipartFormData::Part::file_path' will be initialized after [-Wreorder]
+  814 |             std::string file_path;
+      |                         ^~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:811:25: warning:   'std::string nativeHTTP::MultipartFormData::Part::filename' [-Wreorder]
+  811 |             std::string filename;
+      |                         ^~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:776:13: warning:   when initialized here [-Wreorder]
+  776 |             Part(const std::string& n, const std::string& filepath,
+      |             ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In member function 'bool nativeHTTP::Client::WebSocket::connect()':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1144:23: warning: variable 'access_type' set but not used [-Wunused-but-set-variable]
+ 1144 |                 DWORD access_type = WINHTTP_ACCESS_TYPE_NO_PROXY;
+      |                       ^~~~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1145:25: warning: variable 'proxy_ptr' set but not used [-Wunused-but-set-variable]
+ 1145 |                 LPCWSTR proxy_ptr = WINHTTP_NO_PROXY_NAME;
+      |                         ^~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1146:25: warning: unused variable 'proxy_bypass_ptr' [-Wunused-variable]
+ 1146 |                 LPCWSTR proxy_bypass_ptr = WINHTTP_NO_PROXY_BYPASS;
+      |                         ^~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp: In member function 'void CommandHandler::handle_message(const std::string&, const std::string&, int, const std::string&, const std::string&, bool, const QuoteInfo&)':
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2246:147: error: 'tid' was not declared in this scope
+ 2246 |             reply_text("\u274C V\u00E0o group \u0111\u1EC3 ch\u01A1i. IB ch\u1EC9 \u0111\u1EC3 \u0111\u0103ng nh\u1EADp/\u0111\u0103ng k\u00FD.", tid, tt);
+      |                                                                                                                                                   ^~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2246:152: error: 'tt' was not declared in this scope; did you mean 'tm'?
+ 2246 |             reply_text("\u274C V\u00E0o group \u0111\u1EC3 ch\u01A1i. IB ch\u1EC9 \u0111\u1EC3 \u0111\u0103ng nh\u1EADp/\u0111\u0103ng k\u00FD.", tid, tt);
+      |                                                                                                                                                        ^~
+      |                                                                                                                                                        tm
+E:\zalo-bot-cpp\src\CommandHandler.cpp: At global scope:
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2269:5: error: expected unqualified-id before 'if'
+ 2269 |     if (g_debug_mode && user_id == g_debug_uid) {
+      |     ^~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2277:15: error: 'commands' was not declared in this scope
+ 2277 |     auto it = commands.find(cmd);
+      |               ^~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2277:29: error: 'cmd' was not declared in this scope
+ 2277 |     auto it = commands.find(cmd);
+      |                             ^~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2278:5: error: expected unqualified-id before 'if'
+ 2278 |     if (it != commands.end()) {
+      |     ^~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2290:1: error: expected declaration before '}' token
+ 2290 | }
+      | ^
+E:\zalo-bot-cpp\src\CommandHandler.cpp:139:13: warning: 'void render_game_image(const std::string&, const std::string&, int, const std::string&, bool, cpp_int, cpp_int, cpp_int, cpp_int, const std::string&, const std::vector<bool>&, const std::string&)' defined but not used [-Wunused-function]
+  139 | static void render_game_image(
+      |             ^~~~~~~~~~~~~~~~~
+[ 23%] Building CXX object CMakeFiles/zalo_bot.dir/src/PermissionManager.cpp.obj
+mingw32-make[2]: *** [CMakeFiles\zalo_bot.dir\build.make:124: CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj] Error 1
+mingw32-make[2]: *** Waiting for unfinished jobs....
+mingw32-make[1]: *** [CMakeFiles\Makefile2:86: CMakeFiles/zalo_bot.dir/all] Error 2
+mingw32-make: *** [Makefile:90: all] Error 2

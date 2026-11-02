@@ -1,0 +1,8 @@
+# Danh sach admin
+# Format: uid|role|display_name
+# role: HOST | SUPER_ADMIN | BOT_ADMIN
+# File nay khong bi xoa khi build
+
+52530098038539431|HOST|P Nek
+8216655396191849242|BOT_ADMIN|Hương Giang
+944659047568420609|SUPER_ADMIN|Minh Nguyệt

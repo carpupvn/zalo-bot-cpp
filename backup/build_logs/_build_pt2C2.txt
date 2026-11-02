@@ -1,0 +1,443 @@
+[  4%] Building CXX object CMakeFiles/zalo_bot.dir/src/main.cpp.obj
+[  9%] Building CXX object CMakeFiles/zalo_bot.dir/src/ZaloApi.cpp.obj
+[ 14%] Building CXX object CMakeFiles/zalo_bot.dir/src/ZaloBridge.cpp.obj
+[ 19%] Building CXX object CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj
+In file included from E:/zalo-bot-cpp/include/ZaloApi.hpp:2,
+                 from E:/zalo-bot-cpp/include/CommandHandler.hpp:9,
+                 from E:\zalo-bot-cpp\src\CommandHandler.cpp:2:
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:93: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   93 |     #pragma comment(lib, "winhttp.lib")
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:94: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   94 |     #pragma comment(lib, "secur32.lib")
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:95: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   95 |     #pragma comment(lib, "crypt32.lib")
+In file included from E:/zalo-bot-cpp/include/ZaloApi.hpp:2,
+                 from E:\zalo-bot-cpp\src\ZaloApi.cpp:1:
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:93: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   93 |     #pragma comment(lib, "winhttp.lib")
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:94: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   94 |     #pragma comment(lib, "secur32.lib")
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:95: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   95 |     #pragma comment(lib, "crypt32.lib")
+In file included from E:/zalo-bot-cpp/include/ZaloApi.hpp:2,
+                 from E:\zalo-bot-cpp\src\main.cpp:1:
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:93: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   93 |     #pragma comment(lib, "winhttp.lib")
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:94: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   94 |     #pragma comment(lib, "secur32.lib")
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:95: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   95 |     #pragma comment(lib, "crypt32.lib")
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In static member function 'static void nativeHTTP::Logger::log_last_error(const std::string&, Level)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:195:19: warning: unused variable 'size' [-Wunused-variable]
+  195 |             DWORD size = FormatMessageA(
+      |                   ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In constructor 'nativeHTTP::MultipartFormData::Part::Part(const std::string&, const std::vector<unsigned char>&, const std::string&, const std::string&)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:813:34: warning: 'nativeHTTP::MultipartFormData::Part::data' will be initialized after [-Wreorder]
+  813 |             std::vector<uint8_t> data;
+      |                                  ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:811:25: warning:   'std::string nativeHTTP::MultipartFormData::Part::filename' [-Wreorder]
+  811 |             std::string filename;
+      |                         ^~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:771:13: warning:   when initialized here [-Wreorder]
+  771 |             Part(const std::string& n, const std::vector<uint8_t>& d,
+      |             ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In constructor 'nativeHTTP::MultipartFormData::Part::Part(const std::string&, const std::string&, const std::string&, const std::string&)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:814:25: warning: 'nativeHTTP::MultipartFormData::Part::file_path' will be initialized after [-Wreorder]
+  814 |             std::string file_path;
+      |                         ^~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:811:25: warning:   'std::string nativeHTTP::MultipartFormData::Part::filename' [-Wreorder]
+  811 |             std::string filename;
+      |                         ^~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:776:13: warning:   when initialized here [-Wreorder]
+  776 |             Part(const std::string& n, const std::string& filepath,
+      |             ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In member function 'bool nativeHTTP::Client::WebSocket::connect()':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1144:23: warning: variable 'access_type' set but not used [-Wunused-but-set-variable]
+ 1144 |                 DWORD access_type = WINHTTP_ACCESS_TYPE_NO_PROXY;
+      |                       ^~~~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1145:25: warning: variable 'proxy_ptr' set but not used [-Wunused-but-set-variable]
+ 1145 |                 LPCWSTR proxy_ptr = WINHTTP_NO_PROXY_NAME;
+      |                         ^~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1146:25: warning: unused variable 'proxy_bypass_ptr' [-Wunused-variable]
+ 1146 |                 LPCWSTR proxy_bypass_ptr = WINHTTP_NO_PROXY_BYPASS;
+      |                         ^~~~~~~~~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In static member function 'static void nativeHTTP::Logger::log_last_error(const std::string&, Level)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:195:19: warning: unused variable 'size' [-Wunused-variable]
+  195 |             DWORD size = FormatMessageA(
+      |                   ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In static member function 'static void nativeHTTP::Logger::log_last_error(const std::string&, Level)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:195:19: warning: unused variable 'size' [-Wunused-variable]
+  195 |             DWORD size = FormatMessageA(
+      |                   ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In constructor 'nativeHTTP::MultipartFormData::Part::Part(const std::string&, const std::vector<unsigned char>&, const std::string&, const std::string&)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:813:34: warning: 'nativeHTTP::MultipartFormData::Part::data' will be initialized after [-Wreorder]
+  813 |             std::vector<uint8_t> data;
+      |                                  ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:811:25: warning:   'std::string nativeHTTP::MultipartFormData::Part::filename' [-Wreorder]
+  811 |             std::string filename;
+      |                         ^~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:771:13: warning:   when initialized here [-Wreorder]
+  771 |             Part(const std::string& n, const std::vector<uint8_t>& d,
+      |             ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In constructor 'nativeHTTP::MultipartFormData::Part::Part(const std::string&, const std::string&, const std::string&, const std::string&)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:814:25: warning: 'nativeHTTP::MultipartFormData::Part::file_path' will be initialized after [-Wreorder]
+  814 |             std::string file_path;
+      |                         ^~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:811:25: warning:   'std::string nativeHTTP::MultipartFormData::Part::filename' [-Wreorder]
+  811 |             std::string filename;
+      |                         ^~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:776:13: warning:   when initialized here [-Wreorder]
+  776 |             Part(const std::string& n, const std::string& filepath,
+      |             ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In constructor 'nativeHTTP::MultipartFormData::Part::Part(const std::string&, const std::vector<unsigned char>&, const std::string&, const std::string&)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:813:34: warning: 'nativeHTTP::MultipartFormData::Part::data' will be initialized after [-Wreorder]
+  813 |             std::vector<uint8_t> data;
+      |                                  ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:811:25: warning:   'std::string nativeHTTP::MultipartFormData::Part::filename' [-Wreorder]
+  811 |             std::string filename;
+      |                         ^~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:771:13: warning:   when initialized here [-Wreorder]
+  771 |             Part(const std::string& n, const std::vector<uint8_t>& d,
+      |             ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In constructor 'nativeHTTP::MultipartFormData::Part::Part(const std::string&, const std::string&, const std::string&, const std::string&)':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:814:25: warning: 'nativeHTTP::MultipartFormData::Part::file_path' will be initialized after [-Wreorder]
+  814 |             std::string file_path;
+      |                         ^~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:811:25: warning:   'std::string nativeHTTP::MultipartFormData::Part::filename' [-Wreorder]
+  811 |             std::string filename;
+      |                         ^~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:776:13: warning:   when initialized here [-Wreorder]
+  776 |             Part(const std::string& n, const std::string& filepath,
+      |             ^~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In member function 'bool nativeHTTP::Client::WebSocket::connect()':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1144:23: warning: variable 'access_type' set but not used [-Wunused-but-set-variable]
+ 1144 |                 DWORD access_type = WINHTTP_ACCESS_TYPE_NO_PROXY;
+      |                       ^~~~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1145:25: warning: variable 'proxy_ptr' set but not used [-Wunused-but-set-variable]
+ 1145 |                 LPCWSTR proxy_ptr = WINHTTP_NO_PROXY_NAME;
+      |                         ^~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1146:25: warning: unused variable 'proxy_bypass_ptr' [-Wunused-variable]
+ 1146 |                 LPCWSTR proxy_bypass_ptr = WINHTTP_NO_PROXY_BYPASS;
+      |                         ^~~~~~~~~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp: In member function 'bool nativeHTTP::Client::WebSocket::connect()':
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1144:23: warning: variable 'access_type' set but not used [-Wunused-but-set-variable]
+ 1144 |                 DWORD access_type = WINHTTP_ACCESS_TYPE_NO_PROXY;
+      |                       ^~~~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1145:25: warning: variable 'proxy_ptr' set but not used [-Wunused-but-set-variable]
+ 1145 |                 LPCWSTR proxy_ptr = WINHTTP_NO_PROXY_NAME;
+      |                         ^~~~~~~~~
+E:/zalo-bot-cpp/lib/nativeHTTP.hpp:1146:25: warning: unused variable 'proxy_bypass_ptr' [-Wunused-variable]
+ 1146 |                 LPCWSTR proxy_bypass_ptr = WINHTTP_NO_PROXY_BYPASS;
+      |                         ^~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp: In member function 'void CommandHandler::tick_taixiu()':
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2355:24: error: 'sess' was not declared in this scope
+ 2355 |             if (now >= sess.end_time) { to_end.push_back(kv.first); continue; }
+      |                        ^~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2356:23: error: 'sess' was not declared in this scope
+ 2356 |             if (now - sess.last_update >= 10) {
+      |                       ^~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2358:17: error: 'to_update' was not declared in this scope
+ 2358 |                 to_update.push_back({kv.first, rem});
+      |                 ^~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp: At global scope:
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2471:22: error: redefinition of 'std::mt19937& game_rng()'
+ 2471 | static std::mt19937& game_rng() {
+      |                      ^~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:34:22: note: 'std::mt19937& game_rng()' previously defined here
+   34 | static std::mt19937& game_rng() {
+      |                      ^~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2476:12: error: redefinition of 'int roll_dice_mt(int)'
+ 2476 | static int roll_dice_mt(int sides) {
+      |            ^~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:39:12: note: 'int roll_dice_mt(int)' previously defined here
+   39 | static int roll_dice_mt(int sides) {
+      |            ^~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2482:16: error: redefinition of 'cpp_int parse_money(const std::string&, cpp_int)'
+ 2482 | static cpp_int parse_money(const std::string& s, cpp_int def = -1) {
+      |                ^~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:45:16: note: 'cpp_int parse_money(const std::string&, cpp_int)' previously defined here
+   45 | static cpp_int parse_money(const std::string& s, cpp_int def = -1) {
+      |                ^~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2504:16: error: redefinition of 'cpp_int parse_bet_amount(const std::string&, const cpp_int&)'
+ 2504 | static cpp_int parse_bet_amount(const std::string& s, const cpp_int& balance) {
+      |                ^~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:67:16: note: 'cpp_int parse_bet_amount(const std::string&, const cpp_int&)' previously defined here
+   67 | static cpp_int parse_bet_amount(const std::string& s, const cpp_int& balance) {
+      |                ^~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2521:20: error: redefinition of 'std::string money_str(const cpp_int&)'
+ 2521 | static std::string money_str(const cpp_int& n) {
+      |                    ^~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:84:20: note: 'std::string money_str(const cpp_int&)' previously defined here
+   84 | static std::string money_str(const cpp_int& n) {
+      |                    ^~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2537:26: error: redefinition of 'std::vector<bool> g_chanle_history'
+ 2537 | static std::vector<bool> g_chanle_history;
+      |                          ^~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:100:26: note: 'std::vector<bool> g_chanle_history' previously declared here
+  100 | static std::vector<bool> g_chanle_history;
+      |                          ^~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2538:26: error: redefinition of 'std::vector<bool> g_taixiu_history'
+ 2538 | static std::vector<bool> g_taixiu_history;
+      |                          ^~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:101:26: note: 'std::vector<bool> g_taixiu_history' previously declared here
+  101 | static std::vector<bool> g_taixiu_history;
+      |                          ^~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2543:13: error: redefinition of 'bool g_debug_mode'
+ 2543 | static bool g_debug_mode = false;
+      |             ^~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:106:13: note: 'bool g_debug_mode' previously defined here
+  106 | static bool g_debug_mode = false;
+      |             ^~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2544:13: error: redefinition of 'bool g_debug_saved_bot'
+ 2544 | static bool g_debug_saved_bot = false;
+      |             ^~~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:107:13: note: 'bool g_debug_saved_bot' previously defined here
+  107 | static bool g_debug_saved_bot = false;
+      |             ^~~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2545:13: error: redefinition of 'bool g_debug_saved_game'
+ 2545 | static bool g_debug_saved_game = false;
+      |             ^~~~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:108:13: note: 'bool g_debug_saved_game' previously defined here
+  108 | static bool g_debug_saved_game = false;
+      |             ^~~~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2546:20: error: redefinition of 'std::string g_debug_uid'
+ 2546 | static std::string g_debug_uid = "";
+      |                    ^~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:109:20: note: 'std::string g_debug_uid' previously declared here
+  109 | static std::string g_debug_uid = "";
+      |                    ^~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2547:24: error: redefinition of 'const long long int DEBUG_BANK_LL'
+ 2547 | static const long long DEBUG_BANK_LL = 1000000000LL;
+      |                        ^~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:110:24: note: 'const long long int DEBUG_BANK_LL' previously defined here
+  110 | static const long long DEBUG_BANK_LL = 1000000000LL;
+      |                        ^~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2551:8: error: redefinition of 'struct TaixiuPlayer'
+ 2551 | struct TaixiuPlayer {
+      |        ^~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:114:8: note: previous definition of 'struct TaixiuPlayer'
+  114 | struct TaixiuPlayer {
+      |        ^~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2558:8: error: redefinition of 'struct TaixiuSession'
+ 2558 | struct TaixiuSession {
+      |        ^~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:121:8: note: previous definition of 'struct TaixiuSession'
+  121 | struct TaixiuSession {
+      |        ^~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2567:45: error: redefinition of 'std::map<std::__cxx11::basic_string<char>, TaixiuSession> g_taixiu_sessions'
+ 2567 | static std::map<std::string, TaixiuSession> g_taixiu_sessions;
+      |                                             ^~~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:130:45: note: 'std::map<std::__cxx11::basic_string<char>, TaixiuSession> g_taixiu_sessions' previously declared here
+  130 | static std::map<std::string, TaixiuSession> g_taixiu_sessions;
+      |                                             ^~~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2568:19: error: redefinition of 'std::mutex g_taixiu_mtx'
+ 2568 | static std::mutex g_taixiu_mtx;
+      |                   ^~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:131:19: note: 'std::mutex g_taixiu_mtx' previously declared here
+  131 | static std::mutex g_taixiu_mtx;
+      |                   ^~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2571:39: error: redefinition of 'std::map<std::__cxx11::basic_string<char>, boost::multiprecision::number<boost::multiprecision::backends::cpp_int_backend<> > > g_husks'
+ 2571 | static std::map<std::string, cpp_int> g_husks;
+      |                                       ^~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:134:39: note: 'std::map<std::__cxx11::basic_string<char>, boost::multiprecision::number<boost::multiprecision::backends::cpp_int_backend<> > > g_husks' previously declared here
+  134 | static std::map<std::string, cpp_int> g_husks;
+      |                                       ^~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2572:19: error: redefinition of 'std::mutex g_husks_mtx'
+ 2572 | static std::mutex g_husks_mtx;
+      |                   ^~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:135:19: note: 'std::mutex g_husks_mtx' previously declared here
+  135 | static std::mutex g_husks_mtx;
+      |                   ^~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2577:26: error: redefinition of 'std::atomic<bool> g_spam_active'
+ 2577 | static std::atomic<bool> g_spam_active{false};
+      |                          ^~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:140:26: note: 'std::atomic<bool> g_spam_active' previously defined here
+  140 | static std::atomic<bool> g_spam_active{false};
+      |                          ^~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2578:26: error: redefinition of 'std::atomic<bool> g_scold_active'
+ 2578 | static std::atomic<bool> g_scold_active{false};
+      |                          ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:141:26: note: 'std::atomic<bool> g_scold_active' previously defined here
+  141 | static std::atomic<bool> g_scold_active{false};
+      |                          ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2579:33: error: redefinition of 'std::vector<std::__cxx11::basic_string<char> > g_scold_list'
+ 2579 | static std::vector<std::string> g_scold_list;
+      |                                 ^~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:142:33: note: 'std::vector<std::__cxx11::basic_string<char> > g_scold_list' previously declared here
+  142 | static std::vector<std::string> g_scold_list;
+      |                                 ^~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2581:13: error: redefinition of 'void push_history(std::vector<bool>&, bool)'
+ 2581 | static void push_history(std::vector<bool>& h, bool v) {
+      |             ^~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:144:13: note: 'void push_history(std::vector<bool>&, bool)' previously defined here
+  144 | static void push_history(std::vector<bool>& h, bool v) {
+      |             ^~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2586:13: error: redefinition of 'void draw_history_dots(std::vector<unsigned char>&, int, int, int, int, const std::vector<bool>&)'
+ 2586 | static void draw_history_dots(std::vector<uint8_t>& canvas, int W, int H,
+      |             ^~~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:149:13: note: 'void draw_history_dots(std::vector<unsigned char>&, int, int, int, int, const std::vector<bool>&)' previously defined here
+  149 | static void draw_history_dots(std::vector<uint8_t>& canvas, int W, int H,
+      |             ^~~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2601:13: error: redefinition of 'void render_game_image(const std::string&, const std::string&, int, const std::string&, bool, cpp_int, cpp_int, cpp_int, cpp_int, const std::string&, const std::vector<bool>&, const std::string&)'
+ 2601 | static void render_game_image(
+      |             ^~~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:164:13: note: 'void render_game_image(const std::string&, const std::string&, int, const std::string&, bool, cpp_int, cpp_int, cpp_int, cpp_int, const std::string&, const std::vector<bool>&, const std::string&)' previously defined here
+  164 | static void render_game_image(
+      |             ^~~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2694:8: error: redefinition of 'struct HelpRow'
+ 2694 | struct HelpRow {
+      |        ^~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:257:8: note: previous definition of 'struct HelpRow'
+  257 | struct HelpRow {
+      |        ^~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2701:8: error: redefinition of 'struct HelpSection'
+ 2701 | struct HelpSection {
+      |        ^~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:264:8: note: previous definition of 'struct HelpSection'
+  264 | struct HelpSection {
+      |        ^~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2706:13: error: redefinition of 'void render_help_image(const std::string&, const std::vector<HelpSection>&, const std::string&, const std::string&, const std::string&)'
+ 2706 | static void render_help_image(
+      |             ^~~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:269:13: note: 'void render_help_image(const std::string&, const std::vector<HelpSection>&, const std::string&, const std::string&, const std::string&)' previously defined here
+  269 | static void render_help_image(
+      |             ^~~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2790:6: error: redefinition of 'void CommandHandler::load_scold_list()'
+ 2790 | void CommandHandler::load_scold_list() {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:353:6: note: 'void CommandHandler::load_scold_list()' previously defined here
+  353 | void CommandHandler::load_scold_list() {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2816:6: error: redefinition of 'void CommandHandler::load_husks()'
+ 2816 | void CommandHandler::load_husks() {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:379:6: note: 'void CommandHandler::load_husks()' previously defined here
+  379 | void CommandHandler::load_husks() {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2842:6: error: redefinition of 'void CommandHandler::save_husks()'
+ 2842 | void CommandHandler::save_husks() {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:405:6: note: 'void CommandHandler::save_husks()' previously defined here
+  405 | void CommandHandler::save_husks() {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2859:1: error: redefinition of 'CommandHandler::CommandHandler(ZaloApi&, PermissionManager&, EconomyManager&, GameManager&, GroupManager&, AccountManager&)'
+ 2859 | CommandHandler::CommandHandler(ZaloApi& api, PermissionManager& perm, EconomyManager& econ,
+      | ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:422:1: note: 'CommandHandler::CommandHandler(ZaloApi&, PermissionManager&, EconomyManager&, GameManager&, GroupManager&, AccountManager&)' previously defined here
+  422 | CommandHandler::CommandHandler(ZaloApi& api, PermissionManager& perm, EconomyManager& econ,
+      | ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2869:6: error: redefinition of 'void CommandHandler::load_user_economy_impl(const std::string&, const std::string&)'
+ 2869 | void CommandHandler::load_user_economy_impl(const std::string& uid, const std::string& username) {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:432:6: note: 'void CommandHandler::load_user_economy_impl(const std::string&, const std::string&)' previously defined here
+  432 | void CommandHandler::load_user_economy_impl(const std::string& uid, const std::string& username) {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2880:6: error: redefinition of 'void CommandHandler::save_user_economy_impl(const std::string&)'
+ 2880 | void CommandHandler::save_user_economy_impl(const std::string& uid) {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:443:6: note: 'void CommandHandler::save_user_economy_impl(const std::string&)' previously defined here
+  443 | void CommandHandler::save_user_economy_impl(const std::string& uid) {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2893:6: error: redefinition of 'void CommandHandler::load_bot_info()'
+ 2893 | void CommandHandler::load_bot_info() {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:456:6: note: 'void CommandHandler::load_bot_info()' previously defined here
+  456 | void CommandHandler::load_bot_info() {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2908:6: error: redefinition of 'void CommandHandler::cache_user_name(const std::string&, const std::string&)'
+ 2908 | void CommandHandler::cache_user_name(const std::string& uid, const std::string& name) {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:471:6: note: 'void CommandHandler::cache_user_name(const std::string&, const std::string&)' previously defined here
+  471 | void CommandHandler::cache_user_name(const std::string& uid, const std::string& name) {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2914:13: error: redefinition of 'std::string CommandHandler::format_user(const std::string&)'
+ 2914 | std::string CommandHandler::format_user(const std::string& uid) {
+      |             ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:477:13: note: 'std::string CommandHandler::format_user(const std::string&)' previously defined here
+  477 | std::string CommandHandler::format_user(const std::string& uid) {
+      |             ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2924:26: error: redefinition of 'std::vector<std::__cxx11::basic_string<char> > CommandHandler::parse_command(const std::string&)'
+ 2924 | std::vector<std::string> CommandHandler::parse_command(const std::string& message) {
+      |                          ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:487:26: note: 'std::vector<std::__cxx11::basic_string<char> > CommandHandler::parse_command(const std::string&)' previously defined here
+  487 | std::vector<std::string> CommandHandler::parse_command(const std::string& message) {
+      |                          ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2932:6: error: redefinition of 'void CommandHandler::reply_text(const std::string&, const std::string&, int)'
+ 2932 | void CommandHandler::reply_text(const std::string& msg, const std::string& thread_id,
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:495:6: note: 'void CommandHandler::reply_text(const std::string&, const std::string&, int)' previously defined here
+  495 | void CommandHandler::reply_text(const std::string& msg, const std::string& thread_id,
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2951:6: error: redefinition of 'void CommandHandler::reply_image(const std::string&, const std::string&, const std::string&, int)'
+ 2951 | void CommandHandler::reply_image(const std::string& title, const std::string& msg,
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:514:6: note: 'void CommandHandler::reply_image(const std::string&, const std::string&, const std::string&, int)' previously defined here
+  514 | void CommandHandler::reply_image(const std::string& title, const std::string& msg,
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2994:6: error: redefinition of 'void CommandHandler::register_commands()'
+ 2994 | void CommandHandler::register_commands() {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:557:6: note: 'void CommandHandler::register_commands()' previously defined here
+  557 | void CommandHandler::register_commands() {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:4625:6: error: redefinition of 'void CommandHandler::cache_message(const std::string&, const std::string&, const std::string&, const std::string&, const std::string&, const std::string&, bool)'
+ 4625 | void CommandHandler::cache_message(const std::string& thread_id,
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2186:6: note: 'void CommandHandler::cache_message(const std::string&, const std::string&, const std::string&, const std::string&, const std::string&, const std::string&, bool)' previously defined here
+ 2186 | void CommandHandler::cache_message(const std::string& thread_id,
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:4648:6: error: redefinition of 'void CommandHandler::handle_message(const std::string&, const std::string&, int, const std::string&, const std::string&, bool, const QuoteInfo&)'
+ 4648 | void CommandHandler::handle_message(const std::string& user_id, const std::string& thread_id,
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2209:6: note: 'void CommandHandler::handle_message(const std::string&, const std::string&, int, const std::string&, const std::string&, bool, const QuoteInfo&)' previously defined here
+ 2209 | void CommandHandler::handle_message(const std::string& user_id, const std::string& thread_id,
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:4782:6: error: redefinition of 'void CommandHandler::tick_taixiu()'
+ 4782 | void CommandHandler::tick_taixiu() {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2343:6: note: 'void CommandHandler::tick_taixiu()' previously defined here
+ 2343 | void CommandHandler::tick_taixiu() {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:4801:6: error: redefinition of 'void CommandHandler::end_taixiu_session(const std::string&)'
+ 4801 | void CommandHandler::end_taixiu_session(const std::string& thread_id) {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2367:6: note: 'void CommandHandler::end_taixiu_session(const std::string&)' previously defined here
+ 2367 | void CommandHandler::end_taixiu_session(const std::string& thread_id) {
+      |      ^~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2706:13: warning: 'void render_help_image(const std::string&, const std::vector<HelpSection>&, const std::string&, const std::string&, const std::string&)' defined but not used [-Wunused-function]
+ 2706 | static void render_help_image(
+      |             ^~~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2601:13: warning: 'void render_game_image(const std::string&, const std::string&, int, const std::string&, bool, cpp_int, cpp_int, cpp_int, cpp_int, const std::string&, const std::vector<bool>&, const std::string&)' defined but not used [-Wunused-function]
+ 2601 | static void render_game_image(
+      |             ^~~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2586:13: warning: 'void draw_history_dots(std::vector<unsigned char>&, int, int, int, int, const std::vector<bool>&)' defined but not used [-Wunused-function]
+ 2586 | static void draw_history_dots(std::vector<uint8_t>& canvas, int W, int H,
+      |             ^~~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2581:13: warning: 'void push_history(std::vector<bool>&, bool)' defined but not used [-Wunused-function]
+ 2581 | static void push_history(std::vector<bool>& h, bool v) {
+      |             ^~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2521:20: warning: 'std::string money_str(const cpp_int&)' defined but not used [-Wunused-function]
+ 2521 | static std::string money_str(const cpp_int& n) {
+      |                    ^~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2504:16: warning: 'cpp_int parse_bet_amount(const std::string&, const cpp_int&)' defined but not used [-Wunused-function]
+ 2504 | static cpp_int parse_bet_amount(const std::string& s, const cpp_int& balance) {
+      |                ^~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2482:16: warning: 'cpp_int parse_money(const std::string&, cpp_int)' defined but not used [-Wunused-function]
+ 2482 | static cpp_int parse_money(const std::string& s, cpp_int def = -1) {
+      |                ^~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2476:12: warning: 'int roll_dice_mt(int)' defined but not used [-Wunused-function]
+ 2476 | static int roll_dice_mt(int sides) {
+      |            ^~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:2471:22: warning: 'std::mt19937& game_rng()' defined but not used [-Wunused-function]
+ 2471 | static std::mt19937& game_rng() {
+      |                      ^~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:164:13: warning: 'void render_game_image(const std::string&, const std::string&, int, const std::string&, bool, cpp_int, cpp_int, cpp_int, cpp_int, const std::string&, const std::vector<bool>&, const std::string&)' defined but not used [-Wunused-function]
+  164 | static void render_game_image(
+      |             ^~~~~~~~~~~~~~~~~
+E:\zalo-bot-cpp\src\CommandHandler.cpp:144:13: warning: 'void push_history(std::vector<bool>&, bool)' defined but not used [-Wunused-function]
+  144 | static void push_history(std::vector<bool>& h, bool v) {
+      |             ^~~~~~~~~~~~
+mingw32-make[2]: *** [CMakeFiles\zalo_bot.dir\build.make:124: CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj] Error 1
+mingw32-make[2]: *** Waiting for unfinished jobs....
+mingw32-make[1]: *** [CMakeFiles\Makefile2:86: CMakeFiles/zalo_bot.dir/all] Error 2
+mingw32-make: *** [Makefile:90: all] Error 2
