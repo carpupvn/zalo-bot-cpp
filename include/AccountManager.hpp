@@ -47,6 +47,7 @@ public:
     std::map<std::string, std::string> get_logged_in_map() const;
 
     // Top user giàu nhất (username, wallet) — query accounts.db
+    void export_to_txt(const std::string& path);
     bool get_top_wallet(int limit,
                         std::vector<std::pair<std::string, cpp_int>>& out) const;
 

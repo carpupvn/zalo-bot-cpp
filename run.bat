@@ -1,6 +1,6 @@
 @echo off
 chcp 65001 >nul
-cd /d E:\zalo-bot-cpp
+cd /d "%~dp0"
 
 if not exist "build\zalo_bot.exe" (
     echo [X] Chua co build\zalo_bot.exe - chay start.bat truoc!

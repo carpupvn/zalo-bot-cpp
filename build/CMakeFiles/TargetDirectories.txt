@@ -1,3 +1,3 @@
-E:/zalo-bot-cpp/build/CMakeFiles/zalo_bot.dir
-E:/zalo-bot-cpp/build/CMakeFiles/edit_cache.dir
-E:/zalo-bot-cpp/build/CMakeFiles/rebuild_cache.dir
+E:/zalo-bot-cpp-main/zalo-bot-cpp-main/build/CMakeFiles/zalo_bot.dir
+E:/zalo-bot-cpp-main/zalo-bot-cpp-main/build/CMakeFiles/edit_cache.dir
+E:/zalo-bot-cpp-main/zalo-bot-cpp-main/build/CMakeFiles/rebuild_cache.dir

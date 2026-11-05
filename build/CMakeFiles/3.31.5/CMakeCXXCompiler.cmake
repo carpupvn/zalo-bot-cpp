@@ -1,4 +1,4 @@
-set(CMAKE_CXX_COMPILER "D:/CodeBlocks/MinGW/bin/c++.exe")
+set(CMAKE_CXX_COMPILER "E:/Program Files/CodeBlocks/MinGW/bin/c++.exe")
 set(CMAKE_CXX_COMPILER_ARG1 "")
 set(CMAKE_CXX_COMPILER_ID "GNU")
 set(CMAKE_CXX_COMPILER_VERSION "14.2.0")
@@ -24,11 +24,11 @@ set(CMAKE_CXX_SIMULATE_VERSION "")
 
 
 
-set(CMAKE_AR "D:/CodeBlocks/MinGW/bin/ar.exe")
-set(CMAKE_CXX_COMPILER_AR "D:/CodeBlocks/MinGW/bin/gcc-ar.exe")
-set(CMAKE_RANLIB "D:/CodeBlocks/MinGW/bin/ranlib.exe")
-set(CMAKE_CXX_COMPILER_RANLIB "D:/CodeBlocks/MinGW/bin/gcc-ranlib.exe")
-set(CMAKE_LINKER "D:/CodeBlocks/MinGW/bin/ld.exe")
+set(CMAKE_AR "E:/Program Files/CodeBlocks/MinGW/bin/ar.exe")
+set(CMAKE_CXX_COMPILER_AR "E:/Program Files/CodeBlocks/MinGW/bin/gcc-ar.exe")
+set(CMAKE_RANLIB "E:/Program Files/CodeBlocks/MinGW/bin/ranlib.exe")
+set(CMAKE_CXX_COMPILER_RANLIB "E:/Program Files/CodeBlocks/MinGW/bin/gcc-ranlib.exe")
+set(CMAKE_LINKER "E:/Program Files/CodeBlocks/MinGW/bin/ld.exe")
 set(CMAKE_LINKER_LINK "")
 set(CMAKE_LINKER_LLD "")
 set(CMAKE_CXX_COMPILER_LINKER "Configured with: ../configure --prefix=/R/winlibs_staging_ucrt64/inst_gcc-14.2.0/share/gcc --build=x86_64-w64-mingw32 --host=x86_64-w64-mingw32 --enable-offload-targets=nvptx-none --with-pkgversion='MinGW-W64 x86_64-ucrt-posix-seh, built by Brecht Sanders, r3' --with-tune=generic --enable-checking=release --enable-threads=posix --disable-sjlj-exceptions --disable-libunwind-exceptions --disable-serial-configure --disable-bootstrap --enable-host-shared --enable-plugin --disable-default-ssp --disable-rpath --disable-libstdcxx-debug --disable-version-specific-runtime-libs --disable-symvers --enable-languages=c,c++,fortran,lto,objc,obj-c++ --disable-gold --disable-nls --disable-stage1-checking --disable-win32-registry --disable-multilib --enable-ld --enable-libquadmath --enable-libada --enable-libssp --enable-libstdcxx --enable-lto --enable-fully-dynamic-string --enable-libgomp --enable-graphite --enable-mingw-wildcard --enable-libstdcxx-time --enable-libstdcxx-pch --with-mpc=/c/Prog/winlibs_staging_ucrt/custombuilt64 --with-mpfr=/c/Prog/winlibs_staging_ucrt/custombuilt64 --with-gmp=/c/Prog/winlibs_staging_ucrt/custombuilt64 --with-isl=/c/Prog/winlibs_staging_ucrt/custombuilt64 --disable-libstdcxx-backtrace --enable-install-libiberty --enable-__cxa_atexit --without-included-gettext --with-diagnostics-color=auto --enable-clocale=generic --with-libiconv --with-system-zlib --with-build-sysroot=/R/winlibs_staging_ucrt64/gcc-14.2.0/build_mingw/mingw-w64 CFLAGS='-I/c/Prog/winlibs_staging_ucrt/custombuilt64/include/libdl-win32   -march=nocona -msahf -mtune=generic -O2 -Wno-error=format' CXXFLAGS='-Wno-int-conversion  -march=nocona -msahf -mtune=generic -O2' LDFLAGS='-pthread -Wl,--no-insert-timestamp -Wl,--dynamicbase -Wl,--high-entropy-va -Wl,--nxcompat -Wl,--tsaware' LD=/c/Prog/winlibs_staging_ucrt/custombuilt64/share/binutils/bin/ld.exe")
@@ -87,9 +87,9 @@ endif()
 
 
 
-set(CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES "D:/CodeBlocks/MinGW/include/c++/14.2.0;D:/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32;D:/CodeBlocks/MinGW/include/c++/14.2.0/backward;D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include;D:/CodeBlocks/MinGW/include;D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include-fixed;D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include")
-set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "stdc++;mingw32;gcc_s;gcc;mingwex;kernel32;pthread;advapi32;shell32;user32;kernel32;mingw32;gcc_s;gcc;mingwex;kernel32")
-set(CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES "D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0;D:/CodeBlocks/MinGW/lib/gcc;D:/CodeBlocks/MinGW/x86_64-w64-mingw32/lib;D:/CodeBlocks/MinGW/lib")
+set(CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES "E:/Program Files/CodeBlocks/MinGW/include/c++/14.2.0;E:/Program Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32;E:/Program Files/CodeBlocks/MinGW/include/c++/14.2.0/backward;E:/Program Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include;E:/Program Files/CodeBlocks/MinGW/include;E:/Program Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include-fixed;E:/Program Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include")
+set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "")
+set(CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES "")
 set(CMAKE_CXX_IMPLICIT_LINK_FRAMEWORK_DIRECTORIES "")
 set(CMAKE_CXX_COMPILER_CLANG_RESOURCE_DIR "")
 

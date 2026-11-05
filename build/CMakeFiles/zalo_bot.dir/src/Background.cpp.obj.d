@@ -1,145 +1,146 @@
 CMakeFiles/zalo_bot.dir/src/Background.cpp.obj: \
- E:\zalo-bot-cpp\src\Background.cpp \
- E:/zalo-bot-cpp/include/Background.hpp \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/cstdint \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/os_defines.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/cpu_defines.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/pstl/pstl_config.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdint.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdint.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/crtdefs.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/corecrt.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_mac.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_secapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/vadefs.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stddef.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stddef.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/vector \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/requires_hosted.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_algobase.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/functexcept.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/exception_defines.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/cpp_type_traits.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/ext/type_traits.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/ext/numeric_traits.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_pair.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/type_traits \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/version.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/move.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/utility.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_iterator_base_types.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_iterator_base_funcs.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/concept_check.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/debug/assertions.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_iterator.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/ptr_traits.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/debug/debug.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/predefined_ops.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bit \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/concepts \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/allocator.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++allocator.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/new_allocator.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/new \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/exception.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/memoryfwd.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_construct.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_uninitialized.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/ext/alloc_traits.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/alloc_traits.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_vector.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/initializer_list \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_bvector.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/functional_hash.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/hash_bytes.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/refwrap.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/invoke.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_function.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/backward/binders.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/range_access.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/vector.tcc \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/memory_resource.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/cstddef \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/uses_allocator.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/uses_allocator_args.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/tuple \
- E:/zalo-bot-cpp/include/Color.hpp \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/string \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/stringfwd.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/char_traits.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/postypes.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/cwchar \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/wchar.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/corecrt_stdio_config.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/corecrt_wstdlib.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_off_t.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_stat64.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/swprintf.inl \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/wchar_s.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/localefwd.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++locale.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/clocale \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/locale.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdio.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/stdio_s.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/iosfwd \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/cctype \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/ctype.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/ostream_insert.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/cxxabi_forced.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/basic_string.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/string_view \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/string_view.tcc \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/ext/string_conversions.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/cstdlib \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdlib.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/limits.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/syslimits.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/limits.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/stdlib_s.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/stdlib.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/malloc.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mm_malloc.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/errno.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/std_abs.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/cstdio \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/cerrno \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/charconv.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/basic_string.tcc \
- E:/zalo-bot-cpp/include/Gradient.hpp E:/zalo-bot-cpp/include/Shape.hpp \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/utility \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_relops.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/cmath \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/math.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/specfun.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/limits \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/tr1/gamma.tcc \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/tr1/special_function_util.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/tr1/bessel_function.tcc \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/tr1/beta_function.tcc \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/tr1/ell_integral.tcc \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/tr1/exp_integral.tcc \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/tr1/hypergeometric.tcc \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/tr1/legendre_function.tcc \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/tr1/modified_bessel_func.tcc \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/tr1/poly_hermite.tcc \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/tr1/poly_laguerre.tcc \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/tr1/riemann_zeta.tcc \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/random \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/random.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/uniform_int_dist.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/opt_random.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/random.tcc \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/numeric \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_numeric.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/pstl/glue_numeric_defs.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/pstl/execution_defs.h \
- D:/CodeBlocks/MinGW/include/c++/14.2.0/ctime \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/time.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sys/timeb.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/sys/timeb_s.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_timeval.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pthread_time.h
+ E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\Background.cpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Background.hpp \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cstdint \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/os_defines.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/cpu_defines.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/pstl/pstl_config.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdint.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdint.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/crtdefs.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/corecrt.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_mac.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_secapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/vadefs.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stddef.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stddef.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/vector \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/requires_hosted.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_algobase.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/functexcept.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/exception_defines.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/cpp_type_traits.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ext/type_traits.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ext/numeric_traits.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_pair.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/type_traits \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/version.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/move.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/utility.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_iterator_base_types.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_iterator_base_funcs.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/concept_check.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/debug/assertions.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_iterator.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/ptr_traits.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/debug/debug.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/predefined_ops.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bit \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/concepts \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/allocator.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++allocator.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/new_allocator.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/new \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/exception.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/memoryfwd.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_construct.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_uninitialized.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ext/alloc_traits.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/alloc_traits.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_vector.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/initializer_list \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_bvector.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/functional_hash.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/hash_bytes.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/refwrap.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/invoke.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_function.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/backward/binders.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/range_access.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/vector.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/memory_resource.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cstddef \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/uses_allocator.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/uses_allocator_args.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tuple \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Color.hpp \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/string \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stringfwd.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/char_traits.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/postypes.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cwchar \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/wchar.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/corecrt_stdio_config.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/corecrt_wstdlib.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_off_t.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_stat64.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/swprintf.inl \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/wchar_s.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/localefwd.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++locale.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/clocale \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/locale.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdio.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/stdio_s.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/iosfwd \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cctype \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/ctype.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/ostream_insert.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/cxxabi_forced.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/basic_string.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/string_view \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/string_view.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ext/string_conversions.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cstdlib \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdlib.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/limits.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/syslimits.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/limits.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/stdlib_s.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/stdlib.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/malloc.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mm_malloc.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/errno.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/std_abs.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cstdio \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cerrno \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/charconv.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/basic_string.tcc \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Gradient.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Shape.hpp \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/utility \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_relops.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cmath \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/math.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/specfun.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/limits \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/gamma.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/special_function_util.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/bessel_function.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/beta_function.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/ell_integral.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/exp_integral.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/hypergeometric.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/legendre_function.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/modified_bessel_func.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/poly_hermite.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/poly_laguerre.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/riemann_zeta.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/random \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/random.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/uniform_int_dist.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/opt_random.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/random.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/numeric \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_numeric.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/pstl/glue_numeric_defs.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/pstl/execution_defs.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ctime \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/time.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sys/timeb.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/sys/timeb_s.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_timeval.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pthread_time.h

@@ -8,32 +8,32 @@
           "fertilized": [],
           "last_watered_at": 1791565749446,
           "planted_at": 0,
-          "status": "good",
-          "water_level": 100
+          "status": "dry",
+          "water_level": 0
         },
         {
           "crop_key": "",
           "fertilized": [],
           "last_watered_at": 1791565749446,
           "planted_at": 0,
-          "status": "good",
-          "water_level": 100
+          "status": "dry",
+          "water_level": 0
         },
         {
           "crop_key": "",
           "fertilized": [],
           "last_watered_at": 1791565749446,
           "planted_at": 0,
-          "status": "good",
-          "water_level": 100
+          "status": "dry",
+          "water_level": 0
         },
         {
           "crop_key": "",
           "fertilized": [],
           "last_watered_at": 1791565749446,
           "planted_at": 0,
-          "status": "good",
-          "water_level": 100
+          "status": "dry",
+          "water_level": 0
         }
       ]
     }

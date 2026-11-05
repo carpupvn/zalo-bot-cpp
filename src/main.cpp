@@ -141,17 +141,9 @@ int main() {
             std::string own_id = ev.value("own_id", "");
             api.set_own_id(own_id);
 
-            // Chỉ set HOST nếu chưa có ai là HOST trong file admins.txt
-            bool has_host = false;
-            for (const auto& entry : perm.list_admins()) {
-                if (entry.find("[HOST]") != std::string::npos) {
-                    has_host = true;
-                    break;
-                }
-            }
-            if (!has_host) {
-                perm.set_user_role(own_id, Role::HOST);
-            }
+            // Tự động nhận diện tài khoản đang đăng nhập làm HOST
+            // (Ghi đè HOST cũ nếu có)
+            perm.set_user_role(own_id, Role::HOST);
             group.set_own_id(own_id);
 
             std::cout << "✅ Bot own_id: " << own_id << "\n";
@@ -541,6 +533,7 @@ int main() {
             d.games_won    = e.games_won;
             account.save_economy(un, d);
         }
+        account.export_to_txt("data/accounts.txt");
         std::cout << "[main] Final save: " << logged.size() << " user\n";
     }
 

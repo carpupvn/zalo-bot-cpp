@@ -17,6 +17,8 @@ NongTraiManager* g_farm_mgr = nullptr;
 #include <boost/multiprecision/cpp_int.hpp>
 #include <filesystem>
 #include "ProfileRender.inc"
+#include "BotInfoRender.inc"
+#include "SystemInfo.hpp"
 #include <random>
 #include <ctime>
 #include "json.hpp"
@@ -47,26 +49,66 @@ static int roll_dice_mt(int sides) {
     return d(game_rng());
 }
 
-static cpp_int parse_money(const std::string& s, cpp_int def = -1) {
-    if (s.empty()) return def;
-    std::string num, suf;
+static cpp_int parse_money(const std::string& s_in, cpp_int max_val = -1) {
+    std::string s = s_in;
+    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+    
+    std::string num_part = "";
+    std::string suffix_part = "";
+    
+    // Tách phần số và phần chữ cái (k, m, b)
     for (char c : s) {
-        if (std::isdigit((unsigned char)c)) num += c;
-        else if (std::isalpha((unsigned char)c)) suf += (char)std::tolower((unsigned char)c);
+        if (std::isdigit(c) || c == '.' || c == ',') {
+            num_part += c;
+        } else if (c == 'k' || c == 'm' || c == 'b') {
+            suffix_part += c;
+        }
     }
-    if (num.empty()) return def;
-    cpp_int base = 0;
-    try { base = cpp_int(num); } catch (...) { return def; }
-    if (suf.empty()) return base;
-    char f = suf[0];
-    for (char c : suf) if (c != f) return def;
-    int unit = (f == 'k') ? 3 : (f == 'm') ? 6 : (f == 'b') ? 9 : 0;
-    if (unit == 0) return def;
-    int exp = unit * (int)suf.size();
-    if (exp > 500) return def;
-    cpp_int mult = 1;
-    for (int i = 0; i < exp; i++) mult *= 10;
-    return base * mult;
+    
+    cpp_int multiplier = 1;
+    if (!suffix_part.empty()) {
+        // Nhân dồn các hậu tố: kb = 1000 * 1,000,000,000
+        for (char c : suffix_part) {
+            if (c == 'k') multiplier *= 1000;
+            else if (c == 'm') multiplier *= 1000000;
+            else if (c == 'b') multiplier *= 1000000000;
+        }
+    } else {
+        // Không có hậu tố, xóa dấu chấm/phẩy phân cách hàng nghìn (vd: 1.000.000)
+        num_part.erase(std::remove_if(num_part.begin(), num_part.end(), [](char c){ return c == '.' || c == ','; }), num_part.end());
+    }
+    
+    cpp_int final_res = 0;
+    if (num_part.empty()) return 0;
+    
+    if (suffix_part.empty()) {
+        try { final_res = cpp_int(num_part); } catch (...) { return 0; }
+    } else {
+        // Xử lý dấu thập phân (vd: 1.5m)
+        std::replace(num_part.begin(), num_part.end(), ',', '.');
+        size_t dot_pos = num_part.find('.');
+        
+        if (dot_pos == std::string::npos) {
+            try { final_res = cpp_int(num_part) * multiplier; } catch (...) { return 0; }
+        } else {
+            std::string int_str = num_part.substr(0, dot_pos);
+            std::string frac_str = num_part.substr(dot_pos + 1);
+            if (int_str.empty()) int_str = "0";
+            
+            try {
+                final_res = cpp_int(int_str) * multiplier;
+                if (!frac_str.empty()) {
+                    cpp_int frac_val = cpp_int(frac_str);
+                    cpp_int frac_div = 1;
+                    for (size_t i = 0; i < frac_str.length(); ++i) frac_div *= 10;
+                    final_res += (frac_val * multiplier) / frac_div;
+                }
+            } catch (...) { return 0; }
+        }
+    }
+    
+    if (max_val >= 0 && final_res > max_val) return max_val;
+    return final_res;
 }
 
 static cpp_int parse_bet_amount(const std::string& s, const cpp_int& balance) {
@@ -877,7 +919,17 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         reply_text("🪪 UID: " + uid + "\n🎖️ Role: " + rs + "\n👤 Account: " + acc, tid, tt);
     };
 
-    auto mycard = [this](const auto& args, const auto& uid,
+        
+    commands["detail"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+        (void)args; (void)uid;
+        SystemDetails sd = get_sys_details(GetCurrentProcessId());
+        static std::atomic<int> ctr{0};
+        std::string out = "cache/detail_" + std::to_string(ctr++) + ".png";
+        bot_info_render::render(get_bot_name(), sd, out);
+        api.send_image_async(out, tid, tt);
+        std::cout << "[Handler] detail: " << out << "\n";
+    };
+        auto mycard = [this](const auto& args, const auto& uid,
                       const auto& tid, int tt, bool) {
         std::string target = uid;
         if (args.size() > 1 && !args[1].empty()) target = args[1];
@@ -906,13 +958,48 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         d.is_active_pc  = false;
         d.is_active_web = false;
         std::string avt_path = "cache/avt_" + target + ".png";
+        std::string avt_url = "";
+        
+        // Kiểm tra xem đã có file trong cache chưa
         std::ifstream _ft(avt_path, std::ios::binary);
-        if (_ft.good()) {
-            _ft.close();
+        bool has_cache = _ft.good();
+        _ft.close();
+        
+        if (!has_cache) {
+            // Nếu chưa có, gọi API Zalo để lấy link Avatar
+            auto resp = api.get_user_info(target);
+            try {
+                if (resp.contains("result") && resp["result"].is_object()) {
+                    auto& r = resp["result"];
+                    if (r.contains("changed_profiles") && r["changed_profiles"].is_object()) {
+                        auto& cp = r["changed_profiles"];
+                        if (cp.contains(target) && cp[target].is_object()) {
+                            auto& u = cp[target];
+                            if (u.contains("avatar") && u["avatar"].is_string()) avt_url = u["avatar"].get<std::string>();
+                        } else if (!cp.empty()) {
+                            for (auto& [k, v] : cp.items()) {
+                                if (v.is_object() && v.contains("avatar") && v["avatar"].is_string()) {
+                                    avt_url = v["avatar"].get<std::string>();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (...) {}
+            
+            // Nếu lấy được URL thì tiến hành tải ảnh về cache
+            if (!avt_url.empty()) {
+                api.download_image(avt_url, avt_path); 
+            }
+        }
+        
+        // Nạp vào AssetManager để vẽ (dù có cache cũ hay vừa tải xong)
+        std::ifstream _ft2(avt_path, std::ios::binary);
+        if (_ft2.good()) {
+            _ft2.close();
             AssetManager::load("avt_" + target, avt_path);
             d.avatar_key = "avt_" + target;
-        } else {
-            _ft.close();
         }
         static std::atomic<int> ctr{0};
         std::string out = "cache/mycard_" + std::to_string(ctr++) + ".png";
@@ -1366,14 +1453,36 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         if (args.size() < 2) { reply_text("❌ vay <số tiền>", tid, tt); return; }
         cpp_int a = parse_money(args[1]);
         if (econ.borrow(uid, a)) reply_text("✅ Đã vay " + money_str(a), tid, tt);
-        else reply_text("❌ Vay không hợp lệ (tối đa 1,000,000)", tid, tt);
+        else reply_text("❌ Vay không hợp lệ (tối đa 10,000,000,000)", tid, tt);
     };
-    commands["tra"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+        commands["tra"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
         if ((!account.is_logged_in(uid) && !g_debug_mode)) { reply_text("❌ Cần đăng nhập", tid, tt); return; }
-        if (args.size() < 2) { reply_text("❌ tra <số tiền>", tid, tt); return; }
-        cpp_int a = parse_money(args[1]);
-        if (econ.repay(uid, a)) reply_text("✅ Đã trả " + money_str(a), tid, tt);
-        else reply_text("❌ Không trả được", tid, tt);
+        cpp_int current_debt = econ.get_debt(uid);
+        if (current_debt <= 0) { reply_text("✅ Bạn không có khoản nợ nào!", tid, tt); return; }
+        
+        if (args.size() < 2) { reply_text("❌ Cú pháp: tra <số tiền> hoặc tra all", tid, tt); return; }
+        
+        cpp_int a = 0;
+        std::string arg1 = args[1];
+        std::transform(arg1.begin(), arg1.end(), arg1.begin(), ::tolower);
+        
+        if (arg1 == "all") {
+            a = current_debt;
+        } else {
+            a = parse_money(args[1]);
+        }
+        
+        if (a <= 0) { reply_text("❌ Số tiền không hợp lệ", tid, tt); return; }
+        if (a > current_debt) { a = current_debt; } // Tự động giới hạn nếu trả thừa
+        
+        if (econ.repay(uid, a)) {
+            cpp_int remaining_debt = econ.get_debt(uid);
+            std::string msg = "✅ Đã trả: " + money_str(a);
+            msg += "\n📉 Nợ còn lại: " + money_str(remaining_debt);
+            reply_text(msg, tid, tt);
+        } else {
+            reply_text("❌ Trả nợ thất bại", tid, tt);
+        }
     };
     commands["chuyen"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
         if ((!account.is_logged_in(uid) && !g_debug_mode)) { reply_text("❌ Cần đăng nhập", tid, tt); return; }
@@ -2652,8 +2761,12 @@ void CommandHandler::end_taixiu_session(const std::string& thread_id) {
     for (auto& p : sess.players) {
         if (p.bet_type == "tai") tai_total += p.amount;
         else xiu_total += p.amount;
-        if (p.bet_type == result) econ.add_winnings(p.uid, p.amount * 2);
-        else husk_add += p.amount * 60 / 100;
+        if (p.bet_type == result) {
+            econ.add_winnings(p.uid, p.amount * 2);
+        } else {
+            econ.record_loss(p.uid, p.amount);
+            husk_add += p.amount * 60 / 100;
+        }
     }
     if (husk_add > 0) econ.add_to_husk("tai_xiu", husk_add);
     cpp_int husk_after = econ.get_husk("tai_xiu");

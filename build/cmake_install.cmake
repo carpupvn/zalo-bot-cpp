@@ -1,4 +1,4 @@
-# Install script for directory: E:/zalo-bot-cpp
+# Install script for directory: E:/zalo-bot-cpp-main/zalo-bot-cpp-main
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -34,13 +34,13 @@ endif()
 
 # Set path to fallback-tool for dependency-resolution.
 if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "D:/CodeBlocks/MinGW/bin/objdump.exe")
+  set(CMAKE_OBJDUMP "E:/Program Files/CodeBlocks/MinGW/bin/objdump.exe")
 endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "E:/zalo-bot-cpp/build/install_local_manifest.txt"
+  file(WRITE "E:/zalo-bot-cpp-main/zalo-bot-cpp-main/build/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()
 if(CMAKE_INSTALL_COMPONENT)
@@ -56,6 +56,6 @@ else()
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "E:/zalo-bot-cpp/build/${CMAKE_INSTALL_MANIFEST}"
+  file(WRITE "E:/zalo-bot-cpp-main/zalo-bot-cpp-main/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()

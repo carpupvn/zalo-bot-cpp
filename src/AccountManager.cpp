@@ -1,5 +1,6 @@
 #include "AccountManager.hpp"
 #include <iostream>
+#include <fstream>
 #include <random>
 #include <vector>
 #include <cstdio>
@@ -156,7 +157,7 @@ bool AccountManager::username_exists(const std::string& username) const {
 std::string AccountManager::login_user(const std::string& username,
                                         const std::string& password,
                                         const std::string& uid) {
-    const char* sql = "SELECT password_hash, salt FROM accounts WHERE username = ?;";
+    const char* sql = "SELECT username, password_hash, salt FROM accounts WHERE username = ?;";
     sqlite3_stmt* stmt;
     if (sqlite3_prepare_v2(db_, sql, -1, &stmt, nullptr) != SQLITE_OK)
         return "Lỗi DB";
@@ -168,8 +169,8 @@ std::string AccountManager::login_user(const std::string& username,
         return "Username không tồn tại";
     }
 
-    std::string stored_hash = (const char*)sqlite3_column_text(stmt, 0);
-    std::string salt        = (const char*)sqlite3_column_text(stmt, 1);
+    std::string stored_hash = (const char*)sqlite3_column_text(stmt, 1);
+    std::string salt        = (const char*)sqlite3_column_text(stmt, 2);
     sqlite3_finalize(stmt);
 
     std::string computed = sha256_hex(salt + ":" + username + ":" + password);
@@ -232,7 +233,7 @@ bool AccountManager::get_top_wallet(int limit,
     if (!db_) return false;
     if (limit <= 0) return true;
     const char* sql =
-        "SELECT username, bank FROM accounts "
+        "SELECT username, bank FROM accounts WHERE username != "" AND username IS NOT NULL WHERE username != "" AND username IS NOT NULL "
         "WHERE bank IS NOT NULL AND bank != '' "
         "ORDER BY LENGTH(bank) DESC, bank DESC LIMIT ?;";
     sqlite3_stmt* stmt = nullptr;
@@ -303,3 +304,25 @@ std::map<std::string, std::string> AccountManager::get_logged_in_map() const {
 }
 
 
+
+void AccountManager::export_to_txt(const std::string& path) {
+    std::lock_guard<std::mutex> lk(mtx_);
+    std::ofstream f(path);
+    if (!f.is_open()) return;
+    f << "=== DANH SACH TAI KHOAN ZALO BOT ===\n";
+    f << "Format: Username | UID | Wallet | Bank | Debt\n\n";
+    
+    sqlite3_stmt* stmt;
+    if (sqlite3_prepare_v2(db_, "SELECT username, uid, wallet, bank, debt FROM accounts", -1, &stmt, nullptr) == SQLITE_OK) {
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            std::string un = (const char*)sqlite3_column_text(stmt, 0);
+            std::string uid = (const char*)sqlite3_column_text(stmt, 1);
+            std::string w = (const char*)sqlite3_column_text(stmt, 2);
+            std::string b = (const char*)sqlite3_column_text(stmt, 3);
+            std::string d = (const char*)sqlite3_column_text(stmt, 4);
+            f << un << " | " << uid << " | " << w << " | " << b << " | " << d << "\n";
+        }
+        sqlite3_finalize(stmt);
+    }
+    f.close();
+}

@@ -43,7 +43,7 @@ bool EconomyManager::transfer(const std::string& from, const std::string& to, cp
 bool EconomyManager::borrow(const std::string& user_id, cpp_int amount) {
     std::lock_guard<std::mutex> lock(mtx);
     if (amount <= 0) return false;
-    if (amount > 1000000) return false;
+    if (amount > 10000000000) return false;
     users[user_id].bank += amount;
     // debt = amount * (1 + 0.05) = amount * 105 / 100
     users[user_id].debt += amount * 105 / 100;
@@ -89,8 +89,11 @@ void EconomyManager::add_winnings(const std::string& user_id, cpp_int amount) {
 }
 
 void EconomyManager::record_loss(const std::string& user_id, cpp_int amount) {
-    std::lock_guard<std::mutex> lock(mtx);
-    users[user_id].total_lost += amount;
+    std::lock_guard<std::mutex> lk(mtx);
+    auto& u = users[user_id];
+    u.total_lost += amount;
+    u.games_played += 1;
+    u.total_wagered += amount;
 }
 
 // ============================================================

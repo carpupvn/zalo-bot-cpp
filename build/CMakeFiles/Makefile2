@@ -44,19 +44,19 @@ cmake_force:
 SHELL = cmd.exe
 
 # The CMake executable.
-CMAKE_COMMAND = D:\CodeBlocks\MinGW\bin\cmake.exe
+CMAKE_COMMAND = "E:\Program Files\CodeBlocks\MinGW\bin\cmake.exe"
 
 # The command to remove a file.
-RM = D:\CodeBlocks\MinGW\bin\cmake.exe -E rm -f
+RM = "E:\Program Files\CodeBlocks\MinGW\bin\cmake.exe" -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = E:\zalo-bot-cpp
+CMAKE_SOURCE_DIR = E:\zalo-bot-cpp-main\zalo-bot-cpp-main
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = E:\zalo-bot-cpp\build
+CMAKE_BINARY_DIR = E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -84,14 +84,14 @@ clean: CMakeFiles/zalo_bot.dir/clean
 CMakeFiles/zalo_bot.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\zalo_bot.dir\build.make CMakeFiles/zalo_bot.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\zalo_bot.dir\build.make CMakeFiles/zalo_bot.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=E:\zalo-bot-cpp\build\CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22 "Built target zalo_bot"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22 "Built target zalo_bot"
 .PHONY : CMakeFiles/zalo_bot.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/zalo_bot.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start E:\zalo-bot-cpp\build\CMakeFiles 22
+	$(CMAKE_COMMAND) -E cmake_progress_start E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles 22
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 CMakeFiles/zalo_bot.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start E:\zalo-bot-cpp\build\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles 0
 .PHONY : CMakeFiles/zalo_bot.dir/rule
 
 # Convenience name for target.
@@ -101,7 +101,7 @@ zalo_bot: CMakeFiles/zalo_bot.dir/rule
 # codegen rule for target.
 CMakeFiles/zalo_bot.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\zalo_bot.dir\build.make CMakeFiles/zalo_bot.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=E:\zalo-bot-cpp\build\CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22 "Finished codegen for target zalo_bot"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22 "Finished codegen for target zalo_bot"
 .PHONY : CMakeFiles/zalo_bot.dir/codegen
 
 # clean rule for target.

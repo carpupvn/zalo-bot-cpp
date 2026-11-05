@@ -1,225 +1,225 @@
 CMakeFiles/zalo_bot.dir/lib/sqlite/sqlite3.c.obj: \
- E:\zalo-bot-cpp\lib\sqlite\sqlite3.c \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdarg.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdarg.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_stdarg.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/vadefs.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_mac.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_secapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdint.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdint.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/crtdefs.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/corecrt.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stddef.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stddef.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdio.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/corecrt_stdio_config.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_off_t.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/swprintf.inl \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/stdio_s.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdlib.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/corecrt_wstdlib.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/limits.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/syslimits.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/limits.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/stdlib_s.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/malloc.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mm_malloc.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/errno.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/string.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/string_s.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/assert.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/ctype.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/time.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sys/timeb.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/sys/timeb_s.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_timeval.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pthread_time.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/windows.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sdkddkver.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/excpt.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/windef.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winapifamily.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/minwindef.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/specstrings.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sal.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/concurrencysal.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/driverspecs.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winnt.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_unicode.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/apiset.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/psdk_inc/intrin-impl.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/basetsd.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/guiddef.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/x86intrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/x86gprintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/ia32intrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/adxintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/bmiintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/bmi2intrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/cetintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/cldemoteintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/clflushoptintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/clwbintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/clzerointrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/cmpccxaddintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/enqcmdintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/fxsrintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/lzcntintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/lwpintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/movdirintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mwaitintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mwaitxintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/pconfigintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/popcntintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/pkuintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/prfchiintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/raointintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/rdseedintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/rtmintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/serializeintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/sgxintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/tbmintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/tsxldtrkintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/uintrintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/waitpkgintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/wbnoinvdintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/xsaveintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/xsavecintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/xsaveoptintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/xsavesintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/xtestintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/hresetintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/usermsrintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/immintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mmintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/xmmintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/emmintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/pmmintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/tmmintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/smmintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/wmmintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avxintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avxvnniintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avxifmaintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avxvnniint8intrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avxvnniint16intrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx2intrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512fintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512erintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512pfintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512cdintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vlintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512bwintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512dqintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vlbwintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vldqintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512ifmaintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512ifmavlintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vbmiintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vbmivlintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx5124fmapsintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx5124vnniwintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vpopcntdqintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vbmi2intrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vbmi2vlintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vnniintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vnnivlintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vpopcntdqvlintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512bitalgintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512bitalgvlintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vp2intersectintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vp2intersectvlintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512fp16intrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512fp16vlintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/shaintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/sm3intrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/sha512intrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/sm4intrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/fmaintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/f16cintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/gfniintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/vaesintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/vpclmulqdqintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512bf16vlintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512bf16intrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avxneconvertintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/amxtileintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/amxint8intrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/amxbf16intrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/amxcomplexintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/prfchwintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/keylockerintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/amxfp16intrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mm3dnow.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/fma4intrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/ammintrin.h \
- D:/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/xopintrin.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pshpack4.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/poppack.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pshpack4.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pshpack2.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/poppack.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pshpack2.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pshpack8.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pshpack8.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/ktmtypes.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winbase.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/apisetcconv.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/minwinbase.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/bemapiset.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/debugapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/errhandlingapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/fibersapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/fileapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/handleapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/heapapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/ioapiset.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/interlockedapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/jobapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/libloaderapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/memoryapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/namedpipeapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/namespaceapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/processenv.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/processthreadsapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/processtopologyapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/profileapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/realtimeapiset.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/securityappcontainer.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/securitybaseapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/synchapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sysinfoapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/systemtopologyapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/threadpoolapiset.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/threadpoollegacyapiset.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/utilapiset.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/wow64apiset.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winerror.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/fltwinerror.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/timezoneapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/wingdi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pshpack1.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winuser.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/tvout.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winnls.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/datetimeapi.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stringapiset.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/wincon.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winver.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winreg.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/reason.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winnetwk.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/wnnc.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/virtdisk.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stralign.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/stralign_s.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winsvc.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/mcx.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/imm.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/process.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/corecrt_startup.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sys/types.h \
- D:/CodeBlocks/MinGW/x86_64-w64-mingw32/include/math.h
+ E:\zalo-bot-cpp-main\zalo-bot-cpp-main\lib\sqlite\sqlite3.c \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdarg.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdarg.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_stdarg.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/vadefs.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_mac.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_secapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdint.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdint.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/crtdefs.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/corecrt.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stddef.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stddef.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdio.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/corecrt_stdio_config.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_off_t.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/swprintf.inl \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/stdio_s.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdlib.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/corecrt_wstdlib.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/limits.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/syslimits.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/limits.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/stdlib_s.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/malloc.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mm_malloc.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/errno.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/string.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/string_s.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/assert.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/ctype.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/time.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sys/timeb.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/sys/timeb_s.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_timeval.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pthread_time.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/windows.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sdkddkver.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/excpt.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/windef.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winapifamily.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/minwindef.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/specstrings.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sal.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/concurrencysal.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/driverspecs.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winnt.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_unicode.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/apiset.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/psdk_inc/intrin-impl.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/basetsd.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/guiddef.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/x86intrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/x86gprintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/ia32intrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/adxintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/bmiintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/bmi2intrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/cetintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/cldemoteintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/clflushoptintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/clwbintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/clzerointrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/cmpccxaddintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/enqcmdintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/fxsrintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/lzcntintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/lwpintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/movdirintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mwaitintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mwaitxintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/pconfigintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/popcntintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/pkuintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/prfchiintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/raointintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/rdseedintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/rtmintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/serializeintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/sgxintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/tbmintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/tsxldtrkintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/uintrintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/waitpkgintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/wbnoinvdintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/xsaveintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/xsavecintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/xsaveoptintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/xsavesintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/xtestintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/hresetintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/usermsrintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/immintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mmintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/xmmintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/emmintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/pmmintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/tmmintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/smmintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/wmmintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avxintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avxvnniintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avxifmaintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avxvnniint8intrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avxvnniint16intrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx2intrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512fintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512erintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512pfintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512cdintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vlintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512bwintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512dqintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vlbwintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vldqintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512ifmaintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512ifmavlintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vbmiintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vbmivlintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx5124fmapsintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx5124vnniwintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vpopcntdqintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vbmi2intrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vbmi2vlintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vnniintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vnnivlintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vpopcntdqvlintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512bitalgintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512bitalgvlintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vp2intersectintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512vp2intersectvlintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512fp16intrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512fp16vlintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/shaintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/sm3intrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/sha512intrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/sm4intrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/fmaintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/f16cintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/gfniintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/vaesintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/vpclmulqdqintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512bf16vlintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avx512bf16intrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/avxneconvertintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/amxtileintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/amxint8intrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/amxbf16intrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/amxcomplexintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/prfchwintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/keylockerintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/amxfp16intrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/mm3dnow.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/fma4intrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/ammintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/xopintrin.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pshpack4.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/poppack.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pshpack4.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pshpack2.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/poppack.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pshpack2.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pshpack8.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pshpack8.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/ktmtypes.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winbase.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/apisetcconv.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/minwinbase.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/bemapiset.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/debugapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/errhandlingapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/fibersapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/fileapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/handleapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/heapapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/ioapiset.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/interlockedapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/jobapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/libloaderapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/memoryapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/namedpipeapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/namespaceapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/processenv.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/processthreadsapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/processtopologyapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/profileapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/realtimeapiset.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/securityappcontainer.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/securitybaseapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/synchapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sysinfoapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/systemtopologyapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/threadpoolapiset.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/threadpoollegacyapiset.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/utilapiset.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/wow64apiset.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winerror.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/fltwinerror.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/timezoneapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/wingdi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pshpack1.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winuser.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/tvout.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winnls.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/datetimeapi.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stringapiset.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/wincon.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winver.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winreg.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/reason.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winnetwk.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/wnnc.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/virtdisk.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stralign.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/stralign_s.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winsvc.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/mcx.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/imm.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/process.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/corecrt_startup.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sys/types.h \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/math.h

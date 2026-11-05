@@ -6,6 +6,13 @@ endif()
 
 project(zalo-bot-cpp LANGUAGES CXX C)
 
+# Tu dong cau hinh Boost
+set(BOOST_ROOT "C:/msys64/ucrt64")
+set(BOOST_INCLUDEDIR "C:/msys64/ucrt64/include")
+set(BOOST_LIBRARYDIR "C:/msys64/ucrt64/lib")
+find_package(Boost REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -65,6 +72,8 @@ target_link_libraries(zalo_bot PRIVATE
     crypt32
     bcrypt
     ws2_32
+    iphlpapi
+    psapi
 )
 
 add_custom_command(TARGET zalo_bot POST_BUILD
