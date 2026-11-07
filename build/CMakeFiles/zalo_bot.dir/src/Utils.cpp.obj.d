@@ -1,6 +1,5 @@
-CMakeFiles/zalo_bot.dir/src/Utils.cpp.obj: \
- E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\Utils.cpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Utils.hpp \
+CMakeFiles/zalo_bot.dir/src/Utils.cpp.obj: E:\zalo-bot-cpp\src\Utils.cpp \
+ E:/zalo-bot-cpp/include/Utils.hpp \
  C:/msys64/ucrt64/include/boost/multiprecision/cpp_int.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cstdint \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \

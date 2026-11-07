@@ -1,6 +1,6 @@
 CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: \
- E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\CommandHandler.cpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/AssetManager.hpp \
+ E:\zalo-bot-cpp\src\CommandHandler.cpp \
+ E:/zalo-bot-cpp/include/AssetManager.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/string \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/requires_hosted.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \
@@ -141,7 +141,7 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/error_constants.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ext/atomicity.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/atomic_word.h \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/CommandHandler.hpp \
+ E:/zalo-bot-cpp/include/CommandHandler.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/functional \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/std_function.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/typeinfo \
@@ -155,8 +155,7 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/deque \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_deque.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/deque.tcc \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ZaloApi.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/nativeHTTP.hpp \
+ E:/zalo-bot-cpp/include/ZaloApi.hpp E:/zalo-bot-cpp/lib/nativeHTTP.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/memory \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_tempbuf.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_raw_storage_iter.h \
@@ -459,7 +458,7 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winhttp.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sspi.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/ntsecapi.h \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/json.hpp \
+ E:/zalo-bot-cpp/lib/json.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/iterator \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stream_iterator.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/utility \
@@ -489,12 +488,12 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/fs_ops.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/optional \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/any \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ZaloBridge.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/PermissionManager.hpp \
+ E:/zalo-bot-cpp/include/ZaloBridge.hpp \
+ E:/zalo-bot-cpp/include/PermissionManager.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/set \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_set.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_multiset.h \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EconomyManager.hpp \
+ E:/zalo-bot-cpp/include/EconomyManager.hpp \
  C:/msys64/ucrt64/include/boost/multiprecision/cpp_int.hpp \
  C:/msys64/ucrt64/include/boost/multiprecision/detail/standalone_config.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/climits \
@@ -690,24 +689,22 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: \
  C:/msys64/ucrt64/include/boost/multiprecision/cpp_int/literals.hpp \
  C:/msys64/ucrt64/include/boost/multiprecision/cpp_int/serialize.hpp \
  C:/msys64/ucrt64/include/boost/multiprecision/cpp_int/import_export.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/GameManager.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/GroupManager.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/AccountManager.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/sqlite/sqlite3.h \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/NongTraiManager.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/RuntimeState.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/TextRenderer.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Color.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Gradient.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Shape.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EmojiRenderer.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Utils.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/GameRender.inc \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/TaiXiuRender.inc \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/AdminReply.inc \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ProfileRender.inc \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/BotInfoRender.inc \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/SystemInfo.hpp \
+ E:/zalo-bot-cpp/include/GameManager.hpp \
+ E:/zalo-bot-cpp/include/GroupManager.hpp \
+ E:/zalo-bot-cpp/include/AccountManager.hpp \
+ E:/zalo-bot-cpp/lib/sqlite/sqlite3.h \
+ E:/zalo-bot-cpp/include/NongTraiManager.hpp \
+ E:/zalo-bot-cpp/include/RuntimeState.hpp \
+ E:/zalo-bot-cpp/include/TextRenderer.hpp \
+ E:/zalo-bot-cpp/include/Color.hpp E:/zalo-bot-cpp/include/Gradient.hpp \
+ E:/zalo-bot-cpp/include/Shape.hpp \
+ E:/zalo-bot-cpp/include/EmojiRenderer.hpp \
+ E:/zalo-bot-cpp/include/Utils.hpp E:/zalo-bot-cpp/include/GameRender.inc \
+ E:/zalo-bot-cpp/include/TaiXiuRender.inc \
+ E:/zalo-bot-cpp/include/AdminReply.inc \
+ E:/zalo-bot-cpp/include/ProfileRender.inc \
+ E:/zalo-bot-cpp/include/BotInfoRender.inc \
+ E:/zalo-bot-cpp/include/SystemInfo.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/psapi.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/iphlpapi.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/iprtrmib.h \
@@ -758,5 +755,4 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/intrin.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/setjmp.h \
  E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/cpuid.h \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/stb_image_write.h \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/stb_truetype.h
+ E:/zalo-bot-cpp/lib/stb_image_write.h E:/zalo-bot-cpp/lib/stb_truetype.h

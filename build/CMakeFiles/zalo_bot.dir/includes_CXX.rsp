@@ -1,1 +1,1 @@
--IC:/msys64/ucrt64/include -I"E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib" -I"E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/sqlite" -I"E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include"
+-IC:/msys64/ucrt64/include -I"E:/zalo-bot-cpp/lib" -I"E:/zalo-bot-cpp/lib/sqlite" -I"E:/zalo-bot-cpp/include"

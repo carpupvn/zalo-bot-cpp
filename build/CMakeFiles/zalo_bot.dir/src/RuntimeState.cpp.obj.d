@@ -1,6 +1,6 @@
 CMakeFiles/zalo_bot.dir/src/RuntimeState.cpp.obj: \
- E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\RuntimeState.cpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/RuntimeState.hpp \
+ E:\zalo-bot-cpp\src\RuntimeState.cpp \
+ E:/zalo-bot-cpp/include/RuntimeState.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/string \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/requires_hosted.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \

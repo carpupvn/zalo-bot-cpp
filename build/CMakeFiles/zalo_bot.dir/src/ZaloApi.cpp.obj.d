@@ -1,7 +1,6 @@
 CMakeFiles/zalo_bot.dir/src/ZaloApi.cpp.obj: \
- E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\ZaloApi.cpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ZaloApi.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/nativeHTTP.hpp \
+ E:\zalo-bot-cpp\src\ZaloApi.cpp E:/zalo-bot-cpp/include/ZaloApi.hpp \
+ E:/zalo-bot-cpp/lib/nativeHTTP.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/string \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/requires_hosted.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \
@@ -457,7 +456,7 @@ CMakeFiles/zalo_bot.dir/src/ZaloApi.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winhttp.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sspi.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/ntsecapi.h \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/json.hpp \
+ E:/zalo-bot-cpp/lib/json.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/iterator \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stream_iterator.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/utility \
@@ -487,4 +486,4 @@ CMakeFiles/zalo_bot.dir/src/ZaloApi.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/fs_ops.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/optional \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/any \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ZaloBridge.hpp
+ E:/zalo-bot-cpp/include/ZaloBridge.hpp

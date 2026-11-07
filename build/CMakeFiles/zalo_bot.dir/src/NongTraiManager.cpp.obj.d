@@ -1,6 +1,6 @@
 CMakeFiles/zalo_bot.dir/src/NongTraiManager.cpp.obj: \
- E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\NongTraiManager.cpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/NongTraiManager.hpp \
+ E:\zalo-bot-cpp\src\NongTraiManager.cpp \
+ E:/zalo-bot-cpp/include/NongTraiManager.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/string \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/requires_hosted.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \
@@ -521,8 +521,7 @@ CMakeFiles/zalo_bot.dir/src/NongTraiManager.cpp.obj: \
  C:/msys64/ucrt64/include/boost/multiprecision/cpp_int/literals.hpp \
  C:/msys64/ucrt64/include/boost/multiprecision/cpp_int/serialize.hpp \
  C:/msys64/ucrt64/include/boost/multiprecision/cpp_int/import_export.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EconomyManager.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/json.hpp \
+ E:/zalo-bot-cpp/include/EconomyManager.hpp E:/zalo-bot-cpp/lib/json.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/memory \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_raw_storage_iter.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/align.h \

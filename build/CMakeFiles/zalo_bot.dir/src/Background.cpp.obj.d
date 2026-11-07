@@ -1,6 +1,6 @@
 CMakeFiles/zalo_bot.dir/src/Background.cpp.obj: \
- E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\Background.cpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Background.hpp \
+ E:\zalo-bot-cpp\src\Background.cpp \
+ E:/zalo-bot-cpp/include/Background.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cstdint \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/os_defines.h \
@@ -66,7 +66,7 @@ CMakeFiles/zalo_bot.dir/src/Background.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/uses_allocator.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/uses_allocator_args.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tuple \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Color.hpp \
+ E:/zalo-bot-cpp/include/Color.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/string \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stringfwd.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/char_traits.h \
@@ -109,8 +109,7 @@ CMakeFiles/zalo_bot.dir/src/Background.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cerrno \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/charconv.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/basic_string.tcc \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Gradient.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Shape.hpp \
+ E:/zalo-bot-cpp/include/Gradient.hpp E:/zalo-bot-cpp/include/Shape.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/utility \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_relops.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cmath \

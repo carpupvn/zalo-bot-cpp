@@ -1,7 +1,6 @@
 CMakeFiles/zalo_bot.dir/src/Gradient.cpp.obj: \
- E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\Gradient.cpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Gradient.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Color.hpp \
+ E:\zalo-bot-cpp\src\Gradient.cpp E:/zalo-bot-cpp/include/Gradient.hpp \
+ E:/zalo-bot-cpp/include/Color.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cstdint \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/os_defines.h \

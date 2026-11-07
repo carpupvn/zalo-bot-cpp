@@ -1,6 +1,6 @@
 CMakeFiles/zalo_bot.dir/src/GameManager.cpp.obj: \
- E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\GameManager.cpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/GameManager.hpp \
+ E:\zalo-bot-cpp\src\GameManager.cpp \
+ E:/zalo-bot-cpp/include/GameManager.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/string \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/requires_hosted.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \
@@ -146,7 +146,7 @@ CMakeFiles/zalo_bot.dir/src/GameManager.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sec_api/sys/timeb_s.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_timeval.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pthread_time.h \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EconomyManager.hpp \
+ E:/zalo-bot-cpp/include/EconomyManager.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/mutex \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/chrono.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ratio \

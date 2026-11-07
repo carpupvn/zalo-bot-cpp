@@ -1,6 +1,6 @@
 CMakeFiles/zalo_bot.dir/src/EconomyManager.cpp.obj: \
- E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\EconomyManager.cpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EconomyManager.hpp \
+ E:\zalo-bot-cpp\src\EconomyManager.cpp \
+ E:/zalo-bot-cpp/include/EconomyManager.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/string \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/requires_hosted.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \

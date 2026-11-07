@@ -1,7 +1,5 @@
-CMakeFiles/zalo_bot.dir/src/main.cpp.obj: \
- E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\main.cpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ZaloApi.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/nativeHTTP.hpp \
+CMakeFiles/zalo_bot.dir/src/main.cpp.obj: E:\zalo-bot-cpp\src\main.cpp \
+ E:/zalo-bot-cpp/include/ZaloApi.hpp E:/zalo-bot-cpp/lib/nativeHTTP.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/string \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/requires_hosted.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \
@@ -457,7 +455,7 @@ CMakeFiles/zalo_bot.dir/src/main.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winhttp.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sspi.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/ntsecapi.h \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/json.hpp \
+ E:/zalo-bot-cpp/lib/json.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/iterator \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stream_iterator.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/utility \
@@ -487,13 +485,13 @@ CMakeFiles/zalo_bot.dir/src/main.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/fs_ops.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/optional \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/any \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ZaloBridge.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/CommandHandler.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/PermissionManager.hpp \
+ E:/zalo-bot-cpp/include/ZaloBridge.hpp \
+ E:/zalo-bot-cpp/include/CommandHandler.hpp \
+ E:/zalo-bot-cpp/include/PermissionManager.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/set \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_set.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_multiset.h \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EconomyManager.hpp \
+ E:/zalo-bot-cpp/include/EconomyManager.hpp \
  C:/msys64/ucrt64/include/boost/multiprecision/cpp_int.hpp \
  C:/msys64/ucrt64/include/boost/multiprecision/detail/standalone_config.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/climits \
@@ -689,13 +687,13 @@ CMakeFiles/zalo_bot.dir/src/main.cpp.obj: \
  C:/msys64/ucrt64/include/boost/multiprecision/cpp_int/literals.hpp \
  C:/msys64/ucrt64/include/boost/multiprecision/cpp_int/serialize.hpp \
  C:/msys64/ucrt64/include/boost/multiprecision/cpp_int/import_export.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/GameManager.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/GroupManager.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/AccountManager.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/sqlite/sqlite3.h \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/NongTraiManager.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Database.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/RuntimeState.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/TextRenderer.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/AssetManager.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EmojiRenderer.hpp
+ E:/zalo-bot-cpp/include/GameManager.hpp \
+ E:/zalo-bot-cpp/include/GroupManager.hpp \
+ E:/zalo-bot-cpp/include/AccountManager.hpp \
+ E:/zalo-bot-cpp/lib/sqlite/sqlite3.h \
+ E:/zalo-bot-cpp/include/NongTraiManager.hpp \
+ E:/zalo-bot-cpp/include/Database.hpp \
+ E:/zalo-bot-cpp/include/RuntimeState.hpp \
+ E:/zalo-bot-cpp/include/TextRenderer.hpp \
+ E:/zalo-bot-cpp/include/AssetManager.hpp \
+ E:/zalo-bot-cpp/include/EmojiRenderer.hpp
