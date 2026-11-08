@@ -75,7 +75,7 @@ static int roll_dice_mt(int sides) {
 
 static cpp_int parse_money(const std::string& s_in, cpp_int max_val = -1) {
     std::string s = s_in;
-    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char ch){ return std::tolower(ch); });
     
     std::string num_part = "";
     std::string suffix_part = "";
@@ -677,7 +677,7 @@ void CommandHandler::register_commands() {
         (void)is_self;
         if (!g_farm_mgr) { reply_text("Nong trai chua san sang.", tid, tt); return; }
         std::string sub = (args.size() > 1) ? args[1] : "help";
-        std::transform(sub.begin(), sub.end(), sub.begin(), ::tolower);
+        std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch){ return std::tolower(ch); });
 
         auto join_args = [&](int from) -> std::string {
             std::string s;
@@ -739,7 +739,7 @@ void CommandHandler::register_commands() {
             int qty = 1;
             if (args.size() > 3) {
                 std::string a = args[3];
-                std::transform(a.begin(), a.end(), a.begin(), ::tolower);
+                std::transform(a.begin(), a.end(), a.begin(), [](unsigned char ch){ return std::tolower(ch); });
                 qty = (a == "all") ? -1 : std::atoi(a.c_str());
             }
             out = g_farm_mgr->cmd_sell(uid, args[2], qty);
@@ -1095,7 +1095,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
 
     commands["command"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
         std::string sub = (args.size() > 1) ? args[1] : "";
-        std::transform(sub.begin(), sub.end(), sub.begin(), ::tolower);
+        std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch){ return std::tolower(ch); });
         if (sub == "admin") {
             if (!perm.is_admin(uid)) { reply_text("❌ Chỉ admin mới xem được lệnh này.", tid, tt); return; }
             std::string msg = "🛠️ LỆNH ADMIN:\n/bot, /game, /debug, /setad, /listadmin, /setprefix\n/setmoney, /sethu, /buff, /nerf, /txend, /undo, /boost";
@@ -1442,7 +1442,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
     };
     commands["command"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
         std::string sub = (args.size() > 1) ? args[1] : "";
-        std::transform(sub.begin(), sub.end(), sub.begin(), ::tolower);
+        std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch){ return std::tolower(ch); });
         if (sub == "admin") {
             if (!perm.is_admin(uid)) { reply_text("❌ Chỉ admin mới xem được lệnh này.", tid, tt); return; }
             std::string msg = "🛠️ LỆNH ADMIN:\n/bot, /game, /debug, /setad, /listadmin, /setprefix\n/setmoney, /sethu, /buff, /nerf, /txend, /undo, /boost";
@@ -1827,7 +1827,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         
         cpp_int a = 0;
         std::string arg1 = args[1];
-        std::transform(arg1.begin(), arg1.end(), arg1.begin(), ::tolower);
+        std::transform(arg1.begin(), arg1.end(), arg1.begin(), [](unsigned char ch){ return std::tolower(ch); });
         
         if (arg1 == "all") {
             a = current_debt;
@@ -1865,7 +1865,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
             return;
         }
         std::string choice = args[1];
-        std::transform(choice.begin(), choice.end(), choice.begin(), ::tolower);
+        std::transform(choice.begin(), choice.end(), choice.begin(), [](unsigned char ch){ return std::tolower(ch); });
         if (choice == "c" || choice == "chan") choice = "chan";
         if (choice == "l" || choice == "le") choice = "le";
         if (choice != "chan" && choice != "le") {
@@ -1967,7 +1967,7 @@ std::string cap;
         }
         if (args.size() < 3) { reply_text("C\u00FA ph\u00E1p: /taixiu <t\u00E0i|x\u1EC9u> <c\u01B0\u1EE3c>", tid, tt); return; }
         std::string choice = args[1];
-        std::transform(choice.begin(), choice.end(), choice.begin(), ::tolower);
+        std::transform(choice.begin(), choice.end(), choice.begin(), [](unsigned char ch){ return std::tolower(ch); });
         if (choice == "t" || choice == "tai") choice = "tai";
         if (choice == "x" || choice == "xiu") choice = "xiu";
         if (choice != "tai" && choice != "xiu") { reply_text("Ch\u1ECDn t\u00E0i ho\u1EB7c x\u1EC9u", tid, tt); return; }
@@ -2033,7 +2033,7 @@ std::string cap;
             std::istringstream iss(part);
             std::string con; cpp_int amount;
             if (iss >> con >> part) { // Tạm dùng part để lấy số tiền
-                std::transform(con.begin(), con.end(), con.begin(), ::tolower);
+                std::transform(con.begin(), con.end(), con.begin(), [](unsigned char ch){ return std::tolower(ch); });
                 if (nameMap.find(con) == nameMap.end()) { reply_text("❌ Con vật không hợp lệ: " + con, tid, tt); return; }
                 amount = parse_money(part);
                 if (amount <= 0) { reply_text("❌ Số tiền không hợp lệ", tid, tt); return; }
@@ -2125,7 +2125,7 @@ std::string cap;
         if (args.size() < 3) { reply_text("❌ Cú pháp: kbb <keo/bua/bao> <tiền>", tid, tt); return; }
         
         std::string choice = args[1];
-        std::transform(choice.begin(), choice.end(), choice.begin(), ::tolower);
+        std::transform(choice.begin(), choice.end(), choice.begin(), [](unsigned char ch){ return std::tolower(ch); });
         int p_choice = -1;
         if (choice == "keo" || choice == "kéo") p_choice = 0;
         else if (choice == "bua" || choice == "búa") p_choice = 1;
@@ -2763,7 +2763,7 @@ std::string cap;
 
         if (toks.empty()) { reply_text("\U0001F4D6 setad add/remove/list", tid, tt); return; }
         std::string sub = toks[0];
-        std::transform(sub.begin(), sub.end(), sub.begin(), ::tolower);
+        std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch){ return std::tolower(ch); });
 
         if (sub == "list") {
             // Forward sang listadmin (render anh 1 voi avatar + fix badge)
@@ -2780,7 +2780,7 @@ std::string cap;
             size_t idx = 1;
             if (idx < toks.size()) {
                 std::string tk = toks[idx];
-                std::transform(tk.begin(), tk.end(), tk.begin(), ::tolower);
+                std::transform(tk.begin(), tk.end(), tk.begin(), [](unsigned char ch){ return std::tolower(ch); });
                 if (tk == "sp" || tk == "super") { is_super = true; idx++; }
             }
             if (idx >= toks.size()) { reply_text("\u274C setad add [sp] <@user>", tid, tt); return; }
@@ -2982,7 +2982,7 @@ std::string cap;
         bool show_status = (args.size() < 2);
         if (args.size() == 2) {
             std::string s2 = args[1];
-            std::transform(s2.begin(), s2.end(), s2.begin(), ::tolower);
+            std::transform(s2.begin(), s2.end(), s2.begin(), [](unsigned char ch){ return std::tolower(ch); });
             if (s2 == "status" || s2 == "info" || s2 == "help" || s2 == "xem") {
                 show_status = true;
             }
@@ -3004,7 +3004,7 @@ std::string cap;
         }
 
         std::string sub = args[1];
-        std::transform(sub.begin(), sub.end(), sub.begin(), ::tolower);
+        std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch){ return std::tolower(ch); });
 
         if (sub == "on" || sub == "off" || sub == "reset") {
             bool en = (sub == "on");
@@ -3028,7 +3028,7 @@ std::string cap;
         }
 
         std::string val = args[2];
-        std::transform(val.begin(), val.end(), val.begin(), ::tolower);
+        std::transform(val.begin(), val.end(), val.begin(), [](unsigned char ch){ return std::tolower(ch); });
         bool en = (val == "on");
 
         if (sub == "spam") {
@@ -3419,7 +3419,7 @@ void CommandHandler::handle_message(const std::string& user_id, const std::strin
     if (g_mini_games.count(thread_id)) {
         auto& g = g_mini_games[thread_id];
         std::string text = message;
-        std::transform(text.begin(), text.end(), text.begin(), ::tolower);
+        std::transform(text.begin(), text.end(), text.begin(), [](unsigned char ch){ return std::tolower(ch); });
         
         if (g.type == "guessNumber") {
             try {
@@ -3784,7 +3784,7 @@ void CommandHandler::handle_game_chat(const std::string& thread_id, int thread_t
     
     auto& g = g_mini_games[thread_id];
     std::string lower = text;
-    std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+    std::transform(lower.begin(), lower.end(), lower.begin(), [](unsigned char ch){ return std::tolower(ch); });
 
         if (g.type == "guessNumber") {
             try {

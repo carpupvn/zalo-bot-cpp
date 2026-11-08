@@ -26,6 +26,7 @@ extern NongTraiManager* g_farm_mgr;
 #include <regex>
 #include <vector>
 #include <windows.h>
+#include <csetjmp>
 
 using json = nlohmann::json;
 
@@ -58,9 +59,24 @@ static std::string extract_uid(const json& m) {
 }
 
 static std::string resolve_mentions(const std::string& content, const json& mentions) {
-    std::string result = content;
-    static const std::regex bracket_re(R"(@\[(\d+)\])");
-    result = std::regex_replace(result, bracket_re, "<@$1>");
+    std::string result;
+    // Thay the @[id] bang <@id> thu cong de tranh Heap Corruption
+    for (size_t i = 0; i < content.size(); ) {
+        if (content[i] == '@' && i + 1 < content.size() && content[i+1] == '[') {
+            size_t close = content.find(']', i + 2);
+            if (close != std::string::npos) {
+                std::string id = content.substr(i + 2, close - i - 2);
+                bool all_digit = !id.empty() && std::all_of(id.begin(), id.end(), ::isdigit);
+                if (all_digit) {
+                    result += "<@" + id + ">";
+                    i = close + 1;
+                    continue;
+                }
+            }
+        }
+        result += content[i];
+        i++;
+    }
 
     if (!mentions.is_array() || mentions.empty()) return result;
 
@@ -90,9 +106,22 @@ static std::string resolve_mentions(const std::string& content, const json& ment
     }
     return result;
 }
+// ==== SEH RECOVERY: Bat loi Heap/Access Violation de chay tiep ====
+static jmp_buf g_crash_jmp;
+static volatile bool g_in_crash_zone = false;
+
+static LONG WINAPI _recovery_exception_filter(EXCEPTION_POINTERS* info) {
+    if (g_in_crash_zone) {
+        g_in_crash_zone = false;
+        longjmp(g_crash_jmp, 1);
+    }
+    return EXCEPTION_CONTINUE_SEARCH;
+}
+// =================================================================
 
 int main() {
     setup_console();
+    SetUnhandledExceptionFilter(_recovery_exception_filter);
     std::cout << "🤖 Zalo Bot C++ khởi động...\n\n";
 
     if (!TextRenderer::init("assets/BeVietnamPro-Bold.ttf")) {
@@ -135,6 +164,12 @@ int main() {
     g_farm_mgr = &farm;
 
     bridge.set_event_handler([&](const json& ev) {
+        if (setjmp(g_crash_jmp) != 0) {
+            std::cerr << "[SEH-RECOVERY] Bo qua tin nhan bi loi, bot tiep tuc chay.\n";
+            return;
+        }
+        g_in_crash_zone = true;
+        try {
         std::string event = ev.value("event", "");
 
         if (event == "login_ok") {
@@ -233,6 +268,7 @@ int main() {
                         int byte_start = utf16_to_utf8_offset(content, m_pos);
                         int byte_end   = utf16_to_utf8_offset(content, m_pos + m_len);
                         if (byte_end > (int)content.size()) continue;
+                        if (byte_start > byte_end) continue;
 
                         std::string raw_mention = content.substr(byte_start, byte_end - byte_start);
                         std::string name = raw_mention;
@@ -459,6 +495,12 @@ int main() {
                 std::cerr << "[main] undo error: " << e.what() << "\n";
             }
         }
+        } catch (const std::exception& e) {
+            std::cerr << "[EXCEPTION] " << e.what() << "\n";
+        } catch (...) {
+            std::cerr << "[EXCEPTION] Unknown error\n";
+        }
+        g_in_crash_zone = false;
     });
 
     std::cout << "🔌 Khởi động Node bridge...\n";

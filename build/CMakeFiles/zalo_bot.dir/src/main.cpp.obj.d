@@ -698,4 +698,6 @@ CMakeFiles/zalo_bot.dir/src/main.cpp.obj: \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/RuntimeState.hpp \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/TextRenderer.hpp \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/AssetManager.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EmojiRenderer.hpp
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EmojiRenderer.hpp \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/csetjmp \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/setjmp.h
