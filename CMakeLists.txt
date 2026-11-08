@@ -48,6 +48,7 @@ set(SOURCES
     src/Shape.cpp
     src/Background.cpp
     src/Utils.cpp
+    src/WordChain.cpp
     lib/sqlite/sqlite3.c
 )
 

@@ -24,12 +24,12 @@ static std::map<std::string, CropDef> g_crops = {
 };
 
 static std::map<std::string, ShopItemDef> g_shop_items = {
-    {"WATER",             {"WATER","W1","Binh Nuoc","",10000, 0.60}},
-    {"SHOVEL",            {"SHOVEL","S1","Cuoc","",15000, 1.0}},
-    {"LAND",              {"LAND","L0","Manh Dat","",10000000,1.0}},
-    {"FERTILIZER",        {"FERTILIZER","F1","Phan Bon So Cap","",20000, 0.20}},
-    {"MEDIUM_FERTILIZER", {"MEDIUM_FERTILIZER","MF1","Phan Bon Trung Cap","",35000, 0.30}},
-    {"SUPER_FERTILIZER",  {"SUPER_FERTILIZER","SF1","Phan Bon Cao Cap","",50000, 0.40}},
+    {"WATER",             {"WATER","W1","Binh Nuoc","", "Tuoi nuoc cho cay, tang do am len 60%", 10000, 0.60}},
+    {"SHOVEL",            {"SHOVEL","S1","Cuoc","", "Dung de cuoc dat kho can", 15000, 1.0}},
+    {"LAND",              {"LAND","L0","Manh Dat","", "Mo rong nong trai (gia tang theo so luong dat)", 10000000,1.0}},
+    {"FERTILIZER",        {"FERTILIZER","F1","Phan Bon So Cap","", "Giam 20% thoi gian phat trien", 20000, 0.20}},
+    {"MEDIUM_FERTILIZER", {"MEDIUM_FERTILIZER","MF1","Phan Bon Trung Cap","", "Giam 30% thoi gian phat trien", 35000, 0.30}},
+    {"SUPER_FERTILIZER",  {"SUPER_FERTILIZER","SF1","Phan Bon Cao Cap","", "Giam 40% thoi gian phat trien", 50000, 0.40}},
 };
 
 const std::map<std::string, CropDef>& get_crops() { return g_crops; }

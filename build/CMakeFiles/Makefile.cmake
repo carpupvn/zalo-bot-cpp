@@ -127,7 +127,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "E:/Program Files/CodeBlocks/MinGW/share/cmake-3.31/Modules/Platform/Windows-windres.cmake"
   "E:/Program Files/CodeBlocks/MinGW/share/cmake-3.31/Modules/Platform/Windows.cmake"
   "E:/Program Files/CodeBlocks/MinGW/share/cmake-3.31/Modules/Platform/WindowsPaths.cmake"
-  "E:/zalo-bot-cpp/CMakeLists.txt"
+  "E:/zalo-bot-cpp-main/zalo-bot-cpp-main/CMakeLists.txt"
   "CMakeFiles/3.31.5/CMakeCCompiler.cmake"
   "CMakeFiles/3.31.5/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.31.5/CMakeRCCompiler.cmake"

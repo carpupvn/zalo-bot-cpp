@@ -195,7 +195,7 @@ static void draw_text_utf8(std::vector<unsigned char>& img, int W, int H,
             }
         }
 
-        cursor_x += (int)(adv * scale);
+        cursor_x += (int)(adv * (glyph_idx == 0 && g_emoji_initialized && stbtt_FindGlyphIndex(&g_emoji_info, cp) > 0 ? scale * 1.05f : scale));
         i += len;
     }
 }
@@ -409,6 +409,18 @@ void TextRenderer::draw_text_on_canvas(std::vector<uint8_t>& canvas, int W, int 
     draw_text_utf8(canvas, W, H, x, y, r, g, b, &g_font_info, scale, text);
 }
 
+void TextRenderer::draw_text_on_canvas_baseline(std::vector<uint8_t>& canvas, int W, int H,
+                                                 int x, int y_baseline, int size,
+                                                 unsigned char r, unsigned char g, unsigned char b,
+                                                 const std::string& text) {
+    if (!g_initialized) return;
+    float scale = stbtt_ScaleForPixelHeight(&g_font_info, size);
+    int vmAscent = 0, vmDescent = 0, vmLineGap = 0;
+    stbtt_GetFontVMetrics(&g_font_info, &vmAscent, &vmDescent, &vmLineGap);
+    int ascent_px = (int)((float)vmAscent * scale + 0.5f);
+    draw_text_utf8(canvas, W, H, x, y_baseline, r, g, b, &g_font_info, scale, text);
+}
+
 void TextRenderer::draw_text_shadow(std::vector<uint8_t>& canvas, int W, int H,
                                      int x, int y, int size,
                                      unsigned char r, unsigned char g, unsigned char b,
@@ -435,8 +447,14 @@ int TextRenderer::measure_text_width(int size, const std::string& text) {
         else { i++; continue; }
 
         int adv = 0, lsb = 0;
-        stbtt_GetCodepointHMetrics(&g_font_info, cp, &adv, &lsb);
-        total += (int)(adv * scale);
+        int gi = stbtt_FindGlyphIndex(&g_font_info, cp);
+        if (gi == 0 && g_emoji_initialized && stbtt_FindGlyphIndex(&g_emoji_info, cp) > 0) {
+            stbtt_GetCodepointHMetrics(&g_emoji_info, cp, &adv, &lsb);
+            total += (int)(adv * scale * 1.05f);
+        } else {
+            stbtt_GetCodepointHMetrics(&g_font_info, cp, &adv, &lsb);
+            total += (int)(adv * scale);
+        }
         i += len;
     }
     return total;
@@ -596,7 +614,7 @@ void TextRenderer::darken_region(std::vector<uint8_t>& canvas, int W, int H,
 }
 
 // ============================================================
-// Random gradient — palette tu bot kia
+// Random gradient ï¿½ palette tu bot kia
 // ============================================================
 void TextRenderer::get_random_gradient(unsigned char& r1, unsigned char& g1, unsigned char& b1,
                                          unsigned char& r2, unsigned char& g2, unsigned char& b2) {
@@ -647,12 +665,18 @@ void TextRenderer::draw_text_gradient(std::vector<uint8_t>& canvas, int W, int H
             else if ((c & 0xF8) == 0xF0) { cp = ((c & 0x07) << 18) | ((text[i+1] & 0x3F) << 12) | ((text[i+2] & 0x3F) << 6) | (text[i+3] & 0x3F); len = 4; }
             else { i++; continue; }
             int adv = 0, lsb = 0;
-            stbtt_GetCodepointHMetrics(&g_font_info, cp, &adv, &lsb);
-            total_w += (int)(adv * scale);
+            int gi2 = stbtt_FindGlyphIndex(&g_font_info, cp);
+            if (gi2 == 0 && g_emoji_initialized && stbtt_FindGlyphIndex(&g_emoji_info, cp) > 0) {
+                stbtt_GetCodepointHMetrics(&g_emoji_info, cp, &adv, &lsb);
+                total_w += (int)(adv * scale * 1.05f);
+            } else {
+                stbtt_GetCodepointHMetrics(&g_font_info, cp, &adv, &lsb);
+                total_w += (int)(adv * scale);
+            }
             i += len;
         }
     }
-    if (total_w == 0) return;
+    if (total_w <= 0) total_w = 1;
 
     int i = 0;
     int cursor = 0;
@@ -675,8 +699,14 @@ void TextRenderer::draw_text_gradient(std::vector<uint8_t>& canvas, int W, int H
         draw_char(canvas, W, H, x + cursor, y, cr, cg, cb, &g_font_info, scale, cp);
 
         int adv = 0, lsb = 0;
-        stbtt_GetCodepointHMetrics(&g_font_info, cp, &adv, &lsb);
-        cursor += (int)(adv * scale);
+        int gi3 = stbtt_FindGlyphIndex(&g_font_info, cp);
+        if (gi3 == 0 && g_emoji_initialized && stbtt_FindGlyphIndex(&g_emoji_info, cp) > 0) {
+            stbtt_GetCodepointHMetrics(&g_emoji_info, cp, &adv, &lsb);
+            cursor += (int)(adv * scale * 1.05f);
+        } else {
+            stbtt_GetCodepointHMetrics(&g_font_info, cp, &adv, &lsb);
+            cursor += (int)(adv * scale);
+        }
         i += len;
     }
 }
@@ -687,7 +717,7 @@ bool TextRenderer::save_canvas(const std::vector<uint8_t>& canvas, int W, int H,
 }
 
 // ============================================================
-// V? text v?i random rainbow gradient (5 stop) — gi?ng JS
+// V? text v?i random rainbow gradient (5 stop) ï¿½ gi?ng JS
 // ============================================================
 void TextRenderer::draw_text_gradient_random(std::vector<uint8_t>& canvas, int W, int H,
                                               int x, int y, int size,
@@ -695,7 +725,7 @@ void TextRenderer::draw_text_gradient_random(std::vector<uint8_t>& canvas, int W
     if (!g_initialized) return;
     float scale = stbtt_ScaleForPixelHeight(&g_font_info, size);
 
-    // 5 stop màu random bright HSL
+    // 5 stop mï¿½u random bright HSL
     struct RGB8 { uint8_t r, g, b; };
     std::vector<RGB8> stops;
     static std::mt19937 rng{std::random_device{}()};
@@ -740,7 +770,7 @@ void TextRenderer::draw_text_gradient_random(std::vector<uint8_t>& canvas, int W
         return c;
     };
 
-    // Ðo t?ng width
+    // ï¿½o t?ng width
     int total_w = 0;
     {
         int i = 0;
@@ -753,12 +783,18 @@ void TextRenderer::draw_text_gradient_random(std::vector<uint8_t>& canvas, int W
             else if ((ch & 0xF8) == 0xF0) { cp = ((ch & 0x07) << 18) | ((text[i+1] & 0x3F) << 12) | ((text[i+2] & 0x3F) << 6) | (text[i+3] & 0x3F); len = 4; }
             else { i++; continue; }
             int adv = 0, lsb = 0;
-            stbtt_GetCodepointHMetrics(&g_font_info, cp, &adv, &lsb);
-            total_w += (int)(adv * scale);
+            int gi2 = stbtt_FindGlyphIndex(&g_font_info, cp);
+            if (gi2 == 0 && g_emoji_initialized && stbtt_FindGlyphIndex(&g_emoji_info, cp) > 0) {
+                stbtt_GetCodepointHMetrics(&g_emoji_info, cp, &adv, &lsb);
+                total_w += (int)(adv * scale * 1.05f);
+            } else {
+                stbtt_GetCodepointHMetrics(&g_font_info, cp, &adv, &lsb);
+                total_w += (int)(adv * scale);
+            }
             i += len;
         }
     }
-    if (total_w <= 0) return;
+    if (total_w <= 0) total_w = 1;
 
     // V?
     int i = 0;
@@ -777,8 +813,14 @@ void TextRenderer::draw_text_gradient_random(std::vector<uint8_t>& canvas, int W
         draw_char(canvas, W, H, x + cursor, y, c.r, c.g, c.b, &g_font_info, scale, cp);
 
         int adv = 0, lsb = 0;
-        stbtt_GetCodepointHMetrics(&g_font_info, cp, &adv, &lsb);
-        cursor += (int)(adv * scale);
+        int gi3 = stbtt_FindGlyphIndex(&g_font_info, cp);
+        if (gi3 == 0 && g_emoji_initialized && stbtt_FindGlyphIndex(&g_emoji_info, cp) > 0) {
+            stbtt_GetCodepointHMetrics(&g_emoji_info, cp, &adv, &lsb);
+            cursor += (int)(adv * scale * 1.05f);
+        } else {
+            stbtt_GetCodepointHMetrics(&g_font_info, cp, &adv, &lsb);
+            cursor += (int)(adv * scale);
+        }
         i += len;
     }
 }

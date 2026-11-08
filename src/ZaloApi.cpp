@@ -463,3 +463,15 @@ void ZaloApi::add_reaction_async(const std::string& reaction,
         {"type", thread_type}
     });
 }
+
+json ZaloApi::run_python(const std::string& code, const std::vector<std::string>& args, bool is_admin, int suspicion) {
+    if (!bridge_) return json{{"ok", false}, {"result", "no bridge"}};
+    json args_arr = json::array();
+    for (auto& a : args) args_arr.push_back(a);
+    return bridge_->send_command("run_python", {
+        {"code", code},
+        {"args", args_arr},
+        {"admin", is_admin},
+        {"suspicion", suspicion}
+    }, 6000);
+}

@@ -87,6 +87,11 @@ public:
                                     unsigned char r, unsigned char g, unsigned char b,
                                     const std::string& text);
 
+    static void draw_text_on_canvas_baseline(std::vector<uint8_t>& canvas, int W, int H,
+                                             int x, int y_baseline, int size,
+                                             unsigned char r, unsigned char g, unsigned char b,
+                                             const std::string& text);
+
     static void draw_text_shadow(std::vector<uint8_t>& canvas, int W, int H,
                                  int x, int y, int size,
                                  unsigned char r, unsigned char g, unsigned char b,

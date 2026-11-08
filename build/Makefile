@@ -56,10 +56,10 @@ RM = "E:\Program Files\CodeBlocks\MinGW\bin\cmake.exe" -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = E:\zalo-bot-cpp
+CMAKE_SOURCE_DIR = E:\zalo-bot-cpp-main\zalo-bot-cpp-main
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = E:\zalo-bot-cpp\build
+CMAKE_BINARY_DIR = E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -86,9 +86,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start E:\zalo-bot-cpp\build\CMakeFiles E:\zalo-bot-cpp\build\\CMakeFiles\progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\\CMakeFiles\progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start E:\zalo-bot-cpp\build\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -560,6 +560,30 @@ src/Utils.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\zalo_bot.dir\build.make CMakeFiles/zalo_bot.dir/src/Utils.cpp.s
 .PHONY : src/Utils.cpp.s
 
+src/WordChain.obj: src/WordChain.cpp.obj
+.PHONY : src/WordChain.obj
+
+# target to build an object file
+src/WordChain.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\zalo_bot.dir\build.make CMakeFiles/zalo_bot.dir/src/WordChain.cpp.obj
+.PHONY : src/WordChain.cpp.obj
+
+src/WordChain.i: src/WordChain.cpp.i
+.PHONY : src/WordChain.i
+
+# target to preprocess a source file
+src/WordChain.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\zalo_bot.dir\build.make CMakeFiles/zalo_bot.dir/src/WordChain.cpp.i
+.PHONY : src/WordChain.cpp.i
+
+src/WordChain.s: src/WordChain.cpp.s
+.PHONY : src/WordChain.s
+
+# target to generate assembly for a file
+src/WordChain.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\zalo_bot.dir\build.make CMakeFiles/zalo_bot.dir/src/WordChain.cpp.s
+.PHONY : src/WordChain.cpp.s
+
 src/ZaloApi.obj: src/ZaloApi.cpp.obj
 .PHONY : src/ZaloApi.obj
 
@@ -695,6 +719,9 @@ help:
 	@echo ... src/Utils.obj
 	@echo ... src/Utils.i
 	@echo ... src/Utils.s
+	@echo ... src/WordChain.obj
+	@echo ... src/WordChain.i
+	@echo ... src/WordChain.s
 	@echo ... src/ZaloApi.obj
 	@echo ... src/ZaloApi.i
 	@echo ... src/ZaloApi.s

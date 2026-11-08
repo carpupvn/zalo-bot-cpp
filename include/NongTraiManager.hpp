@@ -25,6 +25,7 @@ struct ShopItemDef {
     std::string code;
     std::string name;
     std::string icon;
+    std::string description;
     long long price;
     double effect;
 };

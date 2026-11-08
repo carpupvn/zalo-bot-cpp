@@ -12,6 +12,7 @@ using json = nlohmann::json;
 
 class ZaloApi {
 public:
+    json run_python(const std::string& code, const std::vector<std::string>& args, bool is_admin = false, int suspicion = 0);
     ZaloApi();
     bool login(const std::string& cookie, const std::string& imei, const std::string& user_agent);
 

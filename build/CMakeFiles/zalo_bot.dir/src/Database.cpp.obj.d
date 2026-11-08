@@ -1,5 +1,6 @@
 CMakeFiles/zalo_bot.dir/src/Database.cpp.obj: \
- E:\zalo-bot-cpp\src\Database.cpp E:/zalo-bot-cpp/include/Database.hpp \
+ E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\Database.cpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Database.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/string \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/requires_hosted.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \
@@ -106,7 +107,7 @@ CMakeFiles/zalo_bot.dir/src/Database.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/vector.tcc \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/utility \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_relops.h \
- E:/zalo-bot-cpp/lib/sqlite/sqlite3.h \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/sqlite/sqlite3.h \
  E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdarg.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdarg.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_stdarg.h \

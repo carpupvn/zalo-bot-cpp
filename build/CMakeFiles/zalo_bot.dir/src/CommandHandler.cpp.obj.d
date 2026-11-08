@@ -1,6 +1,6 @@
 CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: \
- E:\zalo-bot-cpp\src\CommandHandler.cpp \
- E:/zalo-bot-cpp/include/AssetManager.hpp \
+ E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\CommandHandler.cpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/WordChain.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/string \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/requires_hosted.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \
@@ -100,25 +100,52 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/uses_allocator.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/uses_allocator_args.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tuple \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/map \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_tree.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ext/aligned_buffer.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/node_handle.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_map.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_multimap.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/erase_if.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/vector \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_uninitialized.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_vector.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_bvector.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/vector.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/unordered_map \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/unordered_map.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/hashtable.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/hashtable_policy.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ext/aligned_buffer.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/enable_special_members.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/node_handle.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/erase_if.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/unordered_set \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/unordered_set.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/random \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cmath \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/math.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/specfun.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/limits \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/gamma.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/special_function_util.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/bessel_function.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/beta_function.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/ell_integral.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/exp_integral.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/hypergeometric.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/legendre_function.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/modified_bessel_func.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/poly_hermite.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/poly_laguerre.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/riemann_zeta.tcc \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cstdint \
  E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdint.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdint.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/random.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/uniform_int_dist.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/opt_random.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/random.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/numeric \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_numeric.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/pstl/glue_numeric_defs.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/pstl/execution_defs.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/mutex \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/chrono.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ratio \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/limits \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ctime \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/time.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sys/timeb.h \
@@ -141,43 +168,22 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/error_constants.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ext/atomicity.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/atomic_word.h \
- E:/zalo-bot-cpp/include/CommandHandler.hpp \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/functional \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/std_function.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/typeinfo \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/unordered_map \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/unordered_map.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/hashtable.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/hashtable_policy.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/enable_special_members.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/array \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/compare \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/deque \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_deque.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/deque.tcc \
- E:/zalo-bot-cpp/include/ZaloApi.hpp E:/zalo-bot-cpp/lib/nativeHTTP.hpp \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/memory \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/chrono \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/VietnameseUtils.hpp \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/algorithm \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_algo.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/algorithmfwd.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_heap.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_tempbuf.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_raw_storage_iter.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/align.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/unique_ptr.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/shared_ptr.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/shared_ptr_base.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/allocated_ptr.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ext/concurrence.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/pstl/glue_algorithm_defs.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/sstream \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/istream \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ios \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/exception \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/exception_ptr.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/cxxabi_init_exception.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/typeinfo \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/nested_exception.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/shared_ptr_atomic.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/atomic_base.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/atomic_lockfree_defines.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/backward/auto_ptr.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/pstl/glue_memory_defs.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/pstl/execution_defs.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/iostream \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ostream \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ios \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/ios_base.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/locale_classes.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/locale_classes.tcc \
@@ -194,45 +200,44 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/ctype_inline.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/locale_facets.tcc \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/basic_ios.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ostream \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/ostream.tcc \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/istream \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/istream.tcc \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/sstream \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/sstream.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/deque \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_deque.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/deque.tcc \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/AssetManager.hpp \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/map \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_tree.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_map.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_multimap.h \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/CommandHandler.hpp \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/functional \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/std_function.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/array \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/compare \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ZaloApi.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/nativeHTTP.hpp \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/memory \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_raw_storage_iter.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/align.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/unique_ptr.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/shared_ptr.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/shared_ptr_base.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/allocated_ptr.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ext/concurrence.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/shared_ptr_atomic.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/atomic_base.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/atomic_lockfree_defines.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/backward/auto_ptr.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/pstl/glue_memory_defs.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/iostream \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/fstream \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/codecvt.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/basic_file.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++io.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/fstream.tcc \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/algorithm \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_algo.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/algorithmfwd.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_heap.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/uniform_int_dist.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/pstl/glue_algorithm_defs.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/random \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cmath \
- E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/math.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/specfun.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/gamma.tcc \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/special_function_util.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/bessel_function.tcc \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/beta_function.tcc \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/ell_integral.tcc \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/exp_integral.tcc \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/hypergeometric.tcc \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/legendre_function.tcc \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/modified_bessel_func.tcc \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/poly_hermite.tcc \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/poly_laguerre.tcc \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/riemann_zeta.tcc \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/random.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/opt_random.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/random.tcc \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/numeric \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_numeric.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/pstl/glue_numeric_defs.h \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/chrono \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/thread \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/std_thread.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/this_thread_sleep.h \
@@ -458,7 +463,7 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/winhttp.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/sspi.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/ntsecapi.h \
- E:/zalo-bot-cpp/lib/json.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/json.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/iterator \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stream_iterator.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/utility \
@@ -488,12 +493,12 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/fs_ops.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/optional \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/any \
- E:/zalo-bot-cpp/include/ZaloBridge.hpp \
- E:/zalo-bot-cpp/include/PermissionManager.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ZaloBridge.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/PermissionManager.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/set \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_set.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_multiset.h \
- E:/zalo-bot-cpp/include/EconomyManager.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EconomyManager.hpp \
  C:/msys64/ucrt64/include/boost/multiprecision/cpp_int.hpp \
  C:/msys64/ucrt64/include/boost/multiprecision/detail/standalone_config.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/climits \
@@ -689,22 +694,25 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: \
  C:/msys64/ucrt64/include/boost/multiprecision/cpp_int/literals.hpp \
  C:/msys64/ucrt64/include/boost/multiprecision/cpp_int/serialize.hpp \
  C:/msys64/ucrt64/include/boost/multiprecision/cpp_int/import_export.hpp \
- E:/zalo-bot-cpp/include/GameManager.hpp \
- E:/zalo-bot-cpp/include/GroupManager.hpp \
- E:/zalo-bot-cpp/include/AccountManager.hpp \
- E:/zalo-bot-cpp/lib/sqlite/sqlite3.h \
- E:/zalo-bot-cpp/include/NongTraiManager.hpp \
- E:/zalo-bot-cpp/include/RuntimeState.hpp \
- E:/zalo-bot-cpp/include/TextRenderer.hpp \
- E:/zalo-bot-cpp/include/Color.hpp E:/zalo-bot-cpp/include/Gradient.hpp \
- E:/zalo-bot-cpp/include/Shape.hpp \
- E:/zalo-bot-cpp/include/EmojiRenderer.hpp \
- E:/zalo-bot-cpp/include/Utils.hpp E:/zalo-bot-cpp/include/GameRender.inc \
- E:/zalo-bot-cpp/include/TaiXiuRender.inc \
- E:/zalo-bot-cpp/include/AdminReply.inc \
- E:/zalo-bot-cpp/include/ProfileRender.inc \
- E:/zalo-bot-cpp/include/BotInfoRender.inc \
- E:/zalo-bot-cpp/include/SystemInfo.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/GameManager.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/GroupManager.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/AccountManager.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/sqlite/sqlite3.h \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/NongTraiManager.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/random.h \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/RuntimeState.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/TextRenderer.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Color.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Gradient.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Shape.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EmojiRenderer.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Utils.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/GameRender.inc \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/TaiXiuRender.inc \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/AdminReply.inc \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ProfileRender.inc \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/BotInfoRender.inc \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/SystemInfo.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/psapi.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/iphlpapi.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/iprtrmib.h \
@@ -755,4 +763,8 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/intrin.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/setjmp.h \
  E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/cpuid.h \
- E:/zalo-bot-cpp/lib/stb_image_write.h E:/zalo-bot-cpp/lib/stb_truetype.h
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/stb_image_write.h \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/stb_truetype.h \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/NongTraiRender.inc \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ShopRender.inc \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/BauCuaKbbRender.inc

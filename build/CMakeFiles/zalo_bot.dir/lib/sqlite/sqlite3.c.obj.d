@@ -1,5 +1,5 @@
 CMakeFiles/zalo_bot.dir/lib/sqlite/sqlite3.c.obj: \
- E:\zalo-bot-cpp\lib\sqlite\sqlite3.c \
+ E:\zalo-bot-cpp-main\zalo-bot-cpp-main\lib\sqlite\sqlite3.c \
  E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdarg.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdarg.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_stdarg.h \

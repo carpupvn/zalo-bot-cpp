@@ -1,6 +1,6 @@
 CMakeFiles/zalo_bot.dir/src/AccountManager.cpp.obj: \
- E:\zalo-bot-cpp\src\AccountManager.cpp \
- E:/zalo-bot-cpp/include/AccountManager.hpp \
+ E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\AccountManager.cpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/AccountManager.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/string \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/requires_hosted.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \
@@ -143,7 +143,7 @@ CMakeFiles/zalo_bot.dir/src/AccountManager.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/error_constants.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ext/atomicity.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/atomic_word.h \
- E:/zalo-bot-cpp/lib/sqlite/sqlite3.h \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/sqlite/sqlite3.h \
  E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdarg.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdarg.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_stdarg.h \

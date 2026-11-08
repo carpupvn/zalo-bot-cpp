@@ -1,6 +1,12 @@
+#include "WordChain.hpp"
+#include "VietnameseUtils.hpp"
+#include <deque>
+#include <unordered_map>
+#include <mutex>
 #include "AssetManager.hpp"
 #include "CommandHandler.hpp"
 #include "NongTraiManager.hpp"
+#include "random.h"
 
 // Global pointer - set tu main.cpp
 NongTraiManager* g_farm_mgr = nullptr;
@@ -18,6 +24,9 @@ NongTraiManager* g_farm_mgr = nullptr;
 #include <filesystem>
 #include "ProfileRender.inc"
 #include "BotInfoRender.inc"
+#include "NongTraiRender.inc"
+#include "ShopRender.inc"
+#include "BauCuaKbbRender.inc"
 #include "SystemInfo.hpp"
 #include <random>
 #include <ctime>
@@ -33,7 +42,22 @@ NongTraiManager* g_farm_mgr = nullptr;
 #include <chrono>
 #include <cmath>
 
+namespace {
+    WordChainEngine& getWordChain() {
+        static WordChainEngine wc;
+        static std::once_flag flag;
+        std::call_once(flag, []() {
+            wc.loadDictionary("data/dictionary.txt");
+        });
+        return wc;
+    }
+}
 using json = nlohmann::json;
+
+thread_local std::string CommandHandler::current_sender_id_;
+thread_local std::string CommandHandler::current_msg_text_;
+thread_local std::string CommandHandler::current_sender_name_;
+thread_local QuoteInfo CommandHandler::current_quote_;
 
 // ============================================================
 // Port từ bot JS (help.js) — render ảnh help
@@ -114,7 +138,7 @@ static cpp_int parse_money(const std::string& s_in, cpp_int max_val = -1) {
 static cpp_int parse_bet_amount(const std::string& s, const cpp_int& balance) {
     if (s.empty()) return cpp_int(-1);
     std::string t;
-    for (char c : s) t += (char)std::tolower((unsigned char)c);
+    for (char c : s) t += (char)std::tolower(static_cast<unsigned char>(c));
     if (t == "all" || t == "allin" || t == "het" || t == "hết") {
         return (balance > 0) ? balance : cpp_int(-1);
     }
@@ -192,6 +216,32 @@ static std::atomic<bool> g_spam_active{false};
 static std::atomic<bool> g_scold_active{false};
 static std::vector<std::string> g_scold_list;
 
+static int levenshtein(const std::string& s1, const std::string& s2) {
+    int m = s1.size(), n = s2.size();
+    std::vector<std::vector<int>> dp(m + 1, std::vector<int>(n + 1));
+    for (int i = 0; i <= m; i++) dp[i][0] = i;
+    for (int j = 0; j <= n; j++) dp[0][j] = j;
+    for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (s1[i - 1] == s2[j - 1]) dp[i][j] = dp[i - 1][j - 1];
+            else dp[i][j] = std::min({dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]}) + 1;
+        }
+    }
+    return dp[m][n];
+}
+struct MiniGameState {
+    std::string type; // "guessNumber", "wordChain", "wordGuess"
+    int targetNumber = 0;
+    int attempts = 0;
+    int range = 0;
+    int range_min = 1;
+    int range_max = 1000;
+    int maxAttempts = 0;
+    std::string lastPhrase = "";
+    std::string targetWord = "";
+    bool active = false;
+};
+static std::map<std::string, MiniGameState> g_mini_games;
 static void push_history(std::vector<bool>& h, bool v) {
     h.push_back(v);
     if (h.size() > 8) h.erase(h.begin());
@@ -606,6 +656,19 @@ void CommandHandler::reply_image(const std::string& title, const std::string& ms
 }
 
 void CommandHandler::register_commands() {
+    // Load auto state
+    std::ifstream in_auto("data/auto_state.json");
+    if (in_auto.good()) {
+        try {
+            json j; in_auto >> j;
+            for (auto& el : j.items()) {
+                if (el.value().contains("bot") && el.value()["bot"].get<bool>()) set_bot_for_thread(el.key(), true);
+                if (el.value().contains("game") && el.value()["game"].get<bool>()) set_game_for_thread(el.key(), true);
+            }
+        } catch (...) {}
+    }
+    in_auto.close();
+    // ===== NONG TRAI =====
     // ===== NONG TRAI =====
     commands["nongtrai"] = [this](const std::vector<std::string>& args,
                                   const std::string& uid,
@@ -627,24 +690,46 @@ void CommandHandler::register_commands() {
 
         std::string out;
         if (sub == "farm" || sub == "check" || sub == "xem") {
-            out = g_farm_mgr->format_status_text(uid);
-            g_farm_mgr->set_dirty();
+            static std::atomic<int> farmCtr{0};
+            std::string imgPath = "cache/nongtrai_" + std::to_string(farmCtr++) + ".png";
+            auto& farm = g_farm_mgr->get_or_create(uid);
+            g_farm_mgr->refresh_soil(farm);
+            nong_trai_render::render_farm(farm, imgPath);
+            api.send_image_async(imgPath, tid, tt);
+            return;
         } else if (sub == "help" || sub == "huongdan") {
-            out =
-                "NONG TRAI HELP\n\n"
-                "nongtrai farm              - Xem trang thai\n"
-                "nongtrai shop              - Xem cua hang\n"
-                "nongtrai buy <code> [qty]  - Mua\n"
-                "nongtrai sell <code> [qty|all] - Ban\n"
-                "nongtrai kho               - Xem tui\n"
-                "nongtrai gieohat <code> <slots>  - Trong\n"
-                "nongtrai tuoinuoc <slots>  - Tuoi nuoc\n"
-                "nongtrai cuocdat <slots>   - Cuoc dat\n"
-                "nongtrai thuhoach <slots>  - Thu hoach\n"
-                "nongtrai use <code> <slots> - Dung phan bon\n"
-                "Vi du slots: 1-4 hoac 1 3-5 7";
+            std::string h = "🌾 HƯỚNG DẪN NÔNG TRẠI 🌾\n\n";
+            h += "1. /nongtrai farm - Xem trạng thái nông trại\n";
+            h += "2. /nongtrai cuocdat [các slot đất] - Cuốc đất\n";
+            h += "3. /nongtrai tuoinuoc [các slot đất] - Tưới nước\n";
+            h += "4. /nongtrai gieohat [mã hạt giống] [các slot đất] - Trồng hạt giống\n";
+            h += "5. /nongtrai use [mã SP] [các slot đất] - Sử dụng vật phẩm\n";
+            h += "6. /nongtrai thuhoach [các slot đất] - Thu hoạch\n";
+            h += "7. /nongtrai shop - Xem cửa hàng\n";
+            h += "8. /nongtrai buy [mã SP] [SL] - Mua vật phẩm\n";
+            h += "9. /nongtrai kho - Xem vật phẩm trong kho\n";
+            h += "10. /nongtrai sell [mã SP] [SL] - Bán sản phẩm\n\n";
+            h += "Lưu ý:\n";
+            h += "- Đất sẽ thiếu nước sau 4h Không tưới\n";
+            h += "- Đất sẽ khô cằn sau 8h Không tưới\n";
+            h += "- Đất khô cằn cần cuốc trước khi tưới\n";
+            h += "- Dùng lệnh ntr nếu bn thấy nongtrai là quá dài!!!";
+
+            static std::atomic<int> bgCtr{0};
+            std::string bgPath = "cache/nongtrai_bg_" + std::to_string(bgCtr++) + ".png";
+            nong_trai_render::render_farm_bg(bgPath);
+            
+            std::vector<std::tuple<std::string,int,int>> empty;
+            api.send_message_with_image_mentions_async(h, bgPath, tid, tt, empty);
+            return;
         } else if (sub == "shop") {
-            out = g_farm_mgr->cmd_shop(uid);
+            static std::atomic<int> shopCtr{0};
+            std::string imgPath = "cache/shop_" + std::to_string(shopCtr++) + ".png";
+            auto& farm = g_farm_mgr->get_or_create(uid);
+            long long landPrice = g_farm_mgr->calculate_land_price((int)farm.plots.size());
+            shop_render::render_shop(landPrice, imgPath);
+            api.send_image_async(imgPath, tid, tt);
+            return;
         } else if (sub == "buy") {
             if (args.size() < 3) { reply_text("Dung: nongtrai buy <code> [qty]", tid, tt); return; }
             int qty = (args.size() > 3) ? std::atoi(args[3].c_str()) : 1;
@@ -794,7 +879,7 @@ void CommandHandler::register_commands() {
                     {"🎲", "/chanle <chẵn/lẻ> <n>", "Chẵn lẻ",       true},
                     {"🎲", "/taixiu <tài/xỉu> <n>", "Tài xỉu",       true},
                     {"🦀", "/baucua <con> <n>",     "Bầu cua",       true},
-                    {"🔢", "/doanso <cược>",        "Đoán số 1-100", true},
+                    {"🔢", "/doanso <min> <max>",   "Đoán số trong khoảng", true},
                     {"📝", "/noitu <từ>",           "Nối từ",        true},
                     {"♟️", "/caro <@u> <n>",       "Cờ caro",       true},
                     {"🏆", "/rank",                 "Top chat nhóm", true},
@@ -1008,6 +1093,133 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         std::cout << "[Handler] mycard: " << out << "\n";
     };
 
+    commands["command"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+        std::string sub = (args.size() > 1) ? args[1] : "";
+        std::transform(sub.begin(), sub.end(), sub.begin(), ::tolower);
+        if (sub == "admin") {
+            if (!perm.is_admin(uid)) { reply_text("❌ Chỉ admin mới xem được lệnh này.", tid, tt); return; }
+            std::string msg = "🛠️ LỆNH ADMIN:\n/bot, /game, /debug, /setad, /listadmin, /setprefix\n/setmoney, /sethu, /buff, /nerf, /txend, /undo, /boost";
+            reply_text(msg, tid, tt);
+        } else {
+            std::string msg = "📖 DANH SÁCH LỆNH:\n";
+            msg += "🎮 Game: /taixiu (tx), /chanle (cl), /baucua, /keobuabao (kbb), /vietlott\n";
+            msg += "🎲 Mini-game: /doanso, /noitu, /doantu\n";
+            msg += "🌾 Nông trại: /nongtrai (ntr)\n";
+            msg += "💰 Kinh tế: /bank, /nap, /rut, /vay, /tra, /chuyen, /daily\n";
+            msg += "👤 Tài khoản: /signup, /login, /logout, /whoami, /info, /mycard, /top\n";
+            reply_text(msg, tid, tt);
+        }
+    };
+
+    commands["doanso"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+        (void)uid;
+        if (args.size() > 1 && (args[1] == "cancel" || args[1] == "end" || args[1] == "stop")) {
+            if (g_mini_games.erase(tid)) reply_text("\U0001F6D1 \u0110\u00E3 hu\u1EF7 v\u00E1n \u0111o\u00E1n s\u1ED1.", tid, tt);
+            else                         reply_text("\u26A0\uFE0F Ch\u01B0a c\u00F3 v\u00E1n \u0111o\u00E1n s\u1ED1.", tid, tt);
+            return;
+        }
+        if (args.size() > 1 && (args[1] == "help" || args[1] == "?")) {
+            reply_text(
+                "\U0001F522 \u0110O\u00C1N S\u1ED0 - H\u01AF\u1EDANG D\u1EAAN\n\n"
+                "/doanso <min> <max>  \u2014 b\u1EAFt \u0111\u1EA7u (VD: /doanso 1 100)\n"
+                "/doanso <max>        \u2014 1 \u2192 max (VD: /doanso 100)\n"
+                "/doanso              \u2014 m\u1EB7c \u0111\u1ECBnh 1 \u2192 1000\n"
+                "/doanso cancel|end   \u2014 hu\u1EF7 v\u00E1n\n"
+                "/doanso help         \u2014 h\u01B0\u1EDBng d\u1EABn n\u00E0y\n\n"
+                "Lu\u1EADt:\n"
+                "\u2022 Bot ch\u1ECDn 1 s\u1ED1 b\u00ED m\u1EADt trong ph\u1EA1m vi\n"
+                "\u2022 G\u00F5 s\u1ED1 \u0111\u1EC3 \u0111o\u00E1n (kh\u00F4ng c\u1EA7n prefix)\n"
+                "\u2022 Bot: \U0001F4C8 Cao h\u01A1n / \U0001F4C9 Th\u1EA5p h\u01A1n / \U0001F389 \u0110\u00FAng\n"
+                "\u2022 S\u1ED1 l\u01B0\u1EE3t = 5 + floor(range^0.4), t\u1ED1i \u0111a 30",
+                tid, tt);
+            return;
+        }
+        if (g_mini_games.count(tid)) {
+            reply_text("\u26A0\uFE0F \u0110ang c\u00F3 tr\u00F2 ch\u01A1i kh\u00E1c trong nh\u00F3m. G\u00F5 /doanso cancel \u0111\u1EC3 hu\u1EF7.", tid, tt);
+            return;
+        }
+
+        int minV = 1, maxV = 1000;
+        if (args.size() >= 3) {
+            try {
+                minV = std::stoi(args[1]);
+                maxV = std::stoi(args[2]);
+            } catch (...) {
+                reply_text("\u274C C\u00FA ph\u00E1p: /doanso <min> <max>\nV\u00ED d\u1EE5: /doanso 1 100", tid, tt);
+                return;
+            }
+        } else if (args.size() == 2) {
+            try { maxV = std::stoi(args[1]); } catch (...) {
+                reply_text("\u274C C\u00FA ph\u00E1p: /doanso <min> <max>\nV\u00ED d\u1EE5: /doanso 1 100", tid, tt);
+                return;
+            }
+            minV = 1;
+        }
+
+        if (minV < 1 || maxV < 1 || minV >= maxV) {
+            reply_text("\u274C Ph\u1EA1m vi kh\u00F4ng h\u1EE3p l\u1EC7. C\u1EA7n 1 \u2264 min < max \u2264 1.000.000.", tid, tt);
+            return;
+        }
+        if (maxV > 1000000) {
+            reply_text("\u274C Max qu\u00E1 l\u1EDBn. Gi\u1EDBi h\u1EA1n t\u1ED1i \u0111a 1.000.000.", tid, tt);
+            return;
+        }
+
+        int range = maxV - minV + 1;
+        MiniGameState s;
+        s.type = "guessNumber";
+        s.range_min = minV;
+        s.range_max = maxV;
+        s.range = range;
+        s.targetNumber = myRandom::RanInt(minV, maxV);
+        s.maxAttempts = 5 + (int)std::floor(std::pow(range, 0.4));
+        if (s.maxAttempts > 30) s.maxAttempts = 30;
+        if (s.maxAttempts < 5)  s.maxAttempts = 5;
+        s.active = true;
+        g_mini_games[tid] = s;
+
+        reply_text(
+            "\U0001F522 \u0110O\u00C1N S\u1ED0\n"
+            "Ph\u1EA1m vi: " + std::to_string(minV) + " \u2192 " + std::to_string(maxV) + "\n"
+            "B\u1EA1n c\u00F3 " + std::to_string(s.maxAttempts) + " l\u01B0\u1EE3t.\n"
+            "G\u00F5 s\u1ED1 b\u1EA5t k\u1EF3 \u0111\u1EC3 \u0111o\u00E1n!",
+            tid, tt);
+    };
+
+    commands["noitu"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+        if (args.size() > 1 && args[1] == "cancel") {
+            g_mini_games.erase(tid);
+            reply_text("Trò chơi nối từ đã được hủy bỏ.", tid, tt); return;
+        }
+        if (g_mini_games.count(tid)) { reply_text("Đang có trò chơi khác diễn ra trong nhóm này.", tid, tt); return; }
+        
+        MiniGameState s;
+        s.type = "wordChain";
+        s.lastPhrase = "";
+        s.active = true;
+        g_mini_games[tid] = s;
+        reply_text("Trò chơi nối từ bắt đầu! Hãy nhập một cụm từ (tối đa 2 từ) để bắt đầu.", tid, tt);
+    };
+
+    commands["doantu"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+        if (args.size() > 1 && args[1] == "cancel") {
+            if (g_mini_games.count(tid) && g_mini_games[tid].type == "wordGuess") {
+                std::string ans = g_mini_games[tid].targetWord;
+                g_mini_games.erase(tid);
+                reply_text("Đã hủy trò chơi. Từ cần đoán là: " + ans, tid, tt);
+            } else reply_text("Không có trò chơi Đoán Từ nào đang diễn ra.", tid, tt);
+            return;
+        }
+        if (g_mini_games.count(tid)) { reply_text("Đang có trò chơi khác diễn ra trong nhóm này.", tid, tt); return; }
+        
+        std::vector<std::string> words = {"zalo", "chatbot", "trò chơi", "lập trình", "thông minh nhân tạo", "mạng xã hội", "công nghệ", "internet", "điện thoại", "máy tính"};
+        MiniGameState s;
+        s.type = "wordGuess";
+        s.targetWord = words[myRandom::RanInt(0, words.size() - 1)];
+        s.active = true;
+        g_mini_games[tid] = s;
+        reply_text("Trò chơi Đoán Từ đã bắt đầu! Hãy đoán từ có " + std::to_string(s.targetWord.length()) + " chữ cái.", tid, tt);
+    };
     commands["mycard"] = mycard;
     commands["sodu"] = mycard;
 
@@ -1228,6 +1440,157 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         msg += "\n✅✅✅";
         reply_text(msg, tid, tt);
     };
+    commands["command"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+        std::string sub = (args.size() > 1) ? args[1] : "";
+        std::transform(sub.begin(), sub.end(), sub.begin(), ::tolower);
+        if (sub == "admin") {
+            if (!perm.is_admin(uid)) { reply_text("❌ Chỉ admin mới xem được lệnh này.", tid, tt); return; }
+            std::string msg = "🛠️ LỆNH ADMIN:\n/bot, /game, /debug, /setad, /listadmin, /setprefix\n/setmoney, /sethu, /buff, /nerf, /txend, /undo, /boost";
+            reply_text(msg, tid, tt);
+        } else {
+            std::string msg = "📖 DANH SÁCH LỆNH:\n";
+            msg += "🎮 Game: /taixiu (tx), /chanle (cl), /baucua, /keobuabao (kbb), /vietlott, /doanso, /noitu\n";
+            msg += "🌾 Nông trại: /nongtrai (ntr)\n";
+            msg += "💰 Kinh tế: /bank, /nap, /rut, /vay, /tra, /chuyen, /daily\n";
+            msg += "👤 Tài khoản: /signup, /login, /logout, /whoami, /info, /mycard, /top\n";
+            msg += "📊 Khác: /command, /help, /ping\n";
+            msg += "\n👉 Gõ /command admin để xem lệnh quản trị.";
+            reply_text(msg, tid, tt);
+        }
+    };
+
+    static std::map<std::string, int> g_doanso_targets;
+    // /noitu — Word Chain (text co dau, bot di truoc)
+    commands["noitu"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+        (void)args;
+        auto& wc = getWordChain();
+        if (!wc.isLoaded()) {
+            reply_text("\u274C Kh\u00F4ng n\u1EA1p \u0111\u01B0\u1EE3c t\u1EEB \u0111i\u1EC3n (data/dictionary.txt).", tid, tt);
+            return;
+        }
+
+        std::string raw = current_msg_text_;
+        size_t sp = raw.find_first_of(" \t\n");
+        std::string rest = (sp == std::string::npos) ? "" : raw.substr(sp + 1);
+        size_t b = rest.find_first_not_of(" \t\r\n");
+        if (b != std::string::npos) rest = rest.substr(b); else rest.clear();
+        size_t e = rest.find_last_not_of(" \t\r\n");
+        if (e != std::string::npos) rest = rest.substr(0, e + 1); else rest.clear();
+        std::string rest_norm = vi::normalizeWord(rest);
+
+        if (rest_norm == "cancel" || rest_norm == "huy" || rest_norm == "end" || rest_norm == "stop") {
+            if (wc.cancelGame(tid)) reply_text("\U0001F524 \u0110\u00E3 hu\u1EF7 v\u00E1n n\u1ED1i t\u1EEB.", tid, tt);
+            else                    reply_text("\U0001F524 Ch\u01B0a c\u00F3 v\u00E1n n\u00E0o.", tid, tt);
+            return;
+        }
+
+        if (rest_norm == "stats" || rest_norm == "info") {
+            auto& d = wc.dictionary();
+            std::string msg = "\U0001F4CA N\u1ED0I T\u1EEA - TH\u1ED0NG K\u00CA\n";
+            msg += "T\u1ED5ng t\u1EEB: " + std::to_string(d.size()) + "\n";
+            msg += "Th\u00F4ng d\u1EE5ng: " + std::to_string(d.commonCount()) + "\n";
+            msg += "Kh\u00F3/hi\u1EBFm: " + std::to_string(d.size() - d.commonCount()) + "\n";
+            auto* st = wc.getState(tid);
+            if (st) {
+                msg += "\nV\u00E1n hi\u1EC7n t\u1EA1i: " + std::to_string(st->chain_length) + " t\u1EEB\n";
+                msg += "T\u1EEB cu\u1ED1i: " + st->last_phrase + "\n";
+                if (!st->last_phrase.empty()) {
+                    auto syl = vi::splitSyllables(st->last_phrase);
+                    msg += "C\u1EA7n b\u1EAFt \u0111\u1EA7u: " + syl.back();
+                }
+            } else {
+                msg += "\nCh\u01B0a c\u00F3 v\u00E1n.";
+            }
+            reply_text(msg, tid, tt);
+            return;
+        }
+
+        if (rest_norm == "help") {
+            reply_text(
+                "\U0001F524 N\u1ED0I T\u1EEA - H\u01AF\u1EDANG D\u1EAAN\n\n"
+                "/noitu \u2014 b\u1EAFt \u0111\u1EA7u v\u00E1n m\u1EDBi (bot m\u1EDF m\u00E0n)\n"
+                "/noitu <c\u1EE5m t\u1EEB> \u2014 \u0111\u00E1nh (2 \u00E2m ti\u1EBFt)\n"
+                "/noitu cancel \u2014 hu\u1EF7 v\u00E1n\n"
+                "/noitu stats \u2014 th\u1ED1ng k\u00EA\n"
+                "/noitu help \u2014 tr\u1EE3 gi\u00FAp\n\n"
+                "Khi v\u00E1n \u0111ang ch\u01A1i, ch\u1EC9 c\u1EA7n g\u00F5 c\u1EE5m t\u1EEB (kh\u00F4ng c\u1EA7n /noitu).\n"
+                "Lu\u1EADt: n\u1ED1i t\u1EEB cu\u1ED1i c\u1EE7a c\u1EE5m tr\u01B0\u1EDBc \u2192 t\u1EEB \u0111\u1EA7u c\u1EE7a c\u1EE5m m\u1EDBi.\n"
+                "C\u1EA7n C\u00D3 D\u1EA4U. VD: \u0103n u\u1ED1ng (kh\u00F4ng ph\u1EA3i an uong).",
+                tid, tt);
+            return;
+        }
+
+        if (rest_norm.rfind("add ", 0) == 0) {
+            if (!perm.is_admin(uid)) { reply_text("\u274C Ch\u1EC9 admin bot", tid, tt); return; }
+            std::string w = rest_norm.substr(4);
+            if (wc.dictionary().addWord(w)) {
+                if (wc.saveDictionary()) reply_text("\u2705 \u0110\u00E3 th\u00EAm: " + w, tid, tt);
+                else                     reply_text("\u26A0\uFE0F \u0110\u00E3 th\u00EAm nh\u01B0ng kh\u00F4ng ghi \u0111\u01B0\u1EE3c file.", tid, tt);
+            } else {
+                reply_text("\u274C Kh\u00F4ng th\u00EAm \u0111\u01B0\u1EE3c (sai \u0111\u1ECBnh d\u1EA1ng ho\u1EB7c \u0111\u00E3 t\u1ED3n t\u1EA1i).", tid, tt);
+            }
+            return;
+        }
+
+        if (rest_norm.rfind("remove ", 0) == 0) {
+            if (!perm.is_admin(uid)) { reply_text("\u274C Ch\u1EC9 admin bot", tid, tt); return; }
+            std::string w = rest_norm.substr(7);
+            if (wc.dictionary().removeWord(w)) {
+                if (wc.saveDictionary()) reply_text("\u2705 \u0110\u00E3 xo\u00E1: " + w, tid, tt);
+                else                     reply_text("\u26A0\uFE0F \u0110\u00E3 xo\u00E1 nh\u01B0ng kh\u00F4ng ghi \u0111\u01B0\u1EE3c file.", tid, tt);
+            } else {
+                reply_text("\u274C T\u1EEB kh\u00F4ng c\u00F3 trong t\u1EEB \u0111i\u1EC3n.", tid, tt);
+            }
+            return;
+        }
+
+        if (rest_norm == "sort") {
+            if (!perm.is_admin(uid)) { reply_text("\u274C Ch\u1EC9 admin bot", tid, tt); return; }
+            if (wc.sortDictionary()) reply_text("\u2705 \u0110\u00E3 s\u1EAFp x\u1EBFp l\u1EA1i t\u1EEB \u0111i\u1EC3n.", tid, tt);
+            else                     reply_text("\u274C Kh\u00F4ng ghi \u0111\u01B0\u1EE3c file.", tid, tt);
+            return;
+        }
+
+        if (rest_norm.empty()) {
+            if (wc.hasActiveGame(tid)) {
+                auto* st = wc.getState(tid);
+                auto syl = vi::splitSyllables(st->last_phrase);
+                reply_text(
+                    "\U0001F524 N\u1ED0I T\u1EEA \u0111ang ch\u01A1i\n"
+                    "Chu\u1ED7i: " + std::to_string(st->chain_length) + " t\u1EEB\n"
+                    "T\u1EEB cu\u1ED1i: " + st->last_phrase + "\n"
+                    "C\u1EA7n b\u1EAFt \u0111\u1EA7u b\u1EB1ng: " + syl.back() + "\n\n"
+                    "G\u00F5 c\u1EE5m t\u1EEB ti\u1EBFp theo (kh\u00F4ng c\u1EA7n /noitu).",
+                    tid, tt);
+            } else {
+                PlayOutcome o = wc.startGameBotFirst(tid, uid);
+                if (o.result == PlayResult::OK) reply_text(o.bot_reply, tid, tt);
+                else reply_text("\u274C " + o.error_msg, tid, tt);
+            }
+            return;
+        }
+
+        if (!wc.hasActiveGame(tid)) wc.startGameBotFirst(tid, uid);
+
+        PlayOutcome outcome = wc.playWord(tid, uid, rest);
+        switch (outcome.result) {
+            case PlayResult::NOT_ACTIVE:
+                reply_text("\U0001F524 Ch\u01B0a c\u00F3 v\u00E1n. G\u00F5 /noitu \u0111\u1EC3 b\u1EAFt \u0111\u1EA7u.", tid, tt); break;
+            case PlayResult::WORD_EMPTY:
+            case PlayResult::WORD_NOT_TWO_SYLLABLES:
+                reply_text("\u274C C\u1EA7n \u0111\u00FAng 2 \u00E2m ti\u1EBFt. VD: \"\u0103n u\u1ED1ng\".", tid, tt); break;
+            case PlayResult::WORD_NOT_IN_DICT:
+                reply_text("\u274C T\u1EEB kh\u00F4ng c\u00F3 trong t\u1EEB \u0111i\u1EC3n.", tid, tt); break;
+            case PlayResult::WORD_WRONG_START:
+                reply_text("\u274C Ph\u1EA3i b\u1EAFt \u0111\u1EA7u b\u1EB1ng \"" + outcome.required_start + "\".", tid, tt); break;
+            case PlayResult::WORD_ALREADY_USED:
+                reply_text("\u274C T\u1EEB n\u00E0y \u0111\u00E3 d\u00F9ng trong v\u00E1n.", tid, tt); break;
+            case PlayResult::OK:
+            case PlayResult::WIN:
+                reply_text(outcome.bot_reply, tid, tt); break;
+        }
+    };
+
     commands["bank"] = [this](const auto& args, const auto& uid,
                               const auto& tid, int tt, bool) {
         if ((!account.is_logged_in(uid) && !g_debug_mode)) {
@@ -1651,20 +2014,431 @@ std::string cap;
 
     commands["baucua"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
         if ((!account.is_logged_in(uid) && !g_debug_mode)) { reply_text("❌ Cần đăng nhập", tid, tt); return; }
-        if (args.size() < 3) { reply_text("❌ baucua <con> <cược>", tid, tt); return; }
-        cpp_int bet = parse_money(args[2]);
-        if (econ.get_bank(uid) < bet) { reply_text("❌ Không đủ tiền", tid, tt); return; }
-        game.start_game(GameType::BAU_CUA, uid, tid, tt, bet, args[1]);
-        reply_text("🎲 Đã cược " + money_str(bet), tid, tt);
+        if (args.size() < 3) { reply_text("❌ Cú pháp: baucua <con> <tiền>:<con> <tiền>... (VD: baucua bau 100k:cua 50k)", tid, tt); return; }
+        
+        // Parse các cửa cược
+        std::map<int, cpp_int> bets; // index: 0-bau, 1-cua, 2-tom, 3-ca, 4-ga, 5-nai
+        std::map<std::string, int> nameMap = {{"bau",0},{"cua",1},{"tom",2},{"ca",3},{"ga",4},{"nai",5}};
+        cpp_int total_bet = 0;
+        
+        std::string betStr = "";
+        for (size_t i = 1; i < args.size(); i++) {
+            if (!betStr.empty()) betStr += " ";
+            betStr += args[i];
+        }
+        
+        std::stringstream ss(betStr);
+        std::string part;
+        while (std::getline(ss, part, ':')) {
+            std::istringstream iss(part);
+            std::string con; cpp_int amount;
+            if (iss >> con >> part) { // Tạm dùng part để lấy số tiền
+                std::transform(con.begin(), con.end(), con.begin(), ::tolower);
+                if (nameMap.find(con) == nameMap.end()) { reply_text("❌ Con vật không hợp lệ: " + con, tid, tt); return; }
+                amount = parse_money(part);
+                if (amount <= 0) { reply_text("❌ Số tiền không hợp lệ", tid, tt); return; }
+                bets[nameMap[con]] += amount;
+                total_bet += amount;
+            }
+        }
+        
+        if (total_bet <= 0) { reply_text("❌ Không có cược hợp lệ", tid, tt); return; }
+        if (econ.get_bank(uid) < total_bet) { reply_text("❌ Không đủ tiền. Cần " + money_str(total_bet), tid, tt); return; }
+        
+        econ.set_full_data(uid, econ.get_user_economy(uid).wallet, econ.get_bank(uid) - total_bet, econ.get_user_economy(uid).debt, econ.get_user_economy(uid).games_played, econ.get_user_economy(uid).games_won);
+        
+        // Tung 3 xúc xắc
+        std::vector<int> dices = {myRandom::RanInt(0, 5), myRandom::RanInt(0, 5), myRandom::RanInt(0, 5)};
+        int count[6] = {0};
+        for (int d : dices) count[d]++;
+        
+        // Tính tiền thắng
+        cpp_int total_win = 0;
+        std::string resDetail = "🎲 Kết quả: ";
+        const char* names[] = {"Bầu", "Cua", "Tôm", "Cá", "Gà", "Nai"};
+        for (int i=0; i<3; i++) resDetail += std::string(names[dices[i]]) + (i<2?", ":"");
+        
+        bool isJackpot = (count[dices[0]] == 3);
+        cpp_int husk_add = 0;
+        
+        for (auto& pair : bets) {
+            int con = pair.first;
+            cpp_int bet = pair.second;
+            if (count[con] > 0) {
+                cpp_int win = bet + (bet * 95 * count[con]) / 100; // 1 + 0.95*count
+                total_win += win;
+            } else {
+                husk_add += bet * 60 / 100; // Trích 60% vào hũ
+            }
+        }
+        
+        // Xử lý hũ (nếu nổ hũ)
+        cpp_int husk = econ.get_husk("bau_cua");
+        cpp_int jackpot_win = 0;
+        if (isJackpot && bets.count(dices[0])) {
+            cpp_int max_jackpot = total_bet * 1000;
+            jackpot_win = std::min(husk, max_jackpot);
+            total_win += jackpot_win;
+            if (husk > max_jackpot) econ.add_to_husk("bau_cua", -jackpot_win);
+            else econ.set_husk("bau_cua", 1000000);
+            resDetail += "\n💥 NỔ HŨ! Nhận thêm " + money_str(jackpot_win);
+        } else {
+            if (husk_add > 0) econ.add_to_husk("bau_cua", husk_add);
+        }
+        
+        econ.add_winnings(uid, total_win);
+        g_econ_dirty = true;
+        
+        // Format tin nhắn theo chuẩn JS gốc
+        std::string playerName = format_user(uid);
+        std::string msg = "[ " + playerName + " ] đã đặt:\n";
+        const char* symNames[] = {"Bầu", "Cua", "Tôm", "Cá", "Gà", "Nai"};
+        for (auto& pair : bets) {
+            int con = pair.first;
+            cpp_int bet = pair.second;
+            bool isWin = count[con] > 0;
+            msg += std::string(symNames[con]) + ": " + money_str(bet) + " VNĐ (" + (isWin ? "Win" : "Lose") + ")\n";
+        }
+        msg += "Tổng thắng: " + money_str(total_win) + " VNĐ\n";
+        if (isJackpot) {
+            msg += "💥 NỔ HŨ\n";
+            msg += "Tiền trúng hũ: +" + money_str(jackpot_win) + " VNĐ\n";
+        }
+        cpp_int net_win = total_win - total_bet;
+        if (net_win > 0) msg += "Lợi nhuận: +" + money_str(net_win) + " VNĐ 🎉\n";
+        else msg += "Thua lỗ: " + money_str(net_win) + " VNĐ 😢\n";
+        if (!isJackpot) msg += "Hũ hiện tại: " + money_str(econ.get_husk("bau_cua")) + " VNĐ 💰\n";
+        msg += "\nSố dư biến động: " + money_str(econ.get_bank(uid) + total_bet) + " -> " + money_str(econ.get_bank(uid)) + " VNĐ";
+        resDetail = msg;
+        
+        static std::atomic<int> ctr{0};
+        std::string imgPath = "cache/baucua_" + std::to_string(ctr++) + ".png";
+        long long tw_ll = 0; try { tw_ll = total_win.convert_to<long long>(); } catch(...) {}
+        game_render::render_baucua_result(dices, tw_ll, imgPath);
+        
+        std::vector<std::tuple<std::string,int,int>> empty;
+        api.send_message_with_image_mentions_async(resDetail, imgPath, tid, tt, empty);
     };
-    commands["doanso"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+
+    commands["keobuabao"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
         if ((!account.is_logged_in(uid) && !g_debug_mode)) { reply_text("❌ Cần đăng nhập", tid, tt); return; }
-        if (args.size() < 2) { reply_text("❌ doanso <cược>", tid, tt); return; }
-        cpp_int bet = parse_money(args[1]);
+        if (args.size() < 3) { reply_text("❌ Cú pháp: kbb <keo/bua/bao> <tiền>", tid, tt); return; }
+        
+        std::string choice = args[1];
+        std::transform(choice.begin(), choice.end(), choice.begin(), ::tolower);
+        int p_choice = -1;
+        if (choice == "keo" || choice == "kéo") p_choice = 0;
+        else if (choice == "bua" || choice == "búa") p_choice = 1;
+        else if (choice == "bao" || choice == "bào") p_choice = 2;
+        else { reply_text("❌ Chọn keo, bua hoặc bao", tid, tt); return; }
+        
+        cpp_int bet = parse_money(args[2]);
+        if (bet <= 0) { reply_text("❌ Số tiền không hợp lệ", tid, tt); return; }
         if (econ.get_bank(uid) < bet) { reply_text("❌ Không đủ tiền", tid, tt); return; }
-        game.start_game(GameType::DOAN_SO, uid, tid, tt, bet);
-        reply_text("🔢 Đoán số 1-100, có 5 lượt", tid, tt);
+        
+        econ.set_full_data(uid, econ.get_user_economy(uid).wallet, econ.get_bank(uid) - bet, econ.get_user_economy(uid).debt, econ.get_user_economy(uid).games_played, econ.get_user_economy(uid).games_won);
+        
+        // Mapping index: 0=Kéo, 1=Búa, 2=Bao
+        // beats[i] = cửa mà i đánh bại
+        int beats[3] = {2, 0, 1}; // Kéo thắng Bao, Búa thắng Kéo, Bao thắng Búa
+        
+        int p_beats = beats[p_choice]; // Cửa mà player đánh bại
+        int p_loses_to = -1;
+        for (int i = 0; i < 3; i++) {
+            if (beats[i] == p_choice) { p_loses_to = i; break; }
+        }
+        
+        int randVal = myRandom::RanInt(0, 99);
+        int b_choice = 0;
+        int result = 0; // 0: Player thắng, 1: Hòa, 2: Player thua
+        
+        if (randVal < 35) {
+            // Bot thua: bot chọn cửa mà player đánh bại
+            b_choice = p_beats;
+            result = 0;
+        } else if (randVal < 70) {
+            // Hòa
+            b_choice = p_choice;
+            result = 1;
+        } else {
+            // Bot thắng: bot chọn cửa đánh bại player
+            b_choice = p_loses_to;
+            result = 2;
+        }
+        
+        const char* kbbNames[] = {"Kéo", "Búa", "Bao"};
+        const char* kbbEmojis[] = {"✌️", "✊", "🖐️"};
+        
+        cpp_int oldBank = econ.get_bank(uid) + bet; // Số dư trước khi cược
+        cpp_int win_amount = 0;
+        cpp_int net_amount = 0;
+        
+        if (result == 0) {
+            win_amount = bet * 2;
+            net_amount = bet;
+            econ.add_winnings(uid, win_amount);
+        } else if (result == 1) {
+            win_amount = bet;
+            net_amount = 0;
+            econ.add_winnings(uid, win_amount);
+        } else {
+            win_amount = 0;
+            net_amount = -bet;
+            econ.record_loss(uid, bet);
+        }
+        g_econ_dirty = true;
+        
+        cpp_int newBank = econ.get_bank(uid);
+        
+        std::string playerName = format_user(uid);
+        std::string resText = "[ " + playerName + " ] đã chọn " + std::string(kbbNames[p_choice]) + " " + std::string(kbbEmojis[p_choice]) + "\n";
+        resText += "Bot chọn " + std::string(kbbNames[b_choice]) + " " + std::string(kbbEmojis[b_choice]) + "\n\n";
+        if (result == 0) resText += "🎉 Bạn đã thắng!\n";
+        else if (result == 1) resText += "🤝 Hòa!\n";
+        else resText += "😢 Bạn đã thua!\n";
+        resText += "Đặt cược: " + money_str(bet) + " VNĐ\n";
+        if (net_amount == 0) resText += "Hoàn Tiền: " + money_str(bet) + " VNĐ\n";
+        else if (net_amount > 0) resText += "Tiền Thắng Cược: +" + money_str(net_amount) + " VNĐ\n";
+        else resText += "Thua Lỗ: " + money_str(net_amount) + " VNĐ\n";
+        resText += "Số dư biến động: " + money_str(oldBank) + " -> " + money_str(newBank) + " VNĐ";
+        
+        static std::atomic<int> ctr{0};
+        std::string imgPath = "cache/kbb_" + std::to_string(ctr++) + ".png";
+        game_render::render_kbb_result(p_choice, b_choice, result, imgPath);
+        
+        std::vector<std::tuple<std::string,int,int>> empty;
+        api.send_message_with_image_mentions_async(resText, imgPath, tid, tt, empty);
     };
+    commands["kbb"] = commands["keobuabao"];
+    // ============================================================
+    // /reload, /auto, /py
+    // ============================================================
+    commands["reload"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+        (void)args;
+        if (!perm.is_admin(uid)) { reply_text("❌ Chỉ admin bot dùng được", tid, tt); return; }
+        reply_text("🔄 Đang khởi động lại bot...", tid, tt);
+
+        std::thread([](){
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::cout << "\n[RELOAD] Dang yeu cau run.bat khoi dong lai..." << std::endl;
+            std::exit(99); // Ma 99 bao hieu cho run.bat biet can khoi dong lai
+        }).detach();
+    };
+    commands["auto"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+        if (!perm.is_admin(uid)) { reply_text("❌ Chỉ admin bot", tid, tt); return; }
+        if (args.size() < 2) { reply_text("❌ Cú pháp: /auto bot on:game on", tid, tt); return; }
+        
+        std::string allArgs = "";
+        for (size_t i = 1; i < args.size(); i++) allArgs += args[i] + " ";
+        
+        bool setBot = false, setGame = false;
+        bool botVal = false, gameVal = false;
+        
+        std::stringstream ss(allArgs);
+        std::string part;
+        while (std::getline(ss, part, ':')) {
+            std::istringstream iss(part);
+            std::string type, val;
+            if (iss >> type >> val) {
+                if (type == "bot") { setBot = true; botVal = (val == "on"); }
+                else if (type == "game") { setGame = true; gameVal = (val == "on"); }
+            }
+        }
+        
+        json autoState;
+        std::ifstream in("data/auto_state.json");
+        if (in.good()) { try { in >> autoState; } catch(...) {} }
+        in.close();
+        
+        if (setBot) { set_bot_for_thread(tid, botVal); autoState[tid]["bot"] = botVal; }
+        if (setGame) { set_game_for_thread(tid, gameVal); autoState[tid]["game"] = gameVal; }
+        
+        std::ofstream out("data/auto_state.json");
+        out << autoState.dump(2);
+        out.close();
+        
+        reply_text("✅ Đã cài đặt auto. Sẽ tự động duy trì khi khởi động lại.", tid, tt);
+    };
+
+    commands["py"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+        std::cerr << "[PY-ENTRY] uid=" << uid << " tid=" << tid << " tt=" << tt << std::endl;
+        (void)args;
+
+        // Rate limit (per-user, 60s window)
+        {
+            static std::mutex rl_mutex;
+            static std::unordered_map<std::string, std::deque<std::chrono::steady_clock::time_point>> rl_map;
+            std::lock_guard<std::mutex> lock(rl_mutex);
+            auto& q = rl_map[uid];
+            auto now = std::chrono::steady_clock::now();
+            while (!q.empty() && std::chrono::duration_cast<std::chrono::seconds>(now - q.front()).count() >= 60) {
+                q.pop_front();
+            }
+            bool isAdmin0 = perm.is_admin(uid);
+            int limit = isAdmin0 ? 30 : 10;
+            if ((int)q.size() >= limit) {
+                reply_text("\u23F1\uFE0F Qu\u00E1 nhi\u1EC1u l\u1EC7nh /py. Th\u1EED l\u1EA1i sau 1 ph\u00FAt.", tid, tt);
+                return;
+            }
+            q.push_back(now);
+        }
+
+        std::string raw = current_msg_text_;
+        size_t nl = raw.find('\n');
+        std::string code;
+        std::vector<std::string> pyArgs;
+        bool isInfo = false;
+
+        if (nl == std::string::npos) {
+            size_t sp = raw.find_first_of(" \t");
+            std::string inlineCode = (sp == std::string::npos) ? "" : raw.substr(sp + 1);
+            size_t p = inlineCode.find_first_not_of(" \t");
+            if (p != std::string::npos) inlineCode.erase(0, p);
+            else inlineCode.clear();
+            if (inlineCode == "info" || inlineCode == "help" || inlineCode.empty()) isInfo = true;
+            else code = inlineCode;
+        } else {
+            std::string firstLine = raw.substr(0, nl);
+            code = raw.substr(nl + 1);
+            std::istringstream iss(firstLine);
+            std::string token;
+            iss >> token;
+            while (iss >> token) pyArgs.push_back(token);
+            if (!pyArgs.empty() && (pyArgs[0] == "info" || pyArgs[0] == "help")) {
+                isInfo = true;
+                pyArgs.clear();
+            }
+        }
+        if (!isInfo && code.empty()) isInfo = true;
+        bool isAdmin = perm.is_admin(uid);
+        std::cerr << "[PY-PARSE] nl=" << (nl==std::string::npos?-1:(int)nl) << " code_len=" << code.size() << " isInfo=" << isInfo << " args=" << pyArgs.size() << " admin=" << isAdmin << std::endl;
+
+        if (isInfo) {
+            std::string pyVer = "?";
+            json v = api.run_python("__py_info_magic_7f3a9b__", {}, true, 0);
+            if (v.value("ok", false)) {
+                pyVer = v.value("result", json::object()).value("output", "?");
+                size_t e = pyVer.find_last_not_of(" \r\n\t");
+                if (e != std::string::npos) pyVer.erase(e + 1);
+                else pyVer = "?";
+            }
+            std::string help =
+                "\U0001F40D Python Runner\n"
+                "Version: Python " + pyVer + "\n"
+                "\n"
+                "\U0001F4D6 C\u00E1ch d\u00F9ng:\n"
+                "\u2022 /py <code> - ch\u1EA1y 1 d\u00F2ng\n"
+                "\u2022 /py r\u1ED3i xu\u1ED1ng d\u00F2ng + code - nhi\u1EC1u d\u00F2ng\n"
+                "\u2022 /py arg1 arg2 r\u1ED3i xu\u1ED1ng d\u00F2ng + code - truy\u1EC1n args, d\u00F9ng input()\n"
+                "\n"
+                "\U0001F4E6 Modules cho ph\u00E9p:\n"
+                "math, random, string, datetime, json, re, itertools, collections, time\n"
+                "\n"
+                "\u26A0\uFE0F Gi\u1EDBi h\u1EA1n:\n"
+                "\u2022 Timeout 8s, output 8KB, b\u1ED9 nh\u1EDB 1GB\n"
+                "\u2022 Kh\u00F4ng c\u00F3: open, os, sys, subprocess, eval, exec\n"
+                "\u2022 Code kh\u1EA3 nghi (>=70 \u0111i\u1EC3m): ch\u1EC9 admin ch\u1EA1y \u0111\u01B0\u1EE3c";
+            std::cerr << "[PY-HELP] sending help reply" << std::endl;
+            reply_text(help, tid, tt);
+            return;
+        }
+
+        if (code.size() > 2000) {
+            reply_text("\u274C Code qu\u00E1 d\u00E0i (t\u1ED1i \u0111a 2000 k\u00FD t\u1EF1)", tid, tt);
+            return;
+        }
+
+        // Suspicion scoring
+        int susp = 0;
+        std::vector<std::string> reasons;
+        auto has = [&](const char* s) { return code.find(s) != std::string::npos; };
+        if (code.size() > 800)   { susp += 10; reasons.push_back("dai>800"); }
+        if (code.size() > 1500)  { susp += 15; reasons.push_back("dai>1500"); }
+        if (code.size() > 500 && code.find('\n') == std::string::npos) { susp += 10; reasons.push_back("1dongdai"); }
+        if (code.size() > 800 && code.find('\n') == std::string::npos) { susp += 15; reasons.push_back("1dongratdai"); }
+        if (has("__"))           { susp += 20; reasons.push_back("dunder"); }
+        if (has("getattr") || has("setattr")) { susp += 20; reasons.push_back("getattr"); }
+        if (has("eval(") || has("exec(") || has("compile(")) { susp += 30; reasons.push_back("eval-exec-compile"); }
+        if (has("__import__"))   { susp += 30; reasons.push_back("__import__"); }
+        if (has("builtins"))     { susp += 20; reasons.push_back("builtins"); }
+        if (has("format_map"))   { susp += 15; reasons.push_back("format_map"); }
+        if (has(".format("))     { susp += 4;  reasons.push_back("format"); }
+        if (has("while True") || has("while 1")) { susp += 8; reasons.push_back("whileTrue"); }
+        if (has("time.sleep"))   { susp += 8;  reasons.push_back("sleep"); }
+        if (has("chr("))         { susp += 10; reasons.push_back("chr"); }
+        if (has("fromhex"))      { susp += 12; reasons.push_back("fromhex"); }
+        if (has("bytes(") || has("bytearray(")) { susp += 5; reasons.push_back("bytes"); }
+        if (has("\\x"))          { susp += 8;  reasons.push_back("hexescape"); }
+        if (has("lambda"))       { susp += 2;  reasons.push_back("lambda"); }
+        int semiC = 0; for (char c : code) if (c == ';') semiC++;
+        if (semiC >= 3)          { susp += 5;  reasons.push_back("semicolons"); }
+
+        auto logLine = [&](const char* status, const std::string& extra) {
+            std::ofstream lf("data/py_audit.log", std::ios::app);
+            if (!lf) return;
+            auto now = std::chrono::system_clock::now();
+            auto tt_ = std::chrono::system_clock::to_time_t(now);
+            char buf[32];
+            std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", std::localtime(&tt_));
+            std::string prev = code.substr(0, std::min<size_t>(code.size(), 100));
+            for (auto& ch : prev) { if (ch == '\n' || ch == '\r' || ch == '\t') ch = ' '; }
+            lf << buf << " " << status << " score=" << susp << " uid=" << uid
+               << " tid=" << tid << " len=" << code.size()
+               << " preview=\"" << prev << "\" " << extra << "\n";
+        };
+
+        if (!isAdmin && susp >= 70) {
+            std::string reasonStr;
+            for (size_t i = 0; i < reasons.size() && i < 5; ++i) {
+                if (i > 0) reasonStr += ", ";
+                reasonStr += reasons[i];
+            }
+            reply_text("\U0001F6AB Code b\u1ECB \u0111\u00E1nh gi\u00E1 kh\u1EA3 nghi ("
+                       + std::to_string(susp) + " \u0111i\u1EC3m).\n"
+                       "L\u00FD do: " + reasonStr + "\n"
+                       "Ch\u1EC9 admin m\u1EDBi ch\u1EA1y \u0111\u01B0\u1EE3c code n\u00E0y.", tid, tt);
+            logLine("BLOCK", "reasons=" + reasonStr);
+            return;
+        }
+
+        std::cerr << "[PY-EXEC] admin=" << isAdmin << " susp=" << susp << " code_len=" << code.size() << std::endl;
+        std::string prefix = "\U0001F40D \u0110ang th\u1EF1c thi Python...";
+        if (isAdmin && susp >= 40) {
+            prefix += " (\u26A0\uFE0F " + std::to_string(susp) + " \u0111i\u1EC3m)";
+        }
+        reply_text(prefix, tid, tt);
+        std::cerr << "[PY-AFTER-REPLY]" << std::endl;
+        logLine("RUN", "");
+        std::cerr << "[PY-AFTER-LOG]" << std::endl;
+
+        json r;
+        try {
+            r = api.run_python(code, pyArgs, isAdmin, susp);
+        } catch (const std::exception& e) {
+            reply_text("❌ Lỗi C++ khi gọi Python: " + std::string(e.what()), tid, tt);
+            return;
+        }
+        std::cerr << "[PY-AFTER-RUN] ok=" << r.value("ok", false) << std::endl;
+        if (r.value("ok", false)) {
+            std::string out = r.value("result", json::object()).value("output", "");
+            if (out.empty()) out = "(khong co output)";
+            
+            // FIX: Cắt chuỗi nếu quá dài (Zalo API giới hạn ~2000 ký tự)
+            const size_t MAX_LEN = 1500;
+            if (out.length() > MAX_LEN) {
+                out = out.substr(0, MAX_LEN) + "\n\n⚠️ (Da cat bot " + std::to_string(out.length() - MAX_LEN) + " ky tu vi qua dai)";
+            }
+            reply_text("\U0001F40D K\u1EBFt qu\u1EA3:\n" + out, tid, tt);
+        } else {
+            std::string err = r.value("result", "Unknown error");
+            if (err.find('\n') == std::string::npos) {
+                reply_text("\u274C " + err, tid, tt);
+            } else {
+                reply_text("\u274C L\u1ED7i Python:\n" + err, tid, tt);
+            }
+        }
+    };
+    commands["python"] = commands["py"];
     commands["kick"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
         if (!perm.has_permission(uid, "kick")) { reply_text("❌ Không có quyền", tid, tt); return; }
         if (args.size() < 2) { reply_text("❌ kick <@user>", tid, tt); return; }
@@ -1829,10 +2603,18 @@ std::string cap;
                                                 avt_cx + avt_r + 20, y + 15, 30,
                                                 255, 255, 255, rank_line);
 
-            std::string role_display = (tag == "BOT_ADMIN") ? "Quản Trị Viên Bot" : "Quản Trị Cấp Cao";
-            unsigned char rr = (tag == "BOT_ADMIN") ? 200 : 255;
-            unsigned char rg = (tag == "BOT_ADMIN") ? 200 : 220;
-            unsigned char rb = (tag == "BOT_ADMIN") ? 200 : 100;
+            // Robust role detect: strip brackets/spaces/underscores, lowercase, compare
+            std::string role_clean;
+            for (char ch : tag) {
+                if (ch != '[' && ch != ']' && ch != ' ' && ch != '_' && ch != '\t' && ch != '\r' && ch != '\n') {
+                    role_clean += (char)::tolower((unsigned char)ch);
+                }
+            }
+            bool is_bot = (role_clean == "botadmin" || role_clean == "admin");
+            std::string role_display = is_bot ? "Quản Trị Viên Bot" : "Quản Trị Cấp Cao";
+            unsigned char rr = is_bot ? 200 : 255;
+            unsigned char rg = is_bot ? 200 : 220;
+            unsigned char rb = is_bot ? 200 : 100;
 
             TextRenderer::draw_text_on_canvas(canvas, W, H,
                                                 avt_cx + avt_r + 20, y + 52, 22,
@@ -1946,57 +2728,88 @@ std::string cap;
     };
 
     commands["setad"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
-        if (!perm.is_super_admin(uid)) { reply_text("❌ Chỉ SUPER ADMIN!", tid, tt); return; }
-        if (args.size() < 2) { reply_text("📖 setad add/remove/list", tid, tt); return; }
-        std::string sub = args[1];
-        std::transform(sub.begin(), sub.end(), sub.begin(), ::tolower);
-        if (sub == "list") {
-            auto admins = perm.list_admins();
-            std::string body;
-            if (admins.empty()) body = "(chưa có ai)\n";
-            else {
-                for (size_t i = 0; i < admins.size(); i++) {
-                    std::string entry = admins[i];
-                    size_t sp = entry.find("  [");
-                    std::string u, role;
-                    if (sp != std::string::npos) {
-                        u = entry.substr(0, sp);
-                        role = entry.substr(sp + 2);
-                    } else { u = entry; role = ""; }
-                    std::string name = perm.get_user_name(u);
-                    if (name.empty()) name = format_user(u);
-                    body += std::to_string(i + 1) + ". " + name + " " + role + "\n";
-                }
+        (void)args;
+        if (!perm.is_super_admin(uid)) { reply_text("\u274C Ch\u1EC9 SUPER ADMIN!", tid, tt); return; }
+
+        // Parse truc tiep tu current_msg_text_ de tranh args[] khong dong nhat
+        std::string raw = current_msg_text_;
+        if (!raw.empty() && (raw[0] == '/' || raw[0] == '!')) raw = raw.substr(1);
+        size_t sp = raw.find_first_of(" \t\r\n");
+        std::string rest = (sp == std::string::npos) ? "" : raw.substr(sp + 1);
+
+        std::vector<std::string> toks;
+        {
+            std::istringstream iss(rest);
+            std::string tk;
+            while (iss >> tk) toks.push_back(tk);
+        }
+
+        auto extract_uid = [](const std::string& t) -> std::string {
+            if (t.empty()) return "";
+            if (t.size() >= 3 && t[0] == '<' && t[1] == '@') {
+                size_t end = t.find_first_of(">|", 2);
+                std::string u = (end != std::string::npos) ? t.substr(2, end - 2) : t.substr(2);
+                if (!u.empty() && std::all_of(u.begin(), u.end(), ::isdigit)) return u;
+                return "";
             }
-            reply_image("👑 DANH SÁCH QUẢN TRỊ", body, tid, tt);
+            if (t[0] == '@') {
+                std::string u = t.substr(1);
+                if (!u.empty() && std::all_of(u.begin(), u.end(), ::isdigit)) return u;
+                return "";
+            }
+            if (std::all_of(t.begin(), t.end(), ::isdigit)) return t;
+            return "";
+        };
+
+        if (toks.empty()) { reply_text("\U0001F4D6 setad add/remove/list", tid, tt); return; }
+        std::string sub = toks[0];
+        std::transform(sub.begin(), sub.end(), sub.begin(), ::tolower);
+
+        if (sub == "list") {
+            // Forward sang listadmin (render anh 1 voi avatar + fix badge)
+            if (commands.count("listadmin")) {
+                commands["listadmin"]({}, uid, tid, tt, false);
+            } else {
+                reply_text("❌ Lệnh /listadmin chưa đăng ký", tid, tt);
+            }
             return;
         }
+
         if (sub == "add") {
-            bool is_super = false; std::string t;
-            if (args.size() >= 4 && (args[2] == "sp" || args[2] == "super")) {
-                is_super = true; t = args[3];
-            } else if (args.size() >= 3) { t = args[2]; }
-            else { reply_text("❌ setad add [sp] <@user>", tid, tt); return; }
-            bool ok = !t.empty() && std::all_of(t.begin(), t.end(), ::isdigit);
-            if (!ok) { reply_text("❌ UID sai", tid, tt); return; }
+            bool is_super = false;
+            size_t idx = 1;
+            if (idx < toks.size()) {
+                std::string tk = toks[idx];
+                std::transform(tk.begin(), tk.end(), tk.begin(), ::tolower);
+                if (tk == "sp" || tk == "super") { is_super = true; idx++; }
+            }
+            if (idx >= toks.size()) { reply_text("\u274C setad add [sp] <@user>", tid, tt); return; }
+            std::string t = extract_uid(toks[idx]);
+            if (t.empty()) {
+                reply_text("\u274C UID sai. D\u00F9ng @mention ho\u1EB7c UID s\u1ED1.", tid, tt);
+                return;
+            }
             Role cur = perm.get_user_role(t);
-            Role nr = is_super ? Role::SUPER_ADMIN : Role::BOT_ADMIN;
-            if (cur == Role::HOST) { reply_text("❌ Không thể đổi HOST", tid, tt); return; }
-            if (cur == nr) { reply_text("ℹ️ " + format_user(t) + " đã có quyền này", tid, tt); return; }
+            Role nr  = is_super ? Role::SUPER_ADMIN : Role::BOT_ADMIN;
+            if (cur == Role::HOST) { reply_text("\u274C Kh\u00F4ng th\u1EC3 \u0111\u1ED5i HOST", tid, tt); return; }
+            if (cur == nr) { reply_text("\u2139\uFE0F " + format_user(t) + " \u0111\u00E3 c\u00F3 quy\u1EC1n n\u00E0y", tid, tt); return; }
             perm.set_user_role(t, nr);
             std::string disp = format_user(t);
             if (!disp.empty() && disp != t) perm.set_user_name(t, disp);
-            reply_text("👑 Đã thêm " + disp + " làm " + (is_super ? "SUPER ADMIN" : "ADMIN"), tid, tt);
+            reply_text("\U0001F451 \u0110\u00E3 th\u00EAm " + disp + " l\u00E0m " + (is_super ? "SUPER ADMIN" : "ADMIN"), tid, tt);
+            return;
         }
-        else if (sub == "remove") {
-            if (args.size() < 3) { reply_text("❌ setad remove <@user>", tid, tt); return; }
-            std::string t = args[2];
-            bool ok = !t.empty() && std::all_of(t.begin(), t.end(), ::isdigit);
-            if (!ok) { reply_text("❌ UID sai", tid, tt); return; }
-            if (perm.remove_admin(t)) reply_text("✅ Đã xóa admin " + format_user(t), tid, tt);
-            else reply_text("❌ Không xóa được", tid, tt);
+
+        if (sub == "remove") {
+            if (toks.size() < 2) { reply_text("\u274C setad remove <@user>", tid, tt); return; }
+            std::string t = extract_uid(toks[1]);
+            if (t.empty()) { reply_text("\u274C UID sai", tid, tt); return; }
+            if (perm.remove_admin(t)) reply_text("\u2705 \u0110\u00E3 x\u00F3a admin " + format_user(t), tid, tt);
+            else                     reply_text("\u274C Kh\u00F4ng x\u00F3a \u0111\u01B0\u1EE3c", tid, tt);
+            return;
         }
-        else reply_text("❌ Sub: add/remove/list", tid, tt);
+
+        reply_text("\u274C Sub: add/remove/list", tid, tt);
     };
     commands["setadd"] = commands["setad"];
     commands["setadmin"] = commands["setad"];
@@ -2015,7 +2828,7 @@ std::string cap;
             reply_text("❌ Cần đăng nhập trước", tid, tt);
             return;
         }
-        std::string err = econ.claim_daily(uid, 10000);
+        std::string err = econ.claim_daily(uid, 1000000);
         if (err.empty()) {
             reply_text("🎁 Điểm danh thành công! +10,000", tid, tt);
         } else {
@@ -2479,7 +3292,13 @@ void CommandHandler::handle_message(const std::string& user_id, const std::strin
                                     int thread_type, const std::string& message,
                                     const std::string& sender_name,
                                     bool is_self, const QuoteInfo& quote) {
+    try {
+    current_sender_id_.clear();
+    current_msg_text_.clear();
+    current_sender_name_.clear();
+    current_quote_ = QuoteInfo{};
     current_sender_id_ = user_id;
+    current_msg_text_ = message;
     current_sender_name_ = sender_name;
     current_quote_ = quote;
     if (!user_id.empty() && !sender_name.empty()) {
@@ -2546,7 +3365,7 @@ void CommandHandler::handle_message(const std::string& user_id, const std::strin
     for (const auto& a : clean_args) args.push_back(a);
 
     std::string cmd = cmd_token.substr(prefix.length());
-    std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
+    std::transform(cmd.begin(), cmd.end(), cmd.begin(), [](unsigned char ch){ return std::tolower(ch); });
     std::cout << "[hmsg] cmd=" << cmd << " tt=" << thread_type << " tid=" << thread_id
               << " bot=" << (get_bot_for_thread(thread_id) ? 1 : 0)
               << " game=" << (get_game_for_thread(thread_id) ? 1 : 0) << "\n";
@@ -2596,6 +3415,84 @@ void CommandHandler::handle_message(const std::string& user_id, const std::strin
         }
     }
 
+        // XỬ LÝ MINI-GAME (Bắt tin nhắn chat nếu đang có game)
+    if (g_mini_games.count(thread_id)) {
+        auto& g = g_mini_games[thread_id];
+        std::string text = message;
+        std::transform(text.begin(), text.end(), text.begin(), ::tolower);
+        
+        if (g.type == "guessNumber") {
+            try {
+                int guess = std::stoi(text);
+                if (guess < g.range_min || guess > g.range_max) {
+                    reply_text("\u274C S\u1ED1 ph\u1EA3i trong kho\u1EA3ng " + std::to_string(g.range_min) + " \u2192 " + std::to_string(g.range_max), thread_id, thread_type);
+                    return;
+                }
+                g.attempts++;
+                int remain = g.maxAttempts - g.attempts;
+                if (guess == g.targetNumber) {
+                    reply_text("\U0001F389 Ch\u00FAc m\u1EEBng! \u0110\u00FAng r\u1ED3i! S\u1ED1 l\u00E0 " + std::to_string(g.targetNumber) + ".\nB\u1EA1n \u0111o\u00E1n sau " + std::to_string(g.attempts) + " l\u01B0\u1EE3t.", thread_id, thread_type);
+                    g_mini_games.erase(thread_id);
+                    return;
+                }
+                if (g.attempts >= g.maxAttempts) {
+                    reply_text("\U0001F480 H\u1EBFt l\u01B0\u1EE3t! S\u1ED1 c\u1EA7n \u0111o\u00E1n l\u00E0 " + std::to_string(g.targetNumber) + ".\nG\u00F5 /doanso <min> <max> \u0111\u1EC3 ch\u01A1i l\u1EA1i.", thread_id, thread_type);
+                    g_mini_games.erase(thread_id);
+                    return;
+                }
+                std::string hint = (guess < g.targetNumber) ? "\U0001F4C8 Cao h\u01A1n" : "\U0001F4C9 Th\u1EA5p h\u01A1n";
+                reply_text(hint + " (c\u00F2n " + std::to_string(remain) + " l\u01B0\u1EE3t)", thread_id, thread_type);
+                return;
+            } catch (...) {}
+        }
+        else if (g.type == "wordGuess") {
+            g.attempts++;
+            if (text == g.targetWord) {
+                reply_text("Chúc mừng! Bạn đã đoán đúng từ \"" + g.targetWord + "\" sau " + std::to_string(g.attempts) + " lần thử.", thread_id, thread_type);
+                g_mini_games.erase(thread_id);
+            } else {
+                reply_text("Đoán sai rồi! Hãy thử lại.", thread_id, thread_type);
+            }
+            if (g.attempts >= 10 && g_mini_games.count(thread_id)) {
+                reply_text("Trò chơi kết thúc! Từ cần đoán là \"" + g.targetWord + "\".", thread_id, thread_type);
+                g_mini_games.erase(thread_id);
+            }
+            return;
+        }
+        else if (g.type == "wordChain") {
+            std::string clean = "";
+            for(char c : text) if (std::isalnum((unsigned char)c) || c == ' ') clean += c;
+            
+            std::vector<std::string> words;
+            std::istringstream iss(clean); std::string w;
+            while(iss >> w) words.push_back(w);
+            
+            if (words.size() > 2) {
+                reply_text("Bạn đã thua! Cụm từ vượt quá 2 từ cho phép.", thread_id, thread_type);
+                g_mini_games.erase(thread_id); return;
+            }
+            if (!words.empty()) {
+                if (g.lastPhrase != "") {
+                    std::vector<std::string> lastWords;
+                    std::istringstream iss2(g.lastPhrase); std::string w2;
+                    while(iss2 >> w2) lastWords.push_back(w2);
+                    char lastChar = lastWords.back().back();
+                    char firstChar = words[0].front();
+                    if (std::tolower(firstChar) != std::tolower(lastChar)) {
+                        reply_text("Cụm từ không hợp lệ! Phải bắt đầu bằng \"" + std::string(1, lastChar) + "\".", thread_id, thread_type);
+                        return;
+                    }
+                }
+                g.lastPhrase = clean;
+                char lastChar = clean.back();
+                std::string botWord = std::string(1, lastChar) + "u";
+                g.lastPhrase = botWord;
+                reply_text("Bot: " + botWord + "\nCụm từ tiếp theo phải bắt đầu bằng \"" + std::string(1, botWord.back()) + "\".", thread_id, thread_type);
+                return;
+            }
+        }
+    }
+
     auto it = commands.find(cmd);
     if (it != commands.end()) {
         it->second(args, user_id, thread_id, thread_type, is_self);
@@ -2608,9 +3505,29 @@ void CommandHandler::handle_message(const std::string& user_id, const std::strin
             cmd == "nerf" || cmd == "daily") {
             g_econ_dirty = true;
         }
+    } else {
+        // Gợi ý lệnh (Did you mean)
+        std::string best_match = "";
+        int min_dist = 3;
+        for (auto& p : commands) {
+            if (p.first.length() < 3) continue;
+            int dist = levenshtein(cmd, p.first);
+            if (dist < min_dist && dist < (int)cmd.length()) {
+                min_dist = dist;
+                best_match = p.first;
+            }
+        }
+        if (!best_match.empty()) {
+            reply_text("❌ Lệnh không hợp lệ.\n👉 Có phải ý bạn là: /" + best_match + "?", thread_id, thread_type);
+        } else {
+            reply_text("❌ Lệnh không hợp lệ. Gõ /command để xem danh sách.", thread_id, thread_type);
+        }
+    }    } catch (const std::exception& e) {
+        std::cerr << "[CRITICAL] Crash in handle_message: " << e.what() << "\n";
+    } catch (...) {
+        std::cerr << "[CRITICAL] Unknown crash in handle_message\n";
     }
 }
-
 // ============================================================
 // Tick taixiu - goi tu main loop moi 1s
 // ============================================================
@@ -2750,10 +3667,7 @@ void CommandHandler::end_taixiu_session(const std::string& thread_id) {
         std::cout << "[TX] Undo last waiting msg=" << sess.waiting_msg_id << "\n";
     }
 
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> dd(1, 6);
-    int d1 = dd(gen), d2 = dd(gen), d3 = dd(gen);
+    int d1 = myRandom::Dice(), d2 = myRandom::Dice(), d3 = myRandom::Dice();
     int total = d1 + d2 + d3;
     std::string result = (total > 10) ? "tai" : "xiu";
 
@@ -2813,4 +3727,132 @@ void CommandHandler::end_taixiu_session(const std::string& thread_id) {
 
 
 
+
+
+void CommandHandler::handle_game_chat(const std::string& thread_id, int thread_type, const std::string& text, const std::string& sender_uid, const std::string& sender_name) {
+    current_sender_id_.clear();
+    current_msg_text_.clear();
+    current_sender_name_.clear();
+    current_quote_ = QuoteInfo{};
+    // FIX TAG NHAM: set state de reply_text mention dung nguoi gui
+    current_sender_id_   = sender_uid;
+    current_sender_name_ = sender_name;
+    current_msg_text_    = text;
+    // ===== WordChain hook (auto-capture, khong check own_id de test duoc tu bot account) =====
+    {
+        auto& wc = getWordChain();
+        const bool isCmd       = !text.empty() && (text[0] == '/' || text[0] == '!');
+        const bool hasNewline  = text.find('\n') != std::string::npos;
+        const bool emptyText   = text.empty();
+
+        std::cerr << "[WC-DEBUG] tid=" << thread_id
+                  << " uid=" << sender_uid
+                  << " own=" << api.get_own_id()
+                  << " loaded=" << wc.isLoaded()
+                  << " active=" << wc.hasActiveGame(thread_id)
+                  << " isCmd=" << isCmd
+                  << " hasNL=" << hasNewline
+                  << " textlen=" << text.size()
+                  << " text=[" << text.substr(0, 40) << "]"
+                  << std::endl;
+
+        if (wc.isLoaded() && wc.hasActiveGame(thread_id)
+            && !isCmd && !hasNewline && !emptyText)
+        {
+            PlayOutcome o = wc.playWord(thread_id, sender_uid, text);
+            std::cerr << "[WC-DEBUG] playWord result=" << (int)o.result
+                      << " err=[" << o.error_msg << "]" << std::endl;
+
+            if (o.result == PlayResult::OK || o.result == PlayResult::WIN) {
+                reply_text(o.bot_reply, thread_id, thread_type);
+                return;
+            } else if (o.result == PlayResult::WORD_NOT_TWO_SYLLABLES) {
+                // chat thuong -> bo qua
+            } else {
+                reply_text("\u274C " + o.error_msg, thread_id, thread_type);
+                return;
+            }
+        }
+    }
+    std::cout << "[GameChat] Nhan duoc text: " << text << "\n";
+    std::lock_guard<std::mutex> lk(g_taixiu_mtx);
+    if (!g_mini_games.count(thread_id)) {
+        std::cout << "[GameChat] Khong co game nao trong thread nay.\n";
+        return;
+    }
+    std::cout << "[GameChat] Tim thay game: " << g_mini_games[thread_id].type << "\n";
+    
+    auto& g = g_mini_games[thread_id];
+    std::string lower = text;
+    std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+
+        if (g.type == "guessNumber") {
+            try {
+                int guess = std::stoi(text);
+                if (guess < g.range_min || guess > g.range_max) {
+                    reply_text("\u274C S\u1ED1 ph\u1EA3i trong kho\u1EA3ng " + std::to_string(g.range_min) + " \u2192 " + std::to_string(g.range_max), thread_id, thread_type);
+                    return;
+                }
+                g.attempts++;
+                int remain = g.maxAttempts - g.attempts;
+                if (guess == g.targetNumber) {
+                    reply_text("\U0001F389 Ch\u00FAc m\u1EEBng! \u0110\u00FAng r\u1ED3i! S\u1ED1 l\u00E0 " + std::to_string(g.targetNumber) + ".\nB\u1EA1n \u0111o\u00E1n sau " + std::to_string(g.attempts) + " l\u01B0\u1EE3t.", thread_id, thread_type);
+                    g_mini_games.erase(thread_id);
+                    return;
+                }
+                if (g.attempts >= g.maxAttempts) {
+                    reply_text("\U0001F480 H\u1EBFt l\u01B0\u1EE3t! S\u1ED1 c\u1EA7n \u0111o\u00E1n l\u00E0 " + std::to_string(g.targetNumber) + ".\nG\u00F5 /doanso <min> <max> \u0111\u1EC3 ch\u01A1i l\u1EA1i.", thread_id, thread_type);
+                    g_mini_games.erase(thread_id);
+                    return;
+                }
+                std::string hint = (guess < g.targetNumber) ? "\U0001F4C8 Cao h\u01A1n" : "\U0001F4C9 Th\u1EA5p h\u01A1n";
+                reply_text(hint + " (c\u00F2n " + std::to_string(remain) + " l\u01B0\u1EE3t)", thread_id, thread_type);
+                return;
+            } catch (...) {}
+        }
+    else if (g.type == "wordGuess") {
+        g.attempts++;
+        if (lower == g.targetWord) {
+            reply_text("Chúc mừng! Bạn đã đoán đúng từ \"" + g.targetWord + "\" sau " + std::to_string(g.attempts) + " lần thử.", thread_id, thread_type);
+            g_mini_games.erase(thread_id);
+        } else {
+            reply_text("Đoán sai rồi! Hãy thử lại.", thread_id, thread_type);
+        }
+        if (g.attempts >= 10 && g_mini_games.count(thread_id)) {
+            reply_text("Trò chơi kết thúc! Từ cần đoán là \"" + g.targetWord + "\".", thread_id, thread_type);
+            g_mini_games.erase(thread_id);
+        }
+    }
+    else if (g.type == "wordChain") {
+        std::string clean = "";
+        for(char c : lower) if (std::isalnum((unsigned char)c) || c == ' ') clean += c;
+        
+        std::vector<std::string> words;
+        std::istringstream iss(clean); std::string w;
+        while(iss >> w) words.push_back(w);
+        
+        if (words.size() > 2) {
+            reply_text("Bạn đã thua! Cụm từ vượt quá 2 từ cho phép.", thread_id, thread_type);
+            g_mini_games.erase(thread_id); return;
+        }
+        if (!words.empty()) {
+            if (g.lastPhrase != "") {
+                std::vector<std::string> lastWords;
+                std::istringstream iss2(g.lastPhrase); std::string w2;
+                while(iss2 >> w2) lastWords.push_back(w2);
+                char lastChar = lastWords.back().back();
+                char firstChar = words[0].front();
+                if (std::tolower(firstChar) != std::tolower(lastChar)) {
+                    reply_text("Cụm từ không hợp lệ! Phải bắt đầu bằng \"" + std::string(1, lastChar) + "\".", thread_id, thread_type);
+                    return;
+                }
+            }
+            g.lastPhrase = clean;
+            char lastChar = clean.back();
+            std::string botWord = std::string(1, lastChar) + "u"; // Fake API nối từ
+            g.lastPhrase = botWord;
+            reply_text("Bot: " + botWord + "\nCụm từ tiếp theo phải bắt đầu bằng \"" + std::string(1, botWord.back()) + "\".", thread_id, thread_type);
+        }
+    }
+}
 

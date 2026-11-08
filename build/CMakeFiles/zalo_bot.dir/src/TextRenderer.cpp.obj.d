@@ -1,6 +1,6 @@
 CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.obj: \
- E:\zalo-bot-cpp\src\TextRenderer.cpp \
- E:/zalo-bot-cpp/include/TextRenderer.hpp \
+ E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\TextRenderer.cpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/TextRenderer.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/string \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/requires_hosted.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++config.h \
@@ -108,7 +108,7 @@ CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cstdint \
  E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdint.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdint.h \
- E:/zalo-bot-cpp/include/AssetManager.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/AssetManager.hpp \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/map \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_tree.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ext/aligned_buffer.h \
@@ -207,10 +207,10 @@ CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/numeric \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_numeric.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/pstl/glue_numeric_defs.h \
- E:/zalo-bot-cpp/lib/stb_image_write.h \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/stb_image_write.h \
  E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/stdarg.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/stdarg.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/_mingw_stdarg.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/math.h \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/assert.h \
- E:/zalo-bot-cpp/lib/stb_truetype.h
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/stb_truetype.h

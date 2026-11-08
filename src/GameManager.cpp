@@ -1,4 +1,5 @@
 #include "GameManager.hpp"
+#include "random.h"
 #include <sstream>
 #include <algorithm>
 #include <cctype>

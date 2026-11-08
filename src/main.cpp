@@ -304,6 +304,12 @@ int main() {
                                          (content_resolved.substr(0, 7) == "Prefix " ||
                                           content_resolved.substr(0, 7) == "prefix "));
 
+                if (!is_command && !is_prefix_change && type == 1) {
+                    // Chuyển tin nhắn cho game xử lý (đã bỏ điều kiện !is_self để dễ test)
+                    std::cout << "[main] Non-command message -> game chat: " << content_resolved << "\n";
+                    handler.handle_game_chat(thread_id, type, content_resolved, sender_id, sender_name);
+                }
+
                 if (is_command || is_prefix_change) {
                     std::string msg_id     = data.value("msgId", "");
                     std::string cli_msg_id = data.value("cliMsgId", "");

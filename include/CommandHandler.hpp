@@ -55,6 +55,7 @@ public:
     std::string get_bot_name() const { return bot_name_; }
 
     void tick_taixiu();
+    void handle_game_chat(const std::string& thread_id, int thread_type, const std::string& text, const std::string& sender_uid = "", const std::string& sender_name = "");
 
     void cache_user_name(const std::string& uid, const std::string& name);
     std::string format_user(const std::string& uid);
@@ -70,14 +71,15 @@ private:
     std::string prefix = "/";
     std::string bot_name_ = "Zalo Bot";
 
-    std::string current_sender_id_;
-    std::string current_sender_name_;
+    static thread_local std::string current_sender_id_;
+    static thread_local std::string current_msg_text_;
+    static thread_local std::string current_sender_name_;
 
     std::map<std::string, std::string> user_name_cache_;
 
     std::map<std::string, std::deque<CachedMessage>> thread_msgs_;
     mutable std::mutex msgs_mtx_;
-    QuoteInfo current_quote_;
+    static thread_local QuoteInfo current_quote_;
     mutable std::mutex cache_mtx_;
 
     using CommandFunc = std::function<void(const std::vector<std::string>&,

@@ -35,6 +35,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.obj.d"
   "CMakeFiles/zalo_bot.dir/src/Utils.cpp.obj"
   "CMakeFiles/zalo_bot.dir/src/Utils.cpp.obj.d"
+  "CMakeFiles/zalo_bot.dir/src/WordChain.cpp.obj"
+  "CMakeFiles/zalo_bot.dir/src/WordChain.cpp.obj.d"
   "CMakeFiles/zalo_bot.dir/src/ZaloApi.cpp.obj"
   "CMakeFiles/zalo_bot.dir/src/ZaloApi.cpp.obj.d"
   "CMakeFiles/zalo_bot.dir/src/ZaloBridge.cpp.obj"
