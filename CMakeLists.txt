@@ -32,6 +32,7 @@ set(SOURCES
     src/ZaloApi.cpp
     src/ZaloBridge.cpp
     src/CommandHandler.cpp
+    src/SafeMemory.cpp
     src/PermissionManager.cpp
     src/EconomyManager.cpp
     src/GameManager.cpp

@@ -142,7 +142,7 @@ bool GroupManager::contains_bad_words(const std::string& message) {
 std::string GroupManager::find_bad_word(const std::string& message) {
     std::string lower_msg = message;
     std::transform(lower_msg.begin(), lower_msg.end(), lower_msg.begin(),
-                   [](unsigned char c) { return (char)std::tolower(c); });
+                   [](unsigned char c) { return (char)std::tolower(static_cast<unsigned char>(c)); });
 
     auto is_sep = [](unsigned char c) {
         return c == ' ' || c == '\t' || c == '\n' || c == '\r' ||

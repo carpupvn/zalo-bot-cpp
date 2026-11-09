@@ -767,4 +767,5 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/stb_truetype.h \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/NongTraiRender.inc \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ShopRender.inc \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/BauCuaKbbRender.inc
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/BauCuaKbbRender.inc \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/SafeMemory.hpp

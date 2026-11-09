@@ -33,6 +33,17 @@ struct QuoteInfo {
 
 class CommandHandler {
 public:
+    struct Context {
+        std::string sender_id;
+        std::string sender_name;
+        std::string msg_text;
+        QuoteInfo quote;
+    };
+    static Context& ctx();
+public:
+public:
+    public:
+    public:
     CommandHandler(ZaloApi& api, PermissionManager& perm, EconomyManager& econ,
                    GameManager& game, GroupManager& group, AccountManager& account);
 
@@ -71,15 +82,15 @@ private:
     std::string prefix = "/";
     std::string bot_name_ = "Zalo Bot";
 
-    static thread_local std::string current_sender_id_;
-    static thread_local std::string current_msg_text_;
-    static thread_local std::string current_sender_name_;
+    
+    
+    
 
     std::map<std::string, std::string> user_name_cache_;
 
     std::map<std::string, std::deque<CachedMessage>> thread_msgs_;
     mutable std::mutex msgs_mtx_;
-    static thread_local QuoteInfo current_quote_;
+    
     mutable std::mutex cache_mtx_;
 
     using CommandFunc = std::function<void(const std::vector<std::string>&,

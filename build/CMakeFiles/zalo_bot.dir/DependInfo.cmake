@@ -23,6 +23,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/NongTraiManager.cpp" "CMakeFiles/zalo_bot.dir/src/NongTraiManager.cpp.obj" "gcc" "CMakeFiles/zalo_bot.dir/src/NongTraiManager.cpp.obj.d"
   "E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/PermissionManager.cpp" "CMakeFiles/zalo_bot.dir/src/PermissionManager.cpp.obj" "gcc" "CMakeFiles/zalo_bot.dir/src/PermissionManager.cpp.obj.d"
   "E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/RuntimeState.cpp" "CMakeFiles/zalo_bot.dir/src/RuntimeState.cpp.obj" "gcc" "CMakeFiles/zalo_bot.dir/src/RuntimeState.cpp.obj.d"
+  "E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/SafeMemory.cpp" "CMakeFiles/zalo_bot.dir/src/SafeMemory.cpp.obj" "gcc" "CMakeFiles/zalo_bot.dir/src/SafeMemory.cpp.obj.d"
   "E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/Shape.cpp" "CMakeFiles/zalo_bot.dir/src/Shape.cpp.obj" "gcc" "CMakeFiles/zalo_bot.dir/src/Shape.cpp.obj.d"
   "E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/TextRenderer.cpp" "CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.obj" "gcc" "CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.obj.d"
   "E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/Utils.cpp" "CMakeFiles/zalo_bot.dir/src/Utils.cpp.obj" "gcc" "CMakeFiles/zalo_bot.dir/src/Utils.cpp.obj.d"

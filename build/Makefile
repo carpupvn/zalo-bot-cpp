@@ -488,6 +488,30 @@ src/RuntimeState.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\zalo_bot.dir\build.make CMakeFiles/zalo_bot.dir/src/RuntimeState.cpp.s
 .PHONY : src/RuntimeState.cpp.s
 
+src/SafeMemory.obj: src/SafeMemory.cpp.obj
+.PHONY : src/SafeMemory.obj
+
+# target to build an object file
+src/SafeMemory.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\zalo_bot.dir\build.make CMakeFiles/zalo_bot.dir/src/SafeMemory.cpp.obj
+.PHONY : src/SafeMemory.cpp.obj
+
+src/SafeMemory.i: src/SafeMemory.cpp.i
+.PHONY : src/SafeMemory.i
+
+# target to preprocess a source file
+src/SafeMemory.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\zalo_bot.dir\build.make CMakeFiles/zalo_bot.dir/src/SafeMemory.cpp.i
+.PHONY : src/SafeMemory.cpp.i
+
+src/SafeMemory.s: src/SafeMemory.cpp.s
+.PHONY : src/SafeMemory.s
+
+# target to generate assembly for a file
+src/SafeMemory.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\zalo_bot.dir\build.make CMakeFiles/zalo_bot.dir/src/SafeMemory.cpp.s
+.PHONY : src/SafeMemory.cpp.s
+
 src/Shape.obj: src/Shape.cpp.obj
 .PHONY : src/Shape.obj
 
@@ -710,6 +734,9 @@ help:
 	@echo ... src/RuntimeState.obj
 	@echo ... src/RuntimeState.i
 	@echo ... src/RuntimeState.s
+	@echo ... src/SafeMemory.obj
+	@echo ... src/SafeMemory.i
+	@echo ... src/SafeMemory.s
 	@echo ... src/Shape.obj
 	@echo ... src/Shape.i
 	@echo ... src/Shape.s

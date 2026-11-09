@@ -29,6 +29,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/zalo_bot.dir/src/PermissionManager.cpp.obj.d"
   "CMakeFiles/zalo_bot.dir/src/RuntimeState.cpp.obj"
   "CMakeFiles/zalo_bot.dir/src/RuntimeState.cpp.obj.d"
+  "CMakeFiles/zalo_bot.dir/src/SafeMemory.cpp.obj"
+  "CMakeFiles/zalo_bot.dir/src/SafeMemory.cpp.obj.d"
   "CMakeFiles/zalo_bot.dir/src/Shape.cpp.obj"
   "CMakeFiles/zalo_bot.dir/src/Shape.cpp.obj.d"
   "CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.obj"

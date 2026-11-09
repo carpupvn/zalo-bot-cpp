@@ -31,6 +31,7 @@ NongTraiManager* g_farm_mgr = nullptr;
 #include <random>
 #include <ctime>
 #include "json.hpp"
+#include "SafeMemory.hpp"
 #include <sstream>
 #include <algorithm>
 #include <iostream>
@@ -53,6 +54,21 @@ namespace {
     }
 }
 using json = nlohmann::json;
+
+// Thread-local context: moi thread co 1 con tro toi entry rieng trong map.
+// Con tro la POD -> khong co destructor -> KHONG bi bug MinGW thread_local std::string.
+static std::unordered_map<std::thread::id, CommandHandler::Context> g_ctx_map;
+static std::mutex g_ctx_map_mtx;
+
+CommandHandler::Context& CommandHandler::ctx() {
+    thread_local CommandHandler::Context* local = nullptr;
+    if (!local) {
+        std::lock_guard<std::mutex> lk(g_ctx_map_mtx);
+        local = &g_ctx_map[std::this_thread::get_id()];
+    }
+    return *local;
+}
+
 // Hàm cắt chuỗi an toàn, không cắt giữa các ký tự UTF-8 (như emoji)
 static std::string safe_utf8_truncate(const std::string& str, size_t max_bytes) {
     if (str.length() <= max_bytes) return str;
@@ -64,10 +80,10 @@ static std::string safe_utf8_truncate(const std::string& str, size_t max_bytes) 
     return str.substr(0, len);
 }
 
-thread_local std::string CommandHandler::current_sender_id_;
-thread_local std::string CommandHandler::current_msg_text_;
-thread_local std::string CommandHandler::current_sender_name_;
-thread_local QuoteInfo CommandHandler::current_quote_;
+
+
+
+
 
 // ============================================================
 // Port từ bot JS (help.js) — render ảnh help
@@ -85,7 +101,7 @@ static int roll_dice_mt(int sides) {
 
 static cpp_int parse_money(const std::string& s_in, cpp_int max_val = -1) {
     std::string s = s_in;
-    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char ch){ return std::tolower(ch); });
+    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
     
     std::string num_part = "";
     std::string suffix_part = "";
@@ -605,18 +621,18 @@ std::vector<std::string> CommandHandler::parse_command(const std::string& messag
 
 void CommandHandler::reply_text(const std::string& msg, const std::string& thread_id,
                                 int thread_type) {
-    std::string sender = current_sender_name_.empty() ? "bạn" : current_sender_name_;
+    std::string sender = ctx().sender_name.empty() ? "bạn" : ctx().sender_name;
     std::string header = "[Bot " + bot_name_ + " TRẢ LỜI]\n";
     std::string full = header + msg;
-    bool is_self_chat = (thread_id == current_sender_id_);
+    bool is_self_chat = (thread_id == ctx().sender_id);
     bool can_mention = (thread_type == 1)
-                    && !current_sender_id_.empty()
-                    && !current_sender_name_.empty()
+                    && !ctx().sender_id.empty()
+                    && !ctx().sender_name.empty()
                     && !is_self_chat;
     if (can_mention) {
         std::string mt = "@" + sender;
         api.send_message_with_mention_async(mt + " " + full, thread_id, thread_type,
-                                             current_sender_id_, 0, (int)mt.size());
+                                             ctx().sender_id, 0, (int)mt.size());
     } else {
         api.send_message_async(full, thread_id, thread_type);
     }
@@ -687,7 +703,7 @@ void CommandHandler::register_commands() {
         (void)is_self;
         if (!g_farm_mgr) { reply_text("Nong trai chua san sang.", tid, tt); return; }
         std::string sub = (args.size() > 1) ? args[1] : "help";
-        std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch){ return std::tolower(ch); });
+        std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
 
         auto join_args = [&](int from) -> std::string {
             std::string s;
@@ -749,7 +765,7 @@ void CommandHandler::register_commands() {
             int qty = 1;
             if (args.size() > 3) {
                 std::string a = args[3];
-                std::transform(a.begin(), a.end(), a.begin(), [](unsigned char ch){ return std::tolower(ch); });
+                std::transform(a.begin(), a.end(), a.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
                 qty = (a == "all") ? -1 : std::atoi(a.c_str());
             }
             out = g_farm_mgr->cmd_sell(uid, args[2], qty);
@@ -1105,7 +1121,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
 
     commands["command"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
         std::string sub = (args.size() > 1) ? args[1] : "";
-        std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch){ return std::tolower(ch); });
+        std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
         if (sub == "admin") {
             if (!perm.is_admin(uid)) { reply_text("❌ Chỉ admin mới xem được lệnh này.", tid, tt); return; }
             std::string msg = "🛠️ LỆNH ADMIN:\n/bot, /game, /debug, /setad, /listadmin, /setprefix\n/setmoney, /sethu, /buff, /nerf, /txend, /undo, /boost";
@@ -1452,7 +1468,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
     };
     commands["command"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
         std::string sub = (args.size() > 1) ? args[1] : "";
-        std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch){ return std::tolower(ch); });
+        std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
         if (sub == "admin") {
             if (!perm.is_admin(uid)) { reply_text("❌ Chỉ admin mới xem được lệnh này.", tid, tt); return; }
             std::string msg = "🛠️ LỆNH ADMIN:\n/bot, /game, /debug, /setad, /listadmin, /setprefix\n/setmoney, /sethu, /buff, /nerf, /txend, /undo, /boost";
@@ -1479,7 +1495,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
             return;
         }
 
-        std::string raw = current_msg_text_;
+        std::string raw = ctx().msg_text;
         size_t sp = raw.find_first_of(" \t\n");
         std::string rest = (sp == std::string::npos) ? "" : raw.substr(sp + 1);
         size_t b = rest.find_first_not_of(" \t\r\n");
@@ -1724,8 +1740,8 @@ commands["signup"] = [this](const auto& args, const auto& uid,
             reply_text("\u274C Ch\u1EC9 admin bot d\u00F9ng \u0111\u01B0\u1EE3c", tid, tt);
             return;
         }
-        if (current_quote_.has_quote) {
-            const auto& q = current_quote_;
+        if (ctx().quote.has_quote) {
+            const auto& q = ctx().quote;
             bool is_bot_msg = (q.uid_from == api.get_own_id());
             bool ok = false;
             if (is_bot_msg) {
@@ -1837,7 +1853,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         
         cpp_int a = 0;
         std::string arg1 = args[1];
-        std::transform(arg1.begin(), arg1.end(), arg1.begin(), [](unsigned char ch){ return std::tolower(ch); });
+        std::transform(arg1.begin(), arg1.end(), arg1.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
         
         if (arg1 == "all") {
             a = current_debt;
@@ -1875,7 +1891,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
             return;
         }
         std::string choice = args[1];
-        std::transform(choice.begin(), choice.end(), choice.begin(), [](unsigned char ch){ return std::tolower(ch); });
+        std::transform(choice.begin(), choice.end(), choice.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
         if (choice == "c" || choice == "chan") choice = "chan";
         if (choice == "l" || choice == "le") choice = "le";
         if (choice != "chan" && choice != "le") {
@@ -1977,7 +1993,7 @@ std::string cap;
         }
         if (args.size() < 3) { reply_text("C\u00FA ph\u00E1p: /taixiu <t\u00E0i|x\u1EC9u> <c\u01B0\u1EE3c>", tid, tt); return; }
         std::string choice = args[1];
-        std::transform(choice.begin(), choice.end(), choice.begin(), [](unsigned char ch){ return std::tolower(ch); });
+        std::transform(choice.begin(), choice.end(), choice.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
         if (choice == "t" || choice == "tai") choice = "tai";
         if (choice == "x" || choice == "xiu") choice = "xiu";
         if (choice != "tai" && choice != "xiu") { reply_text("Ch\u1ECDn t\u00E0i ho\u1EB7c x\u1EC9u", tid, tt); return; }
@@ -2043,7 +2059,7 @@ std::string cap;
             std::istringstream iss(part);
             std::string con; cpp_int amount;
             if (iss >> con >> part) { // Tạm dùng part để lấy số tiền
-                std::transform(con.begin(), con.end(), con.begin(), [](unsigned char ch){ return std::tolower(ch); });
+                std::transform(con.begin(), con.end(), con.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
                 if (nameMap.find(con) == nameMap.end()) { reply_text("❌ Con vật không hợp lệ: " + con, tid, tt); return; }
                 amount = parse_money(part);
                 if (amount <= 0) { reply_text("❌ Số tiền không hợp lệ", tid, tt); return; }
@@ -2135,7 +2151,7 @@ std::string cap;
         if (args.size() < 3) { reply_text("❌ Cú pháp: kbb <keo/bua/bao> <tiền>", tid, tt); return; }
         
         std::string choice = args[1];
-        std::transform(choice.begin(), choice.end(), choice.begin(), [](unsigned char ch){ return std::tolower(ch); });
+        std::transform(choice.begin(), choice.end(), choice.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
         int p_choice = -1;
         if (choice == "keo" || choice == "kéo") p_choice = 0;
         else if (choice == "bua" || choice == "búa") p_choice = 1;
@@ -2293,7 +2309,7 @@ std::string cap;
             q.push_back(now);
         }
 
-        std::string raw = current_msg_text_;
+        std::string raw = ctx().msg_text;
         size_t nl = raw.find('\n');
         std::string code;
         std::vector<std::string> pyArgs;
@@ -2618,7 +2634,7 @@ std::string cap;
             std::string role_clean;
             for (char ch : tag) {
                 if (ch != '[' && ch != ']' && ch != ' ' && ch != '_' && ch != '\t' && ch != '\r' && ch != '\n') {
-                    role_clean += (char)::tolower((unsigned char)ch);
+                    role_clean += (char)std::tolower(static_cast<unsigned char>(ch));
                 }
             }
             bool is_bot = (role_clean == "botadmin" || role_clean == "admin");
@@ -2742,8 +2758,8 @@ std::string cap;
         (void)args;
         if (!perm.is_super_admin(uid)) { reply_text("\u274C Ch\u1EC9 SUPER ADMIN!", tid, tt); return; }
 
-        // Parse truc tiep tu current_msg_text_ de tranh args[] khong dong nhat
-        std::string raw = current_msg_text_;
+        // Parse truc tiep tu ctx().msg_text de tranh args[] khong dong nhat
+        std::string raw = ctx().msg_text;
         if (!raw.empty() && (raw[0] == '/' || raw[0] == '!')) raw = raw.substr(1);
         size_t sp = raw.find_first_of(" \t\r\n");
         std::string rest = (sp == std::string::npos) ? "" : raw.substr(sp + 1);
@@ -2774,7 +2790,7 @@ std::string cap;
 
         if (toks.empty()) { reply_text("\U0001F4D6 setad add/remove/list", tid, tt); return; }
         std::string sub = toks[0];
-        std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch){ return std::tolower(ch); });
+        std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
 
         if (sub == "list") {
             // Forward sang listadmin (render anh 1 voi avatar + fix badge)
@@ -2791,7 +2807,7 @@ std::string cap;
             size_t idx = 1;
             if (idx < toks.size()) {
                 std::string tk = toks[idx];
-                std::transform(tk.begin(), tk.end(), tk.begin(), [](unsigned char ch){ return std::tolower(ch); });
+                std::transform(tk.begin(), tk.end(), tk.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
                 if (tk == "sp" || tk == "super") { is_super = true; idx++; }
             }
             if (idx >= toks.size()) { reply_text("\u274C setad add [sp] <@user>", tid, tt); return; }
@@ -2993,7 +3009,7 @@ std::string cap;
         bool show_status = (args.size() < 2);
         if (args.size() == 2) {
             std::string s2 = args[1];
-            std::transform(s2.begin(), s2.end(), s2.begin(), [](unsigned char ch){ return std::tolower(ch); });
+            std::transform(s2.begin(), s2.end(), s2.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
             if (s2 == "status" || s2 == "info" || s2 == "help" || s2 == "xem") {
                 show_status = true;
             }
@@ -3015,7 +3031,7 @@ std::string cap;
         }
 
         std::string sub = args[1];
-        std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch){ return std::tolower(ch); });
+        std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
 
         if (sub == "on" || sub == "off" || sub == "reset") {
             bool en = (sub == "on");
@@ -3039,7 +3055,7 @@ std::string cap;
         }
 
         std::string val = args[2];
-        std::transform(val.begin(), val.end(), val.begin(), [](unsigned char ch){ return std::tolower(ch); });
+        std::transform(val.begin(), val.end(), val.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
         bool en = (val == "on");
 
         if (sub == "spam") {
@@ -3303,15 +3319,20 @@ void CommandHandler::handle_message(const std::string& user_id, const std::strin
                                     int thread_type, const std::string& message,
                                     const std::string& sender_name,
                                     bool is_self, const QuoteInfo& quote) {
+    ctx().sender_id.clear();
+    ctx().msg_text.clear();
+    ctx().sender_name.clear();
+    ctx().quote = QuoteInfo{};
+
     try {
-    current_sender_id_.clear();
-    current_msg_text_.clear();
-    current_sender_name_.clear();
-    current_quote_ = QuoteInfo{};
-    current_sender_id_ = user_id;
-    current_msg_text_ = message;
-    current_sender_name_ = sender_name;
-    current_quote_ = quote;
+    ctx().sender_id.clear();
+    ctx().msg_text.clear();
+    ctx().sender_name.clear();
+    ctx().quote = QuoteInfo{};
+    ctx().sender_id = user_id;
+    ctx().msg_text = message;
+    ctx().sender_name = sender_name;
+    ctx().quote = quote;
     if (!user_id.empty() && !sender_name.empty()) {
         perm.set_user_name(user_id, sender_name);
         cache_user_name(user_id, sender_name);
@@ -3376,7 +3397,7 @@ void CommandHandler::handle_message(const std::string& user_id, const std::strin
     for (const auto& a : clean_args) args.push_back(a);
 
     std::string cmd = cmd_token.substr(prefix.length());
-    std::transform(cmd.begin(), cmd.end(), cmd.begin(), [](unsigned char ch){ return std::tolower(ch); });
+    std::transform(cmd.begin(), cmd.end(), cmd.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
     std::cout << "[hmsg] cmd=" << cmd << " tt=" << thread_type << " tid=" << thread_id
               << " bot=" << (get_bot_for_thread(thread_id) ? 1 : 0)
               << " game=" << (get_game_for_thread(thread_id) ? 1 : 0) << "\n";
@@ -3430,7 +3451,7 @@ void CommandHandler::handle_message(const std::string& user_id, const std::strin
     if (g_mini_games.count(thread_id)) {
         auto& g = g_mini_games[thread_id];
         std::string text = message;
-        std::transform(text.begin(), text.end(), text.begin(), [](unsigned char ch){ return std::tolower(ch); });
+        std::transform(text.begin(), text.end(), text.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
         
         if (g.type == "guessNumber") {
             try {
@@ -3489,7 +3510,7 @@ void CommandHandler::handle_message(const std::string& user_id, const std::strin
                     while(iss2 >> w2) lastWords.push_back(w2);
                     char lastChar = lastWords.back().back();
                     char firstChar = words[0].front();
-                    if (std::tolower(firstChar) != std::tolower(lastChar)) {
+                    if (std::tolower(static_cast<unsigned char>(firstChar)) != std::tolower(static_cast<unsigned char>(lastChar))) {
                         reply_text("Cụm từ không hợp lệ! Phải bắt đầu bằng \"" + std::string(1, lastChar) + "\".", thread_id, thread_type);
                         return;
                     }
@@ -3741,14 +3762,19 @@ void CommandHandler::end_taixiu_session(const std::string& thread_id) {
 
 
 void CommandHandler::handle_game_chat(const std::string& thread_id, int thread_type, const std::string& text, const std::string& sender_uid, const std::string& sender_name) {
-    current_sender_id_.clear();
-    current_msg_text_.clear();
-    current_sender_name_.clear();
-    current_quote_ = QuoteInfo{};
+    ctx().sender_id.clear();
+    ctx().msg_text.clear();
+    ctx().sender_name.clear();
+    ctx().quote = QuoteInfo{};
+
+    ctx().sender_id.clear();
+    ctx().msg_text.clear();
+    ctx().sender_name.clear();
+    ctx().quote = QuoteInfo{};
     // FIX TAG NHAM: set state de reply_text mention dung nguoi gui
-    current_sender_id_   = sender_uid;
-    current_sender_name_ = sender_name;
-    current_msg_text_    = text;
+    ctx().sender_id   = sender_uid;
+    ctx().sender_name = sender_name;
+    ctx().msg_text    = text;
     // ===== WordChain hook (auto-capture, khong check own_id de test duoc tu bot account) =====
     {
         auto& wc = getWordChain();
@@ -3795,7 +3821,7 @@ void CommandHandler::handle_game_chat(const std::string& thread_id, int thread_t
     
     auto& g = g_mini_games[thread_id];
     std::string lower = text;
-    std::transform(lower.begin(), lower.end(), lower.begin(), [](unsigned char ch){ return std::tolower(ch); });
+    std::transform(lower.begin(), lower.end(), lower.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
 
         if (g.type == "guessNumber") {
             try {
@@ -3853,7 +3879,7 @@ void CommandHandler::handle_game_chat(const std::string& thread_id, int thread_t
                 while(iss2 >> w2) lastWords.push_back(w2);
                 char lastChar = lastWords.back().back();
                 char firstChar = words[0].front();
-                if (std::tolower(firstChar) != std::tolower(lastChar)) {
+                if (std::tolower(static_cast<unsigned char>(firstChar)) != std::tolower(static_cast<unsigned char>(lastChar))) {
                     reply_text("Cụm từ không hợp lệ! Phải bắt đầu bằng \"" + std::string(1, lastChar) + "\".", thread_id, thread_type);
                     return;
                 }

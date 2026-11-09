@@ -58,25 +58,7 @@ static std::string extract_uid(const json& m) {
 }
 
 static std::string resolve_mentions(const std::string& content, const json& mentions) {
-    std::string result;
-    // Thay the @[id] bang <@id> thu cong de tranh Heap Corruption
-    for (size_t i = 0; i < content.size(); ) {
-        if (content[i] == '@' && i + 1 < content.size() && content[i+1] == '[') {
-            size_t close = content.find(']', i + 2);
-            if (close != std::string::npos) {
-                std::string id = content.substr(i + 2, close - i - 2);
-                bool all_digit = !id.empty() && std::all_of(id.begin(), id.end(), ::isdigit);
-                if (all_digit) {
-                    result += "<@" + id + ">";
-                    i = close + 1;
-                    continue;
-                }
-            }
-        }
-        result += content[i];
-        i++;
-    }
-
+    std::string result = content; 
     if (!mentions.is_array() || mentions.empty()) return result;
 
     struct Range { int byte_pos; int byte_len; std::string uid; };
@@ -91,13 +73,12 @@ static std::string resolve_mentions(const std::string& content, const json& ment
         int byte_start = utf16_to_utf8_offset(content, utf16_pos);
         int byte_end   = utf16_to_utf8_offset(content, utf16_pos + utf16_len);
         int byte_len   = byte_end - byte_start;
-        if (byte_len <= 0) continue;
-
+        
+        if (byte_start < 0 || byte_end > (int)content.size() || byte_len <= 0) continue;
         ranges.push_back({byte_start, byte_len, uid});
     }
 
-    std::sort(ranges.begin(), ranges.end(),
-              [](const Range& a, const Range& b) { return a.byte_pos > b.byte_pos; });
+    std::sort(ranges.begin(), ranges.end(), [](const Range& a, const Range& b) { return a.byte_pos > b.byte_pos; });
 
     for (const auto& r : ranges) {
         if (r.byte_pos < 0 || r.byte_pos + r.byte_len > (int)result.size()) continue;
@@ -105,20 +86,9 @@ static std::string resolve_mentions(const std::string& content, const json& ment
     }
     return result;
 }
-// ==== VEH RECOVERY: Bat loi he thong (Heap/Access Violation) ====
-static LONG CALLBACK _vectored_exception_handler(EXCEPTION_POINTERS* info) {
-    DWORD code = info->ExceptionRecord->ExceptionCode;
-    if (code == 0xC0000374 || code == 0xC0000005) {
-        std::cerr << "\n[VEH-CRITICAL] Bat duoc loi he thong: 0x" << std::hex << code << std::dec << "\n";
-        std::cerr << "[VEH-CRITICAL] Khong the phuc hoi Heap, chuong trinh se bi kill.\n";
-        std::cerr << "[VEH-CRITICAL] Watchdog se tu dong khoi dong lai...\n";
-    }
-    return EXCEPTION_CONTINUE_SEARCH; 
-}
-// ===============================================================
 int main() {
     setup_console();
-    AddVectoredExceptionHandler(1, _vectored_exception_handler);
+    
     std::cout << "🤖 Zalo Bot C++ khởi động...\n\n";
 
     if (!TextRenderer::init("assets/BeVietnamPro-Bold.ttf")) {
