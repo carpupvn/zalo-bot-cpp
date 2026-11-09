@@ -26,7 +26,6 @@ extern NongTraiManager* g_farm_mgr;
 #include <regex>
 #include <vector>
 #include <windows.h>
-#include <csetjmp>
 
 using json = nlohmann::json;
 
@@ -106,22 +105,20 @@ static std::string resolve_mentions(const std::string& content, const json& ment
     }
     return result;
 }
-// ==== SEH RECOVERY: Bat loi Heap/Access Violation de chay tiep ====
-static jmp_buf g_crash_jmp;
-static volatile bool g_in_crash_zone = false;
-
-static LONG WINAPI _recovery_exception_filter(EXCEPTION_POINTERS* info) {
-    if (g_in_crash_zone) {
-        g_in_crash_zone = false;
-        longjmp(g_crash_jmp, 1);
+// ==== VEH RECOVERY: Bat loi he thong (Heap/Access Violation) ====
+static LONG CALLBACK _vectored_exception_handler(EXCEPTION_POINTERS* info) {
+    DWORD code = info->ExceptionRecord->ExceptionCode;
+    if (code == 0xC0000374 || code == 0xC0000005) {
+        std::cerr << "\n[VEH-CRITICAL] Bat duoc loi he thong: 0x" << std::hex << code << std::dec << "\n";
+        std::cerr << "[VEH-CRITICAL] Khong the phuc hoi Heap, chuong trinh se bi kill.\n";
+        std::cerr << "[VEH-CRITICAL] Watchdog se tu dong khoi dong lai...\n";
     }
-    return EXCEPTION_CONTINUE_SEARCH;
+    return EXCEPTION_CONTINUE_SEARCH; 
 }
-// =================================================================
-
+// ===============================================================
 int main() {
     setup_console();
-    SetUnhandledExceptionFilter(_recovery_exception_filter);
+    AddVectoredExceptionHandler(1, _vectored_exception_handler);
     std::cout << "🤖 Zalo Bot C++ khởi động...\n\n";
 
     if (!TextRenderer::init("assets/BeVietnamPro-Bold.ttf")) {
@@ -164,11 +161,8 @@ int main() {
     g_farm_mgr = &farm;
 
     bridge.set_event_handler([&](const json& ev) {
-        if (setjmp(g_crash_jmp) != 0) {
-            std::cerr << "[SEH-RECOVERY] Bo qua tin nhan bi loi, bot tiep tuc chay.\n";
-            return;
-        }
-        g_in_crash_zone = true;
+        
+        
         try {
         std::string event = ev.value("event", "");
 
@@ -500,7 +494,7 @@ int main() {
         } catch (...) {
             std::cerr << "[EXCEPTION] Unknown error\n";
         }
-        g_in_crash_zone = false;
+        
     });
 
     std::cout << "🔌 Khởi động Node bridge...\n";

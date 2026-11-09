@@ -53,6 +53,16 @@ namespace {
     }
 }
 using json = nlohmann::json;
+// Hàm cắt chuỗi an toàn, không cắt giữa các ký tự UTF-8 (như emoji)
+static std::string safe_utf8_truncate(const std::string& str, size_t max_bytes) {
+    if (str.length() <= max_bytes) return str;
+    size_t len = max_bytes;
+    // Lùi lại nếu đang cắt ngay giữa một ký tự UTF-8 (byte có dạng 10xxxxxx)
+    while (len > 0 && (static_cast<unsigned char>(str[len]) & 0xC0) == 0x80) {
+        len--;
+    }
+    return str.substr(0, len);
+}
 
 thread_local std::string CommandHandler::current_sender_id_;
 thread_local std::string CommandHandler::current_msg_text_;
@@ -2423,10 +2433,11 @@ std::string cap;
             std::string out = r.value("result", json::object()).value("output", "");
             if (out.empty()) out = "(khong co output)";
             
-            // FIX: Cắt chuỗi nếu quá dài (Zalo API giới hạn ~2000 ký tự)
+            // FIX: Cắt chuỗi an toàn UTF-8 (tránh lỗi invalid UTF-8 byte)
             const size_t MAX_LEN = 1500;
             if (out.length() > MAX_LEN) {
-                out = out.substr(0, MAX_LEN) + "\n\n⚠️ (Da cat bot " + std::to_string(out.length() - MAX_LEN) + " ky tu vi qua dai)";
+                size_t old_len = out.length();
+                out = safe_utf8_truncate(out, MAX_LEN) + "\n\n⚠️ (Da cat bot " + std::to_string(old_len - MAX_LEN) + " ky tu vi qua dai)";
             }
             reply_text("\U0001F40D K\u1EBFt qu\u1EA3:\n" + out, tid, tt);
         } else {
