@@ -680,6 +680,30 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\zalo_bot.dir\build.make CMakeFiles/zalo_bot.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/paths.obj: src/paths.cpp.obj
+.PHONY : src/paths.obj
+
+# target to build an object file
+src/paths.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\zalo_bot.dir\build.make CMakeFiles/zalo_bot.dir/src/paths.cpp.obj
+.PHONY : src/paths.cpp.obj
+
+src/paths.i: src/paths.cpp.i
+.PHONY : src/paths.i
+
+# target to preprocess a source file
+src/paths.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\zalo_bot.dir\build.make CMakeFiles/zalo_bot.dir/src/paths.cpp.i
+.PHONY : src/paths.cpp.i
+
+src/paths.s: src/paths.cpp.s
+.PHONY : src/paths.s
+
+# target to generate assembly for a file
+src/paths.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\zalo_bot.dir\build.make CMakeFiles/zalo_bot.dir/src/paths.cpp.s
+.PHONY : src/paths.cpp.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -758,6 +782,9 @@ help:
 	@echo ... src/main.obj
 	@echo ... src/main.i
 	@echo ... src/main.s
+	@echo ... src/paths.obj
+	@echo ... src/paths.i
+	@echo ... src/paths.s
 .PHONY : help
 
 

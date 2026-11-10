@@ -698,4 +698,5 @@ CMakeFiles/zalo_bot.dir/src/main.cpp.obj: \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/RuntimeState.hpp \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/TextRenderer.hpp \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/AssetManager.hpp \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EmojiRenderer.hpp
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EmojiRenderer.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/paths.hpp

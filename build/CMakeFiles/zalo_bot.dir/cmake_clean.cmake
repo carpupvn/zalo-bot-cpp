@@ -45,6 +45,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/zalo_bot.dir/src/ZaloBridge.cpp.obj.d"
   "CMakeFiles/zalo_bot.dir/src/main.cpp.obj"
   "CMakeFiles/zalo_bot.dir/src/main.cpp.obj.d"
+  "CMakeFiles/zalo_bot.dir/src/paths.cpp.obj"
+  "CMakeFiles/zalo_bot.dir/src/paths.cpp.obj.d"
   "libzalo_bot.dll.a"
   "zalo_bot.exe"
   "zalo_bot.exe.manifest"

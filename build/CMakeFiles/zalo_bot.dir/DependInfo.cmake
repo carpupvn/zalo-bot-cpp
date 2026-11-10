@@ -31,6 +31,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/ZaloApi.cpp" "CMakeFiles/zalo_bot.dir/src/ZaloApi.cpp.obj" "gcc" "CMakeFiles/zalo_bot.dir/src/ZaloApi.cpp.obj.d"
   "E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/ZaloBridge.cpp" "CMakeFiles/zalo_bot.dir/src/ZaloBridge.cpp.obj" "gcc" "CMakeFiles/zalo_bot.dir/src/ZaloBridge.cpp.obj.d"
   "E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/main.cpp" "CMakeFiles/zalo_bot.dir/src/main.cpp.obj" "gcc" "CMakeFiles/zalo_bot.dir/src/main.cpp.obj.d"
+  "E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/paths.cpp" "CMakeFiles/zalo_bot.dir/src/paths.cpp.obj" "gcc" "CMakeFiles/zalo_bot.dir/src/paths.cpp.obj.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

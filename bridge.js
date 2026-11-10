@@ -94,13 +94,13 @@ function getChromeUA() {
 async function getCredentials() {
   // Doc config.json - uu tien cao nhat, don gian hoa hoan toan
   const fs = await import("fs");
-  if (!fs.existsSync("config.json")) {
+  if (!fs.existsSync((process.env.BOT_COOKIE_FILE || "config.json"))) {
     log("[Creds] config.json KHONG TON TAI");
     return { cookie: [], imei: "", user_agent: getChromeUA() };
   }
 
   let raw;
-  try { raw = fs.readFileSync("config.json", "utf8"); }
+  try { raw = fs.readFileSync((process.env.BOT_COOKIE_FILE || "config.json"), "utf8"); }
   catch (e) {
     log("[Creds] Khong doc duoc file: " + e.message);
     return { cookie: [], imei: "", user_agent: getChromeUA() };
@@ -228,8 +228,8 @@ function saveCookieToConfig(api, prevCreds) {
     if (!imei) {
       try {
         
-        if (fs.existsSync("config.json")) {
-          const oldCfg = JSON.parse(fs.readFileSync("config.json", "utf8"));
+        if (fs.existsSync((process.env.BOT_COOKIE_FILE || "config.json"))) {
+          const oldCfg = JSON.parse(fs.readFileSync((process.env.BOT_COOKIE_FILE || "config.json"), "utf8"));
           if (oldCfg.imei && oldCfg.imei.length > 20) {
             imei = oldCfg.imei;
             log("[Save] IMEI giu tu config cu: " + imei.substring(0, 25) + "...");
@@ -258,7 +258,7 @@ function saveCookieToConfig(api, prevCreds) {
 
     const json = JSON.stringify(cfg, null, 2);
     const tmpPath = "config.json.tmp";
-    const finalPath = "config.json";
+    const finalPath = (process.env.BOT_COOKIE_FILE || "config.json");
 
     // ATOMIC: ghi tmp -> rename (tranh corrupt giua chung)
     fs.writeFileSync(tmpPath, json, "utf8");
@@ -834,7 +834,7 @@ rl.on("line", async (line) => {
     }
     else if (cmd.action === "create_qr") {
       try {
-        const outPath = cmd.path || `data/qr_${Date.now()}.png`;
+        const outPath = cmd.path || `cache/qr_${Date.now()}.png`;
         const dir = path.dirname(outPath);
         if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
@@ -852,7 +852,135 @@ rl.on("line", async (line) => {
         emitResponse(id, false, e?.message || String(e));
       }
     }
-        else if (cmd.action === "run_python") {
+        else if (cmd.action === "send_voice_text") {
+      try {
+        let localReq;
+        if (typeof require !== 'undefined') { localReq = require; }
+        else {
+          const mod = await import('node:module');
+          localReq = mod.createRequire(import.meta.url);
+        }
+        const fs = localReq('fs');
+        const path = localReq('path');
+        const os = localReq('os');
+        const https = localReq('https');
+        
+        const text = (cmd.text || '').trim();
+        if (!text) { return emitResponse(id, false, 'Van ban rong'); }
+        
+        const detectLanguage = (t) => {
+          const patterns = {
+            vi: /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i,
+            zh: /[\u4E00-\u9FFF]/,
+            ja: /[\u3040-\u309F\u30A0-\u30FF]/,
+            ko: /[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/,
+          };
+          const counts = {
+            vi: (t.match(patterns.vi) || []).length,
+            zh: (t.match(patterns.zh) || []).length,
+            ja: (t.match(patterns.ja) || []).length,
+            ko: (t.match(patterns.ko) || []).length,
+          };
+          let best = { lang: 'vi', count: 0 };
+          for (const [lang, count] of Object.entries(counts)) {
+            if (count > best.count) best = { lang, count };
+          }
+          return best.lang;
+        };
+        const lang = detectLanguage(text);
+        
+        const splitText = (t, maxLen) => {
+          if (t.length <= maxLen) return [t];
+          const parts = [];
+          let cur = '';
+          const sentences = t.split(/(?<=[.!?。！？,;])\s*/);
+          for (const s of sentences) {
+            if ((cur + s).length <= maxLen) { cur += s; }
+            else {
+              if (cur) parts.push(cur);
+              let rem = s;
+              while (rem.length > maxLen) {
+                parts.push(rem.substring(0, maxLen));
+                rem = rem.substring(maxLen);
+              }
+              cur = rem;
+            }
+          }
+          if (cur) parts.push(cur);
+          return parts;
+        };
+        
+        const chunks = splitText(text, 190);
+        log('send_voice_text: lang=' + lang + ' chunks=' + chunks.length);
+        
+        const httpsGet = (url) => new Promise((resolve, reject) => {
+          https.get(url, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+              'Referer': 'https://translate.google.com/',
+              'Accept': '*/*',
+            }
+          }, (res) => {
+            if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 303) {
+              httpsGet(res.headers.location).then(resolve).catch(reject);
+              return;
+            }
+            if (res.statusCode !== 200) {
+              reject(new Error('HTTP ' + res.statusCode));
+              return;
+            }
+            const bs = [];
+            res.on('data', c => bs.push(c));
+            res.on('end', () => resolve(Buffer.concat(bs)));
+            res.on('error', reject);
+          }).on('error', reject);
+        });
+        
+        const buffers = [];
+        for (let i = 0; i < chunks.length; i++) {
+          const ttsUrl = 'https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=' + lang + '&q=' + encodeURIComponent(chunks[i]);
+          log('send_voice_text: chunk ' + (i+1) + '/' + chunks.length + ' downloading...');
+          const buf = await httpsGet(ttsUrl);
+          if (buf.length < 200) throw new Error('Chunk ' + (i+1) + ' qua nho (' + buf.length + ' bytes)');
+          buffers.push(buf);
+        }
+        
+        const mp3Buf = Buffer.concat(buffers);
+        log('send_voice_text: total mp3=' + mp3Buf.length + ' bytes');
+        
+        const tempDir = path.join(os.tmpdir(), 'zalo-voice-' + Date.now());
+        fs.mkdirSync(tempDir, { recursive: true });
+        const mp3Path = path.join(tempDir, 'voice_' + Date.now() + '.mp3');
+        fs.writeFileSync(mp3Path, mp3Buf);
+        
+        // THAY ThreadType.Group/User BANG SO 1/0
+        const threadTypeNum = (cmd.type === 1) ? 1 : 0;
+        log('send_voice_text: threadType=' + threadTypeNum);
+        
+        const uploadResult = await api.uploadAttachment([mp3Path], cmd.threadId, threadTypeNum);
+        
+        try { fs.unlinkSync(mp3Path); } catch (e) {}
+        try { fs.rmdirSync(tempDir); } catch (e) {}
+        
+        if (!uploadResult || !uploadResult[0] || !uploadResult[0].fileUrl) {
+          throw new Error('Upload that bai: ' + JSON.stringify(uploadResult));
+        }
+        let voiceUrl = uploadResult[0].fileUrl;
+        log('send_voice_text: url=' + voiceUrl);
+        
+        if (!voiceUrl.endsWith('.aac')) {
+          voiceUrl = voiceUrl + '/' + Date.now() + '.aac';
+        }
+        
+        await api.sendVoice({ voiceUrl }, cmd.threadId, threadTypeNum);
+        log('send_voice_text: SUCCESS');
+        emitResponse(id, true, { ok: true });
+      } catch (e) {
+        log('send_voice_text ERROR: ' + (e && e.stack ? e.stack : String(e)));
+        emitResponse(id, false, e && e.message ? e.message : String(e));
+      }
+    }
+    else if (cmd.action === "run_python") {
       try {
         const pyCode = cmd.code || "";
         const pyArgs = cmd.args || [];

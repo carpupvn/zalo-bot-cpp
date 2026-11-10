@@ -32,6 +32,7 @@ set(SOURCES
     src/ZaloApi.cpp
     src/ZaloBridge.cpp
     src/CommandHandler.cpp
+    src/paths.cpp
     src/SafeMemory.cpp
     src/PermissionManager.cpp
     src/EconomyManager.cpp
@@ -76,7 +77,7 @@ target_link_libraries(zalo_bot PRIVATE
     ws2_32
     iphlpapi
     psapi
-)
+ shell32)
 
 add_custom_command(TARGET zalo_bot POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory

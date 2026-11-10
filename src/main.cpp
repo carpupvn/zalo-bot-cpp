@@ -15,6 +15,8 @@ extern NongTraiManager* g_farm_mgr;
 #include "AssetManager.hpp"
 #include "EmojiRenderer.hpp"
 #include "json.hpp"
+#include "paths.hpp"
+#include <filesystem>
 
 #include <iostream>
 #include <fstream>
@@ -86,7 +88,43 @@ static std::string resolve_mentions(const std::string& content, const json& ment
     }
     return result;
 }
+static void migrate_root_configs(const std::string& profile_dir) {
+    namespace fs = std::filesystem;
+    struct Pair { const char* src; const char* dst_name; };
+    Pair pairs[] = {
+        { "bot_info.json",         "bot_info.json" },
+        { "data/scold.txt",        "scold.txt" },
+        { "data/husks.json",       "husks.json" },
+        { "data/nong_trai.json",   "nong_trai.json" },
+        { "data/auto_state.json",  "auto_state.json" },
+        { "data/dictionary.txt",   "dictionary.txt" },
+    };
+    for (auto& p : pairs) {
+        std::string src = p.src;
+        std::string dst = profile_dir + "/" + p.dst_name;
+        if (fs::exists(src) && !fs::exists(dst)) {
+            try {
+                fs::copy_file(src, dst);
+                std::cout << "[Migrate] " << src << " -> " << dst << "\n";
+            } catch (const std::exception& e) {
+                std::cerr << "[Migrate] Fail " << src << ": " << e.what() << "\n";
+            }
+        }
+    }
+}
 int main() {
+    paths::g_profile.clear();
+    {
+        std::ifstream pf("data/current_profile.txt");
+        int prof = 1;
+        if (pf.good()) pf >> prof;
+        if (prof >= 1 && prof <= 5) paths::g_profile = std::to_string(prof);
+        
+        // Tạo thư mục nếu chưa có
+        std::filesystem::create_directories(paths::data(""));
+        std::filesystem::create_directories(paths::cache(""));
+        migrate_root_configs(paths::data(""));
+    }
     setup_console();
     
     std::cout << "🤖 Zalo Bot C++ khởi động...\n\n";
@@ -100,7 +138,7 @@ int main() {
     AssetManager::preload_common();
     EmojiRenderer::init("assets/emoji");
 
-    Database db("data/bot.db");
+    Database db(paths::data("bot.db"));
     if (!db.init()) {
         std::cerr << "❌ DB chính fail\n";
         std::cin.get();
@@ -108,18 +146,37 @@ int main() {
     }
 
     AccountManager account;
-    if (!account.init("data/accounts.db")) {
+    if (!account.init(paths::data("accounts.db"))) {
         std::cerr << "❌ Account DB fail\n";
+    
         std::cin.get();
         return 1;
     }
 
-    ZaloBridge bridge;
+        // Restore sessions
+    try {
+        std::ifstream sf("data/sessions.json");
+        if (sf.good()) {
+            nlohmann::json sj; sf >> sj;
+            int cnt = 0;
+            for (auto& item : sj.items()) {
+                std::string uid = item.key();
+                if (item.value().is_string()) {
+                    account.restore_session(uid, item.value().get<std::string>());
+                    cnt++;
+                }
+            }
+            if (cnt > 0) std::cout << "[Session] Restored " << cnt << " user(s)\n";
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "[Session] Load error: " << e.what() << "\n";
+    }
+ZaloBridge bridge;
     ZaloApi    api;
     api.set_bridge(&bridge);
 
     PermissionManager perm;
-    perm.load_from_file("admins.txt");
+    perm.load_from_file(paths::file("admins.txt"));
 
     EconomyManager    econ;
     GameManager       game(econ);
@@ -127,7 +184,7 @@ int main() {
     CommandHandler    handler(api, perm, econ, game, group, account);
 
     NongTraiManager farm(econ);
-    farm.load("data/nong_trai.json");
+    farm.load(paths::data("nong_trai.json"));
     g_farm_mgr = &farm;
 
     bridge.set_event_handler([&](const json& ev) {
@@ -468,6 +525,15 @@ int main() {
     });
 
     std::cout << "🔌 Khởi động Node bridge...\n";
+    {
+        std::ifstream pf("data/current_profile.txt");
+        int prof = 1;
+        if (pf.good()) pf >> prof;
+        if (prof < 1 || prof > 5) prof = 1;
+        std::string cookie_file = "data/cookies/" + std::to_string(prof) + ".json";
+        _putenv_s("BOT_COOKIE_FILE", cookie_file.c_str());
+        std::cout << "[Profile] Using " << cookie_file << "\n";
+    }
     if (!bridge.start("node", "bridge.js")) {
         std::cerr << "❌ Không chạy được Node.\n";
         std::cin.get();
@@ -545,7 +611,7 @@ int main() {
             d.games_won    = e.games_won;
             account.save_economy(un, d);
         }
-        account.export_to_txt("data/accounts.txt");
+        account.export_to_txt(paths::data("accounts.txt"));
         std::cout << "[main] Final save: " << logged.size() << " user\n";
     }
 

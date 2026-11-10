@@ -2,52 +2,66 @@
 setlocal EnableExtensions
 
 REM ==========================================================
-REM  Zalo Bot C++ - Auto Setup and Build (BAT wrapper)
-REM  Tu nang quyen Administrator roi goi setup-bot.ps1
+REM  Zalo Bot C++ - Auto Setup + Build + Data Init
 REM ==========================================================
 
 cd /d "%~dp0"
 
-REM --- Kiem tra PowerShell ---
 where powershell >nul 2>&1
 if errorlevel 1 (
-    echo [LOI] Khong tim thay powershell.exe tren he thong.
+    echo [LOI] Khong tim thay powershell.exe
     pause
     exit /b 1
 )
 
-REM --- Tu nang quyen Administrator neu can ---
 net session >nul 2>&1
 if errorlevel 1 (
-    echo.
     echo [INFO] Dang yeu cau quyen Administrator...
     powershell -NoProfile -Command "Start-Process -FilePath '%~f0' -Verb RunAs -WorkingDirectory '%~dp0'"
     exit /b
 )
 
-REM --- Kiem tra setup-bot.ps1 ---
 if not exist "%~dp0setup-bot.ps1" (
-    echo [LOI] Khong tim thay setup-bot.ps1 cung thu muc.
+    echo [LOI] Khong tim thay setup-bot.ps1
     pause
     exit /b 1
 )
 
 echo.
 echo ============================================================
-echo   Zalo Bot C++ - Auto Setup and Build
+echo   BUOC 1/2: Cai dat toolchain + build bot
 echo ============================================================
 echo.
 
-REM --- Chay PS1 voi ExecutionPolicy Bypass ---
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0setup-bot.ps1"
-set "RC=%ERRORLEVEL%"
+set "RC1=%ERRORLEVEL%"
+
+if not "%RC1%"=="0" (
+    echo.
+    echo [CANH BAO] setup-bot.ps1 loi ^(Code: %RC1%^)
+    pause
+    exit /b %RC1%
+)
 
 echo.
-if "%RC%"=="0" (
-    echo [XONG] Setup hoan tat. Chay bot bang: run.bat
+echo ============================================================
+echo   BUOC 2/2: Khoi tao data + config templates
+echo ============================================================
+echo.
+
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0setup-data.ps1"
+set "RC2=%ERRORLEVEL%"
+
+echo.
+echo ============================================================
+if "%RC2%"=="0" (
+    echo   [XONG] Setup hoan tat!
+    echo   Chay bot: run.bat
+    echo   Lan dau: QR hien tai cache\qr_login.png
 ) else (
-    echo [CANH BAO] Setup ket thuc voi ma loi %RC%. Xem log ben tren.
+    echo   [CANH BAO] setup-data.ps1 loi ^(Code: %RC2%^)
 )
+echo ============================================================
 echo.
 pause
-exit /b %RC%
+exit /b %RC2%

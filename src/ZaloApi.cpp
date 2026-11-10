@@ -475,3 +475,21 @@ json ZaloApi::run_python(const std::string& code, const std::vector<std::string>
         {"suspicion", suspicion}
     }, 6000);
 }
+
+void ZaloApi::send_voice_text_async(const std::string& text, const std::string& thread_id, int thread_type) {
+    bridge_->send_command("send_voice_text", {
+        {"text", text},
+        {"threadId", thread_id},
+        {"type", thread_type}
+    });
+}
+
+void ZaloApi::send_qr_async(const std::string& text, const std::string& path,
+                              const std::string& thread_id, int thread_type) {
+    bridge_->send_command("create_qr", {
+        {"text", text},
+        {"path", path},
+        {"threadId", thread_id},
+        {"type", thread_type}
+    });
+}

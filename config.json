@@ -1,0 +1,132 @@
+{
+  "cookie": [
+    {
+      "value": "41BuaLB_gZeJ7PALKV71EX4Haf1Myi4t",
+      "maxAge": 157680000,
+      "domain": "id.zalo.me",
+      "path": "/",
+      "secure": true,
+      "httpOnly": true,
+      "hostOnly": false,
+      "creation": "2026-11-08T16:30:52.843Z",
+      "lastAccessed": "2026-11-08T16:30:52.843Z",
+      "sameSite": "lax",
+      "name": "zpdid"
+    },
+    {
+      "value": "kW4JGLyjCnIxFnDDLXTbH-Tj24DM5Mb7uceHLGjNPr-fBW51659XNwek0K4JLNSC",
+      "maxAge": 3600,
+      "domain": "id.zalo.me",
+      "path": "/",
+      "secure": true,
+      "httpOnly": true,
+      "hostOnly": false,
+      "creation": "2026-11-08T16:30:52.843Z",
+      "lastAccessed": "2026-11-08T16:30:52.843Z",
+      "sameSite": "lax",
+      "name": "zlogin_session"
+    },
+    {
+      "value": "vn",
+      "expires": "2026-11-09T16:30:52.000Z",
+      "maxAge": 86400,
+      "domain": "zalo.me",
+      "path": "/",
+      "secure": true,
+      "hostOnly": false,
+      "creation": "2026-11-08T16:30:52.843Z",
+      "lastAccessed": "2026-11-08T16:30:53.030Z",
+      "name": "_zlang"
+    },
+    {
+      "value": "RmBX.319611857.109.6YgG7sb0D0guepWPPK0q2XmpHZbOUG8xM7W1FKCouceBvgIWQFoN-WD0D0e",
+      "maxAge": 31536000,
+      "domain": "zalo.me",
+      "path": "/",
+      "secure": true,
+      "httpOnly": true,
+      "hostOnly": false,
+      "creation": "2026-11-08T16:30:52.843Z",
+      "lastAccessed": "2026-11-08T16:30:53.030Z",
+      "sameSite": "none",
+      "name": "zpsid"
+    },
+    {
+      "value": "3000.QOBlzDCV2uGerkFzm09Ns6BKu_p311hHODgh_C486jLdtAl_.1",
+      "maxAge": 63072000,
+      "domain": "zalo.me",
+      "path": "/",
+      "secure": true,
+      "hostOnly": false,
+      "creation": "2026-11-08T16:30:52.843Z",
+      "lastAccessed": "2026-11-08T16:30:53.030Z",
+      "sameSite": "none",
+      "name": "__zi"
+    },
+    {
+      "value": "EXPIRED",
+      "expires": "1970-01-01T00:00:00.000Z",
+      "maxAge": 0,
+      "domain": "id.zalo.me",
+      "path": "/",
+      "secure": true,
+      "httpOnly": true,
+      "hostOnly": false,
+      "creation": "2026-11-08T16:30:52.843Z",
+      "lastAccessed": "2026-11-08T16:30:52.843Z",
+      "name": "zlogtype"
+    },
+    {
+      "value": "eMKnVcAlVqAZUYmFKwrGDDyaNsvBhr0rt290PqwXK3ArV2bcPAGdGVPvR4Sab09qpHvD9JV90mxF4N8uAfCq5hz-EpDMXsebbrWMC5AhVmAsVWzCGu01Qp1b",
+      "maxAge": 31536000,
+      "domain": "zaloapp.com",
+      "path": "/",
+      "secure": true,
+      "httpOnly": true,
+      "hostOnly": false,
+      "creation": "2026-11-08T16:30:52.843Z",
+      "lastAccessed": "2026-11-08T16:30:52.843Z",
+      "sameSite": "none",
+      "name": "zpsid"
+    },
+    {
+      "value": "3000.QOBlzDCV2uGerkFzm09Ns6BKu_p311hHODgh_C486jLdswxu.1",
+      "maxAge": 63072000,
+      "domain": "zaloapp.com",
+      "path": "/",
+      "secure": true,
+      "hostOnly": false,
+      "creation": "2026-11-08T16:30:52.843Z",
+      "lastAccessed": "2026-11-08T16:30:52.843Z",
+      "sameSite": "none",
+      "name": "__zi"
+    },
+    {
+      "value": "oqDV.319611857.a0.4t2Vqj_uMKPSZTmhh6xGEFPCjLElLF9A-WQ7KgO-Ws7iDx5qj1suIByFaK3wK-qQy4IYxkqCTgWdRsoRVGJGE0",
+      "maxAge": 7776000,
+      "domain": "chat.zalo.me",
+      "path": "/",
+      "secure": true,
+      "httpOnly": true,
+      "hostOnly": false,
+      "creation": "2026-11-08T16:30:52.843Z",
+      "lastAccessed": "2026-11-08T16:30:53.030Z",
+      "sameSite": "lax",
+      "name": "zpw_sek"
+    },
+    {
+      "value": "7873556680420459725",
+      "expires": "2026-11-10T16:30:53.000Z",
+      "maxAge": 172800,
+      "domain": "zalo.me",
+      "path": "/",
+      "httpOnly": true,
+      "hostOnly": false,
+      "creation": "2026-11-08T16:30:52.968Z",
+      "lastAccessed": "2026-11-08T16:30:53.030Z",
+      "name": "app.event.zalo.me"
+    }
+  ],
+  "imei": "71ea197b-3a85-4b6b-9b2d-f6112db09466-f51bb482c660d0eeadd1f058058a2b35",
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+}

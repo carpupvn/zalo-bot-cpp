@@ -131,11 +131,26 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.s"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\CommandHandler.cpp -o CMakeFiles\zalo_bot.dir\src\CommandHandler.cpp.s
 
+CMakeFiles/zalo_bot.dir/src/paths.cpp.obj: CMakeFiles/zalo_bot.dir/flags.make
+CMakeFiles/zalo_bot.dir/src/paths.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
+CMakeFiles/zalo_bot.dir/src/paths.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/paths.cpp
+CMakeFiles/zalo_bot.dir/src/paths.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/zalo_bot.dir/src/paths.cpp.obj"
+	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/paths.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\paths.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\paths.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\paths.cpp
+
+CMakeFiles/zalo_bot.dir/src/paths.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/zalo_bot.dir/src/paths.cpp.i"
+	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\paths.cpp > CMakeFiles\zalo_bot.dir\src\paths.cpp.i
+
+CMakeFiles/zalo_bot.dir/src/paths.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/zalo_bot.dir/src/paths.cpp.s"
+	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\paths.cpp -o CMakeFiles\zalo_bot.dir\src\paths.cpp.s
+
 CMakeFiles/zalo_bot.dir/src/SafeMemory.cpp.obj: CMakeFiles/zalo_bot.dir/flags.make
 CMakeFiles/zalo_bot.dir/src/SafeMemory.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/SafeMemory.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/SafeMemory.cpp
 CMakeFiles/zalo_bot.dir/src/SafeMemory.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/zalo_bot.dir/src/SafeMemory.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/zalo_bot.dir/src/SafeMemory.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/SafeMemory.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\SafeMemory.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\SafeMemory.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\SafeMemory.cpp
 
 CMakeFiles/zalo_bot.dir/src/SafeMemory.cpp.i: cmake_force
@@ -150,7 +165,7 @@ CMakeFiles/zalo_bot.dir/src/PermissionManager.cpp.obj: CMakeFiles/zalo_bot.dir/f
 CMakeFiles/zalo_bot.dir/src/PermissionManager.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/PermissionManager.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/PermissionManager.cpp
 CMakeFiles/zalo_bot.dir/src/PermissionManager.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/zalo_bot.dir/src/PermissionManager.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/zalo_bot.dir/src/PermissionManager.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/PermissionManager.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\PermissionManager.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\PermissionManager.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\PermissionManager.cpp
 
 CMakeFiles/zalo_bot.dir/src/PermissionManager.cpp.i: cmake_force
@@ -165,7 +180,7 @@ CMakeFiles/zalo_bot.dir/src/EconomyManager.cpp.obj: CMakeFiles/zalo_bot.dir/flag
 CMakeFiles/zalo_bot.dir/src/EconomyManager.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/EconomyManager.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/EconomyManager.cpp
 CMakeFiles/zalo_bot.dir/src/EconomyManager.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/zalo_bot.dir/src/EconomyManager.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/zalo_bot.dir/src/EconomyManager.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/EconomyManager.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\EconomyManager.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\EconomyManager.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\EconomyManager.cpp
 
 CMakeFiles/zalo_bot.dir/src/EconomyManager.cpp.i: cmake_force
@@ -180,7 +195,7 @@ CMakeFiles/zalo_bot.dir/src/GameManager.cpp.obj: CMakeFiles/zalo_bot.dir/flags.m
 CMakeFiles/zalo_bot.dir/src/GameManager.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/GameManager.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/GameManager.cpp
 CMakeFiles/zalo_bot.dir/src/GameManager.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/zalo_bot.dir/src/GameManager.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/zalo_bot.dir/src/GameManager.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/GameManager.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\GameManager.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\GameManager.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\GameManager.cpp
 
 CMakeFiles/zalo_bot.dir/src/GameManager.cpp.i: cmake_force
@@ -195,7 +210,7 @@ CMakeFiles/zalo_bot.dir/src/GroupManager.cpp.obj: CMakeFiles/zalo_bot.dir/flags.
 CMakeFiles/zalo_bot.dir/src/GroupManager.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/GroupManager.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/GroupManager.cpp
 CMakeFiles/zalo_bot.dir/src/GroupManager.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/zalo_bot.dir/src/GroupManager.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/zalo_bot.dir/src/GroupManager.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/GroupManager.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\GroupManager.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\GroupManager.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\GroupManager.cpp
 
 CMakeFiles/zalo_bot.dir/src/GroupManager.cpp.i: cmake_force
@@ -210,7 +225,7 @@ CMakeFiles/zalo_bot.dir/src/Database.cpp.obj: CMakeFiles/zalo_bot.dir/flags.make
 CMakeFiles/zalo_bot.dir/src/Database.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/Database.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/Database.cpp
 CMakeFiles/zalo_bot.dir/src/Database.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/zalo_bot.dir/src/Database.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/zalo_bot.dir/src/Database.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/Database.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\Database.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\Database.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\Database.cpp
 
 CMakeFiles/zalo_bot.dir/src/Database.cpp.i: cmake_force
@@ -225,7 +240,7 @@ CMakeFiles/zalo_bot.dir/src/RuntimeState.cpp.obj: CMakeFiles/zalo_bot.dir/flags.
 CMakeFiles/zalo_bot.dir/src/RuntimeState.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/RuntimeState.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/RuntimeState.cpp
 CMakeFiles/zalo_bot.dir/src/RuntimeState.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/zalo_bot.dir/src/RuntimeState.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/zalo_bot.dir/src/RuntimeState.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/RuntimeState.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\RuntimeState.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\RuntimeState.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\RuntimeState.cpp
 
 CMakeFiles/zalo_bot.dir/src/RuntimeState.cpp.i: cmake_force
@@ -240,7 +255,7 @@ CMakeFiles/zalo_bot.dir/src/AccountManager.cpp.obj: CMakeFiles/zalo_bot.dir/flag
 CMakeFiles/zalo_bot.dir/src/AccountManager.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/AccountManager.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/AccountManager.cpp
 CMakeFiles/zalo_bot.dir/src/AccountManager.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/zalo_bot.dir/src/AccountManager.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/zalo_bot.dir/src/AccountManager.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/AccountManager.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\AccountManager.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\AccountManager.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\AccountManager.cpp
 
 CMakeFiles/zalo_bot.dir/src/AccountManager.cpp.i: cmake_force
@@ -255,7 +270,7 @@ CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.obj: CMakeFiles/zalo_bot.dir/flags.
 CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/TextRenderer.cpp
 CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\TextRenderer.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\TextRenderer.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\TextRenderer.cpp
 
 CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.i: cmake_force
@@ -270,7 +285,7 @@ CMakeFiles/zalo_bot.dir/src/AssetManager.cpp.obj: CMakeFiles/zalo_bot.dir/flags.
 CMakeFiles/zalo_bot.dir/src/AssetManager.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/AssetManager.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/AssetManager.cpp
 CMakeFiles/zalo_bot.dir/src/AssetManager.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/zalo_bot.dir/src/AssetManager.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/zalo_bot.dir/src/AssetManager.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/AssetManager.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\AssetManager.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\AssetManager.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\AssetManager.cpp
 
 CMakeFiles/zalo_bot.dir/src/AssetManager.cpp.i: cmake_force
@@ -285,7 +300,7 @@ CMakeFiles/zalo_bot.dir/src/EmojiRenderer.cpp.obj: CMakeFiles/zalo_bot.dir/flags
 CMakeFiles/zalo_bot.dir/src/EmojiRenderer.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/EmojiRenderer.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/EmojiRenderer.cpp
 CMakeFiles/zalo_bot.dir/src/EmojiRenderer.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/zalo_bot.dir/src/EmojiRenderer.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/zalo_bot.dir/src/EmojiRenderer.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/EmojiRenderer.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\EmojiRenderer.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\EmojiRenderer.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\EmojiRenderer.cpp
 
 CMakeFiles/zalo_bot.dir/src/EmojiRenderer.cpp.i: cmake_force
@@ -300,7 +315,7 @@ CMakeFiles/zalo_bot.dir/src/NongTraiManager.cpp.obj: CMakeFiles/zalo_bot.dir/fla
 CMakeFiles/zalo_bot.dir/src/NongTraiManager.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/NongTraiManager.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/NongTraiManager.cpp
 CMakeFiles/zalo_bot.dir/src/NongTraiManager.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/zalo_bot.dir/src/NongTraiManager.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/zalo_bot.dir/src/NongTraiManager.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/NongTraiManager.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\NongTraiManager.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\NongTraiManager.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\NongTraiManager.cpp
 
 CMakeFiles/zalo_bot.dir/src/NongTraiManager.cpp.i: cmake_force
@@ -315,7 +330,7 @@ CMakeFiles/zalo_bot.dir/src/Color.cpp.obj: CMakeFiles/zalo_bot.dir/flags.make
 CMakeFiles/zalo_bot.dir/src/Color.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/Color.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/Color.cpp
 CMakeFiles/zalo_bot.dir/src/Color.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/zalo_bot.dir/src/Color.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/zalo_bot.dir/src/Color.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/Color.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\Color.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\Color.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\Color.cpp
 
 CMakeFiles/zalo_bot.dir/src/Color.cpp.i: cmake_force
@@ -330,7 +345,7 @@ CMakeFiles/zalo_bot.dir/src/Gradient.cpp.obj: CMakeFiles/zalo_bot.dir/flags.make
 CMakeFiles/zalo_bot.dir/src/Gradient.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/Gradient.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/Gradient.cpp
 CMakeFiles/zalo_bot.dir/src/Gradient.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/zalo_bot.dir/src/Gradient.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/zalo_bot.dir/src/Gradient.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/Gradient.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\Gradient.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\Gradient.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\Gradient.cpp
 
 CMakeFiles/zalo_bot.dir/src/Gradient.cpp.i: cmake_force
@@ -345,7 +360,7 @@ CMakeFiles/zalo_bot.dir/src/Shape.cpp.obj: CMakeFiles/zalo_bot.dir/flags.make
 CMakeFiles/zalo_bot.dir/src/Shape.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/Shape.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/Shape.cpp
 CMakeFiles/zalo_bot.dir/src/Shape.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/zalo_bot.dir/src/Shape.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/zalo_bot.dir/src/Shape.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/Shape.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\Shape.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\Shape.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\Shape.cpp
 
 CMakeFiles/zalo_bot.dir/src/Shape.cpp.i: cmake_force
@@ -360,7 +375,7 @@ CMakeFiles/zalo_bot.dir/src/Background.cpp.obj: CMakeFiles/zalo_bot.dir/flags.ma
 CMakeFiles/zalo_bot.dir/src/Background.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/Background.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/Background.cpp
 CMakeFiles/zalo_bot.dir/src/Background.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object CMakeFiles/zalo_bot.dir/src/Background.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/zalo_bot.dir/src/Background.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/Background.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\Background.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\Background.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\Background.cpp
 
 CMakeFiles/zalo_bot.dir/src/Background.cpp.i: cmake_force
@@ -375,7 +390,7 @@ CMakeFiles/zalo_bot.dir/src/Utils.cpp.obj: CMakeFiles/zalo_bot.dir/flags.make
 CMakeFiles/zalo_bot.dir/src/Utils.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/Utils.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/Utils.cpp
 CMakeFiles/zalo_bot.dir/src/Utils.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object CMakeFiles/zalo_bot.dir/src/Utils.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/zalo_bot.dir/src/Utils.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/Utils.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\Utils.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\Utils.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\Utils.cpp
 
 CMakeFiles/zalo_bot.dir/src/Utils.cpp.i: cmake_force
@@ -390,7 +405,7 @@ CMakeFiles/zalo_bot.dir/src/WordChain.cpp.obj: CMakeFiles/zalo_bot.dir/flags.mak
 CMakeFiles/zalo_bot.dir/src/WordChain.cpp.obj: CMakeFiles/zalo_bot.dir/includes_CXX.rsp
 CMakeFiles/zalo_bot.dir/src/WordChain.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/WordChain.cpp
 CMakeFiles/zalo_bot.dir/src/WordChain.cpp.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object CMakeFiles/zalo_bot.dir/src/WordChain.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/zalo_bot.dir/src/WordChain.cpp.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\c++.exe" $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/src/WordChain.cpp.obj -MF CMakeFiles\zalo_bot.dir\src\WordChain.cpp.obj.d -o CMakeFiles\zalo_bot.dir\src\WordChain.cpp.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\src\WordChain.cpp
 
 CMakeFiles/zalo_bot.dir/src/WordChain.cpp.i: cmake_force
@@ -405,7 +420,7 @@ CMakeFiles/zalo_bot.dir/lib/sqlite/sqlite3.c.obj: CMakeFiles/zalo_bot.dir/flags.
 CMakeFiles/zalo_bot.dir/lib/sqlite/sqlite3.c.obj: CMakeFiles/zalo_bot.dir/includes_C.rsp
 CMakeFiles/zalo_bot.dir/lib/sqlite/sqlite3.c.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/sqlite/sqlite3.c
 CMakeFiles/zalo_bot.dir/lib/sqlite/sqlite3.c.obj: CMakeFiles/zalo_bot.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building C object CMakeFiles/zalo_bot.dir/lib/sqlite/sqlite3.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building C object CMakeFiles/zalo_bot.dir/lib/sqlite/sqlite3.c.obj"
 	"E:\Program Files\CodeBlocks\MinGW\bin\gcc.exe" $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/zalo_bot.dir/lib/sqlite/sqlite3.c.obj -MF CMakeFiles\zalo_bot.dir\lib\sqlite\sqlite3.c.obj.d -o CMakeFiles\zalo_bot.dir\lib\sqlite\sqlite3.c.obj -c E:\zalo-bot-cpp-main\zalo-bot-cpp-main\lib\sqlite\sqlite3.c
 
 CMakeFiles/zalo_bot.dir/lib/sqlite/sqlite3.c.i: cmake_force
@@ -422,6 +437,7 @@ zalo_bot_OBJECTS = \
 "CMakeFiles/zalo_bot.dir/src/ZaloApi.cpp.obj" \
 "CMakeFiles/zalo_bot.dir/src/ZaloBridge.cpp.obj" \
 "CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj" \
+"CMakeFiles/zalo_bot.dir/src/paths.cpp.obj" \
 "CMakeFiles/zalo_bot.dir/src/SafeMemory.cpp.obj" \
 "CMakeFiles/zalo_bot.dir/src/PermissionManager.cpp.obj" \
 "CMakeFiles/zalo_bot.dir/src/EconomyManager.cpp.obj" \
@@ -449,6 +465,7 @@ zalo_bot.exe: CMakeFiles/zalo_bot.dir/src/main.cpp.obj
 zalo_bot.exe: CMakeFiles/zalo_bot.dir/src/ZaloApi.cpp.obj
 zalo_bot.exe: CMakeFiles/zalo_bot.dir/src/ZaloBridge.cpp.obj
 zalo_bot.exe: CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj
+zalo_bot.exe: CMakeFiles/zalo_bot.dir/src/paths.cpp.obj
 zalo_bot.exe: CMakeFiles/zalo_bot.dir/src/SafeMemory.cpp.obj
 zalo_bot.exe: CMakeFiles/zalo_bot.dir/src/PermissionManager.cpp.obj
 zalo_bot.exe: CMakeFiles/zalo_bot.dir/src/EconomyManager.cpp.obj
@@ -472,7 +489,7 @@ zalo_bot.exe: CMakeFiles/zalo_bot.dir/build.make
 zalo_bot.exe: CMakeFiles/zalo_bot.dir/linkLibs.rsp
 zalo_bot.exe: CMakeFiles/zalo_bot.dir/objects1.rsp
 zalo_bot.exe: CMakeFiles/zalo_bot.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Linking CXX executable zalo_bot.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=E:\zalo-bot-cpp-main\zalo-bot-cpp-main\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Linking CXX executable zalo_bot.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\zalo_bot.dir\link.txt --verbose=$(VERBOSE)
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold "Copy bridge.js + assets"
 	"E:\Program Files\CodeBlocks\MinGW\bin\cmake.exe" -E make_directory E:/zalo-bot-cpp-main/zalo-bot-cpp-main/build/data

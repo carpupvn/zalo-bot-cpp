@@ -34,6 +34,7 @@ public:
                            const std::string& uid);
 
     void logout(const std::string& uid);
+    void restore_session(const std::string& uid, const std::string& username);
 
     bool is_logged_in(const std::string& uid) const;
     std::string get_username(const std::string& uid) const;

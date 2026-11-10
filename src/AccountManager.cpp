@@ -326,3 +326,7 @@ void AccountManager::export_to_txt(const std::string& path) {
     }
     f.close();
 }
+
+void AccountManager::restore_session(const std::string& uid, const std::string& username) {
+    uid_to_username_[uid] = username;
+}

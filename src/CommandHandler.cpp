@@ -1,3 +1,5 @@
+#include <windows.h>
+#include <shellapi.h>
 #include "WordChain.hpp"
 #include "VietnameseUtils.hpp"
 #include <deque>
@@ -31,6 +33,7 @@ NongTraiManager* g_farm_mgr = nullptr;
 #include <random>
 #include <ctime>
 #include "json.hpp"
+#include "paths.hpp"
 #include "SafeMemory.hpp"
 #include <sstream>
 #include <algorithm>
@@ -48,7 +51,7 @@ namespace {
         static WordChainEngine wc;
         static std::once_flag flag;
         std::call_once(flag, []() {
-            wc.loadDictionary("data/dictionary.txt");
+            wc.loadDictionary(paths::data("dictionary.txt").c_str());
         });
         return wc;
     }
@@ -477,9 +480,179 @@ static void render_help_image(
 
     TextRenderer::save_canvas(canvas, W, H, out_path);
 }
+
+// ============================================================
+// /gay helpers - Render đẹp, layout giống /info, nền LGBT mờ
+// ============================================================
+// /gay helpers - Layout can doi, tieu de "Phieu chung nhan do gay"
+// ============================================================
+// /gay helpers - Phieu chung nhan do gay
+// ============================================================
+static bool inside_rounded_rect_gay(int px, int py, int x, int y, int w, int h, int radius) {
+    if (px < x || px >= x + w || py < y || py >= y + h) return false;
+    int cx, cy;
+    if (px < x + radius && py < y + radius) { cx = x + radius; cy = y + radius; }
+    else if (px >= x + w - radius && py < y + radius) { cx = x + w - radius - 1; cy = y + radius; }
+    else if (px < x + radius && py >= y + h - radius) { cx = x + radius; cy = y + h - radius - 1; }
+    else if (px >= x + w - radius && py >= y + h - radius) { cx = x + w - radius - 1; cy = y + h - radius - 1; }
+    else return true;
+    int dx = px - cx, dy = py - cy;
+    return (dx * dx + dy * dy) <= (radius * radius);
+}
+
+static void render_gay_meter(const std::string& name, const std::string& avatar_key,
+                              int percent, const std::string& out_path) {
+    const int W = 1100;
+    const int H = 820;
+    std::vector<uint8_t> canvas;
+    TextRenderer::init_canvas(canvas, W, H, 15, 10, 30);
+
+    // ==== Background: LGBT flag (sang, khong blur) ====
+    struct RGB { unsigned char r, g, b; };
+    RGB lgbt[] = {
+        {228, 3, 3}, {255, 140, 0}, {255, 237, 0},
+        {0, 128, 38}, {0, 77, 255}, {117, 7, 135}
+    };
+    for (int y = 0; y < H; y++) {
+        float t = (float)y / (float)(H - 1) * 5.0f;
+        int i = (int)t;
+        if (i > 4) i = 4;
+        float local = t - (float)i;
+        unsigned char r = (unsigned char)(lgbt[i].r + (lgbt[i+1].r - lgbt[i].r) * local);
+        unsigned char g = (unsigned char)(lgbt[i].g + (lgbt[i+1].g - lgbt[i].g) * local);
+        unsigned char b = (unsigned char)(lgbt[i].b + (lgbt[i+1].b - lgbt[i].b) * local);
+        for (int x = 0; x < W; x++) {
+            int idx = (y * W + x) * 4;
+            canvas[idx + 0] = r;
+            canvas[idx + 1] = g;
+            canvas[idx + 2] = b;
+            canvas[idx + 3] = 255;
+        }
+    }
+    TextRenderer::darken_region(canvas, W, H, 0, 0, W, H, 45);
+
+    // ==== Card: semi-transparent, de lo mau co ====
+    int card_x = 30, card_y = 130, card_w = W - 60, card_h = H - 170, card_r = 40;
+    for (int l = 4; l >= 1; l--) {
+        int off = l * 5;
+        unsigned char a = (unsigned char)(20 + l * 12);
+        TextRenderer::draw_rounded_rect_filled(canvas, W, H,
+                                                 card_x + off, card_y + off, card_w, card_h, card_r,
+                                                 0, 0, 0, a);
+    }
+    TextRenderer::draw_rounded_rect_filled(canvas, W, H, card_x, card_y, card_w, card_h, card_r,
+                                             20, 22, 48, 195);
+    TextRenderer::draw_rounded_rect_outline(canvas, W, H, card_x, card_y, card_w, card_h, card_r,
+                                              3, 255, 100, 210, 240);
+
+    // ==== Title (1 dong, chu hoa, tren card) ====
+    std::string title = "PHIẾU CHỨNG NHẬN ĐỘ GAY";
+    int title_size = 42;
+    int title_w = TextRenderer::measure_text_width(title_size, title);
+    int title_x = (W - title_w) / 2;
+    TextRenderer::draw_text_shadow(canvas, W, H, title_x, 82, title_size,
+                                    255, 255, 255, title);
+
+    // ==== Avatar (trai) ====
+    int avt_cx = 250, avt_cy = 440, avt_r = 130;
+    for (int g = 3; g >= 1; g--) {
+        TextRenderer::draw_circle_filled(canvas, W, H, avt_cx, avt_cy, avt_r + g * 6,
+                                           255, 80, 200, (unsigned char)(30 + (3 - g) * 20));
+    }
+    TextRenderer::draw_circle_filled(canvas, W, H, avt_cx, avt_cy, avt_r, 60, 60, 80, 255);
+    ImageRGBA* avt = AssetManager::get(avatar_key);
+    if (avt && avt->valid()) {
+        TextRenderer::draw_circle_image(canvas, W, H, avt, avt_cx, avt_cy, avt_r);
+    }
+    TextRenderer::draw_circle_outline_rainbow(canvas, W, H, avt_cx, avt_cy, avt_r + 4, 6);
+
+    // ==== Ten duoi avatar ====
+    std::string name_disp = name;
+    if (name_disp.size() > 18) name_disp = name_disp.substr(0, 15) + "...";
+    int name_size = 38;
+    int name_w = TextRenderer::measure_text_width(name_size, name_disp);
+    int name_x = avt_cx - name_w / 2;
+    if (name_x < 50) name_x = 50;
+    TextRenderer::draw_text_shadow(canvas, W, H, name_x, 660, name_size,
+                                    255, 255, 255, name_disp);
+
+    // ==== Ben phai ====
+    int info_x = 500;
+
+    unsigned char pr, pg, pb;
+    if (percent < 15)       { pr = 100; pg = 255; pb = 150; }
+    else if (percent < 30)  { pr = 100; pg = 220; pb = 200; }
+    else if (percent < 50)  { pr = 255; pg = 220; pb = 80;  }
+    else if (percent < 70)  { pr = 255; pg = 180; pb = 80;  }
+    else if (percent < 85)  { pr = 255; pg = 150; pb = 200; }
+    else if (percent < 100) { pr = 255; pg = 100; pb = 180; }
+    else                    { pr = 200; pg = 100; pb = 255; }
+
+    // Label "Do gay da do:"
+    TextRenderer::draw_text_on_canvas(canvas, W, H, info_x, 290, 38,
+                                       240, 240, 255, "Độ gay đã đo:");
+
+    // Big %
+    std::string pct_str = std::to_string(percent) + "%";
+    int pct_size = 150;
+    TextRenderer::draw_text_shadow(canvas, W, H, info_x, 460, pct_size, pr, pg, pb, pct_str);
+
+    // Progress bar
+    int bar_x = info_x, bar_y = 540, bar_w = 560, bar_h = 44;
+    int bar_r = bar_h / 2;
+    TextRenderer::draw_rounded_rect_filled(canvas, W, H, bar_x, bar_y, bar_w, bar_h, bar_r,
+                                             22, 18, 38, 255);
+    TextRenderer::draw_rounded_rect_outline(canvas, W, H, bar_x, bar_y, bar_w, bar_h, bar_r,
+                                              2, 255, 80, 200, 100);
+
+    int fill_w = (bar_w * percent) / 100;
+    for (int px = 0; px < fill_w; px++) {
+        float t = (float)px / (float)(bar_w - 1);
+        unsigned char r, g, b;
+        if (t < 0.5f) {
+            float u = t * 2.0f;
+            r = (unsigned char)(100 + (255 - 100) * u);
+            g = (unsigned char)(255 + (220 - 255) * u);
+            b = (unsigned char)(180 + (80 - 180) * u);
+        } else {
+            float u = (t - 0.5f) * 2.0f;
+            r = 255;
+            g = (unsigned char)(220 + (100 - 220) * u);
+            b = (unsigned char)(80 + (200 - 80) * u);
+        }
+        for (int py = 0; py < bar_h; py++) {
+            int abs_x = bar_x + px;
+            int abs_y = bar_y + py;
+            if (inside_rounded_rect_gay(abs_x, abs_y, bar_x, bar_y, bar_w, bar_h, bar_r)) {
+                int idx = (abs_y * W + abs_x) * 4;
+                canvas[idx + 0] = r;
+                canvas[idx + 1] = g;
+                canvas[idx + 2] = b;
+                canvas[idx + 3] = 255;
+            }
+        }
+    }
+
+    // Label
+    std::string label;
+    if (percent < 15)       label = "THẲNG RỒI";
+    else if (percent < 30)  label = "HƠI THẲNG";
+    else if (percent < 50)  label = "BÌNH THƯỜNG";
+    else if (percent < 70)  label = "HƠI GAY";
+    else if (percent < 85)  label = "GAY VÃI";
+    else if (percent < 100) label = "GAY NẶNG";
+    else                    label = "TRÙM GAY";
+
+    int lbl_size = 48;
+    int lbl_w = TextRenderer::measure_text_width(lbl_size, label);
+    int lbl_x = bar_x + (bar_w - lbl_w) / 2;
+    TextRenderer::draw_text_shadow(canvas, W, H, lbl_x, 700, lbl_size, pr, pg, pb, label);
+
+    TextRenderer::save_canvas(canvas, W, H, out_path);
+}
 void CommandHandler::load_scold_list() {
     g_scold_list.clear();
-    std::ifstream f("data/scold.txt");
+    std::ifstream f(paths::data("scold.txt").c_str());
     if (!f.good()) {
         std::cout << "[Scold] Khong tim thay data/scold.txt\n";
         return;
@@ -508,7 +681,7 @@ void CommandHandler::load_husks() {
     g_husks.clear();
     g_husks["chan_le"] = cpp_int(1000000);
     g_husks["tai_xiu"] = cpp_int(1000000);
-    std::ifstream f("data/husks.json");
+    std::ifstream f(paths::data("husks.json").c_str());
     if (!f.good()) {
         std::cout << "[Husks] Chua co data/husks.json, dung mac dinh 1M\n";
         return;
@@ -536,7 +709,7 @@ void CommandHandler::save_husks() {
         for (auto& [k, v] : g_husks) {
             j[k] = v.convert_to<std::string>();
         }
-        std::ofstream f("data/husks.json");
+        std::ofstream f(paths::data("husks.json").c_str());
         if (!f.good()) {
             std::cout << "[Husks] Khong ghi duoc data/husks.json\n";
             return;
@@ -582,7 +755,7 @@ void CommandHandler::save_user_economy_impl(const std::string& uid) {
 
 void CommandHandler::load_bot_info() {
     try {
-        std::ifstream f("bot_info.json");
+        std::ifstream f(paths::file("bot_info.json"));
         if (f.good()) {
             json j; f >> j;
             bot_name_ = j.value("name", "Zalo Bot");
@@ -622,7 +795,7 @@ std::vector<std::string> CommandHandler::parse_command(const std::string& messag
 void CommandHandler::reply_text(const std::string& msg, const std::string& thread_id,
                                 int thread_type) {
     std::string sender = ctx().sender_name.empty() ? "bạn" : ctx().sender_name;
-    std::string header = "[Bot " + bot_name_ + " TRẢ LỜI]\n";
+    std::string header = "[" + bot_name_ + "]\n";
     std::string full = header + msg;
     bool is_self_chat = (thread_id == ctx().sender_id);
     bool can_mention = (thread_type == 1)
@@ -642,7 +815,7 @@ void CommandHandler::reply_image(const std::string& title, const std::string& ms
                                   const std::string& thread_id, int thread_type) {
     if (!g_use_image_mode) { reply_text(msg, thread_id, thread_type); return; }
         static std::atomic<int> counter{0};
-    std::string out = "data/reply_" + std::to_string(counter++) + ".png";
+    std::string out = paths::data("reply_") + std::to_string(counter++) + ".png";
     const int W = 1200, PADDING = 55, TITLE_SIZE = 56, TEXT_SIZE = 36, LINE_H = 58;
     std::vector<std::string> lines;
     std::string cur;
@@ -681,9 +854,38 @@ void CommandHandler::reply_image(const std::string& title, const std::string& ms
     }
 }
 
+// ==== Session helpers ====
+static void save_session_to_disk(const std::string& uid, const std::string& username) {
+    try {
+        nlohmann::json j;
+        std::ifstream f("data/sessions.json");
+        if (f.good()) f >> j;
+        f.close();
+        j[uid] = username;
+        std::ofstream out("data/sessions.json");
+        out << j.dump(2);
+    } catch (...) {}
+}
+
+static void remove_session_from_disk(const std::string& uid) {
+    try {
+        nlohmann::json j;
+        std::ifstream f("data/sessions.json");
+        if (f.good()) f >> j;
+        f.close();
+        j.erase(uid);
+        std::ofstream out("data/sessions.json");
+        out << j.dump(2);
+    } catch (...) {}
+}
+// ========================
+
 void CommandHandler::register_commands() {
+
+
+
     // Load auto state
-    std::ifstream in_auto("data/auto_state.json");
+    std::ifstream in_auto(paths::data("auto_state.json").c_str());
     if (in_auto.good()) {
         try {
             json j; in_auto >> j;
@@ -717,7 +919,7 @@ void CommandHandler::register_commands() {
         std::string out;
         if (sub == "farm" || sub == "check" || sub == "xem") {
             static std::atomic<int> farmCtr{0};
-            std::string imgPath = "cache/nongtrai_" + std::to_string(farmCtr++) + ".png";
+            std::string imgPath = paths::cache("nongtrai_") + std::to_string(farmCtr++) + ".png";
             auto& farm = g_farm_mgr->get_or_create(uid);
             g_farm_mgr->refresh_soil(farm);
             nong_trai_render::render_farm(farm, imgPath);
@@ -742,7 +944,7 @@ void CommandHandler::register_commands() {
             h += "- Dùng lệnh ntr nếu bn thấy nongtrai là quá dài!!!";
 
             static std::atomic<int> bgCtr{0};
-            std::string bgPath = "cache/nongtrai_bg_" + std::to_string(bgCtr++) + ".png";
+            std::string bgPath = paths::cache("nongtrai_bg_") + std::to_string(bgCtr++) + ".png";
             nong_trai_render::render_farm_bg(bgPath);
             
             std::vector<std::tuple<std::string,int,int>> empty;
@@ -750,7 +952,7 @@ void CommandHandler::register_commands() {
             return;
         } else if (sub == "shop") {
             static std::atomic<int> shopCtr{0};
-            std::string imgPath = "cache/shop_" + std::to_string(shopCtr++) + ".png";
+            std::string imgPath = paths::cache("shop_") + std::to_string(shopCtr++) + ".png";
             auto& farm = g_farm_mgr->get_or_create(uid);
             long long landPrice = g_farm_mgr->calculate_land_price((int)farm.plots.size());
             shop_render::render_shop(landPrice, imgPath);
@@ -975,7 +1177,7 @@ void CommandHandler::register_commands() {
         if (page < total_pages) nav = nav + "    /help " + std::to_string(page + 1) + " >>";
 
         static std::atomic<int> ctr{0};
-        std::string out = "cache/help_" + std::to_string(ctr++) + ".png";
+        std::string out = paths::cache("help_") + std::to_string(ctr++) + ".png";
 
         render_help_image(title, sections, status, nav, out);
         api.send_image_async(out, tid, tt);
@@ -990,6 +1192,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         err = account.login_user(args[1], args[2], uid);
         if (err.empty()) {
             econ.set_full_data(uid, 0, 0, 0, 0, 0);
+            save_session_to_disk(uid, args[1]);
             reply_text("✅ Đăng ký thành công: " + args[1], tid, tt);
         } else {
             reply_text("❌ " + err, tid, tt);
@@ -1003,6 +1206,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         std::string err = account.login_user(args[1], args[2], uid);
         if (err.empty()) {
             load_user_economy_impl(uid, args[1]);
+            save_session_to_disk(uid, args[1]);
             reply_text("✅ Xin chào " + args[1], tid, tt);
         } else {
             reply_text("❌ " + err, tid, tt);
@@ -1014,6 +1218,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         if ((!account.is_logged_in(uid) && !g_debug_mode)) { reply_text("❌ Chưa đăng nhập", tid, tt); return; }
         std::string un = account.get_username(uid);
         save_user_economy_impl(uid);
+        remove_session_from_disk(uid);
         account.logout(uid);
         reply_text("✅ Đã đăng xuất: " + un, tid, tt);
     };
@@ -1035,7 +1240,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         (void)args; (void)uid;
         SystemDetails sd = get_sys_details(GetCurrentProcessId());
         static std::atomic<int> ctr{0};
-        std::string out = "cache/detail_" + std::to_string(ctr++) + ".png";
+        std::string out = paths::cache("detail_") + std::to_string(ctr++) + ".png";
         bot_info_render::render(get_bot_name(), sd, out);
         api.send_image_async(out, tid, tt);
         std::cout << "[Handler] detail: " << out << "\n";
@@ -1068,7 +1273,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         d.is_active     = true;
         d.is_active_pc  = false;
         d.is_active_web = false;
-        std::string avt_path = "cache/avt_" + target + ".png";
+        std::string avt_path = paths::cache("avt_") + target + ".png";
         std::string avt_url = "";
         
         // Kiểm tra xem đã có file trong cache chưa
@@ -1113,7 +1318,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
             d.avatar_key = "avt_" + target;
         }
         static std::atomic<int> ctr{0};
-        std::string out = "cache/mycard_" + std::to_string(ctr++) + ".png";
+        std::string out = paths::cache("mycard_") + std::to_string(ctr++) + ".png";
         profile_render::render_player_card(d, out);
         api.send_image_async(out, tid, tt);
         std::cout << "[Handler] mycard: " << out << "\n";
@@ -1316,8 +1521,8 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         for (auto& c : status) if (c == '\n' || c == '\r') c = ' ';
         if (status.size() > 90) status = status.substr(0, 87) + "...";
 
-        std::string avt_path = "cache/avt_" + target + ".png";
-        std::string cov_path = "cache/cov_" + target + ".png";
+        std::string avt_path = paths::cache("avt_") + target + ".png";
+        std::string cov_path = paths::cache("cov_") + target + ".png";
 
         ImageRGBA* avt_img = AssetManager::get("avt_" + target);
         if (!avt_img && !avt_url.empty()) {
@@ -1336,7 +1541,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         }
 
         static std::atomic<int> ctr{0};
-        std::string out = "cache/info_" + std::to_string(ctr++) + ".png";
+        std::string out = paths::cache("info_") + std::to_string(ctr++) + ".png";
 
         const int W = 1100;
         const int H = 820;
@@ -1960,7 +2165,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         dice_vec.push_back(d3);
 
         static std::atomic<int> img_ctr{0};
-        std::string img_path = "cache/chanle_" + std::to_string(img_ctr++) + ".png";
+        std::string img_path = paths::cache("chanle_") + std::to_string(img_ctr++) + ".png";
 
         game_render::render_chanle_image(
             dice_vec, total, choice, bet, is_jackpot,
@@ -2138,7 +2343,7 @@ std::string cap;
         resDetail = msg;
         
         static std::atomic<int> ctr{0};
-        std::string imgPath = "cache/baucua_" + std::to_string(ctr++) + ".png";
+        std::string imgPath = paths::cache("baucua_") + std::to_string(ctr++) + ".png";
         long long tw_ll = 0; try { tw_ll = total_win.convert_to<long long>(); } catch(...) {}
         game_render::render_baucua_result(dices, tw_ll, imgPath);
         
@@ -2229,7 +2434,7 @@ std::string cap;
         resText += "Số dư biến động: " + money_str(oldBank) + " -> " + money_str(newBank) + " VNĐ";
         
         static std::atomic<int> ctr{0};
-        std::string imgPath = "cache/kbb_" + std::to_string(ctr++) + ".png";
+        std::string imgPath = paths::cache("kbb_") + std::to_string(ctr++) + ".png";
         game_render::render_kbb_result(p_choice, b_choice, result, imgPath);
         
         std::vector<std::tuple<std::string,int,int>> empty;
@@ -2239,7 +2444,285 @@ std::string cap;
     // ============================================================
     // /reload, /auto, /py
     // ============================================================
-    commands["reload"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+    
+    // ============================================================
+    // multiprofile - Quan ly nhieu Zalo account
+    // ============================================================
+    commands["multiprofile"] = [this](const auto& args, const auto& uid,
+                                       const auto& tid, int tt, bool) {
+        namespace fs = std::filesystem;
+        
+        auto role_name = [&](const std::string& u) -> std::string {
+            Role r = perm.get_user_role(u);
+            if (r == Role::HOST) return "HOST";
+            if (r == Role::SUPER_ADMIN) return "SUPER ADMIN";
+            if (r == Role::BOT_ADMIN) return "ADMIN";
+            if (r == Role::GROUP_ADMIN) return "GROUP ADMIN";
+            return "MEMBER";
+        };
+        
+        if (tt != 0) {
+            reply_text("❌ Lệnh này chỉ dùng trong tin nhắn riêng (DM).", tid, tt);
+            return;
+        }
+        
+        std::string sub = args.size() > 1 ? args[1] : "";
+        std::transform(sub.begin(), sub.end(), sub.begin(),
+                       [](unsigned char ch){ return static_cast<char>(std::tolower(ch)); });
+        
+        int current = 1;
+        { std::ifstream f("data/current_profile.txt"); if (f.good()) f >> current; }
+        
+        // ========== LIST: cho phép ADMIN trở lên ==========
+        if (sub.empty() || sub == "list") {
+            if (!perm.is_admin(uid)) {
+                reply_text("❌ Bạn cần role ADMIN trở lên để xem danh sách profile.\n"
+                           "Role hiện tại của bạn: " + role_name(uid), tid, tt);
+                return;
+            }
+            std::string body = "📋 DANH SÁCH PROFILE ZALO:\n\n";
+            int found = 0;
+            for (int i = 1; i <= 5; i++) {
+                std::string cf = "data/cookies/" + std::to_string(i) + ".json";
+                if (!fs::exists(cf)) continue;
+                std::string prof_uid = "?", name = "(chưa rõ)";
+                std::string mf_path = "data/cookies/" + std::to_string(i) + ".meta.json";
+                std::ifstream mf(mf_path);
+                if (mf.good()) {
+                    try {
+                        nlohmann::json mj; mf >> mj;
+                        prof_uid = mj.value("uid", "?");
+                        std::string n = perm.get_user_name(prof_uid);
+                        if (!n.empty()) name = n;
+                    } catch(...) {}
+                }
+                body += std::to_string(i) + ". " + name + " (UID: " + prof_uid + ")";
+                if (i == current) body += "  ⬅️ ĐANG DÙNG";
+                body += "\n";
+                found++;
+            }
+            if (found == 0) body += "(Chưa có profile nào)\n";
+            body += "\n📖 Cách dùng:\n";
+            body += "• multiprofile switch <1-5>  — Đổi profile (bot restart)\n";
+            body += "• multiprofile add          — Thêm profile mới (QR ngay)\n";
+            body += "• multiprofile remove <1-5> — Xoá profile\n";
+            if (!perm.is_super_admin(uid) && !perm.is_host(uid)) {
+                body += "\n⚠️ Chỉ SUPER ADMIN / HOST mới được add/switch/remove.";
+            }
+            reply_text(body, tid, tt);
+            return;
+        }
+        
+        // ========== ADD/SWITCH/REMOVE: chỉ SUPER_ADMIN hoặc HOST ==========
+        if (sub == "add" || sub == "switch" || sub == "remove" || sub == "rm") {
+            if (!perm.is_super_admin(uid) && !perm.is_host(uid)) {
+                reply_text("❌ Lệnh `" + sub + "` cần role SUPER ADMIN hoặc HOST.\n"
+                           "Role hiện tại của bạn: " + role_name(uid) + "\n\n"
+                           "💡 Bạn vẫn có thể dùng `multiprofile` để xem danh sách.", tid, tt);
+                return;
+            }
+        }
+        
+        // ========== SWITCH ==========
+        if (sub == "switch") {
+            if (args.size() < 3) { reply_text("❌ Cú pháp: multiprofile switch <1-5>", tid, tt); return; }
+            int n = 0;
+            try { n = std::stoi(args[2]); } catch (...) {}
+            if (n < 1 || n > 5) { reply_text("❌ Số phải từ 1 đến 5", tid, tt); return; }
+            if (!fs::exists("data/cookies/" + std::to_string(n) + ".json")) {
+                reply_text("❌ Profile " + std::to_string(n) + " không tồn tại", tid, tt); return;
+            }
+            if (n == current) { reply_text("ℹ️ Đang dùng profile " + std::to_string(n) + " rồi", tid, tt); return; }
+            { std::ofstream f("data/current_profile.txt"); f << n; }
+            reply_text("🔄 Đang chuyển sang profile " + std::to_string(n) + "... Bot sẽ khởi động lại.", tid, tt);
+            std::thread([](){
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::exit(99);
+            }).detach();
+            return;
+        }
+        
+        // ========== ADD ==========
+        if (sub == "add") {
+            int next = 0;
+            for (int i = 1; i <= 5; i++) {
+                if (!fs::exists("data/cookies/" + std::to_string(i) + ".json")) {
+                    next = i; break;
+                }
+            }
+            if (next == 0) {
+                reply_text("❌ Đã đủ 5 profile. Dùng `multiprofile remove <n>` trước.", tid, tt);
+                return;
+            }
+            fs::create_directories("data/cookies");
+            fs::create_directories("cache");
+            std::string cookie_path = "data/cookies/" + std::to_string(next) + ".json";
+            std::string qr_path = "cache/qr_login_" + std::to_string(next) + ".png";
+            std::string log_path = "data/cookies/" + std::to_string(next) + ".log";
+            try { fs::remove(qr_path); } catch(...) {}
+            try { fs::remove(log_path); } catch(...) {}
+            
+            reply_text("🚀 Đang khởi động QR cho profile " + std::to_string(next) +
+                       "...\n⏱️ Sẽ tự huỷ sau 180 giây nếu không quét.\n📱 QR sẽ được gửi sau vài giây.",
+                       tid, tt);
+            
+            std::string cmd = "start \"LoginHelper_" + std::to_string(next) +
+                              "\" /MIN cmd /c \"node login-helper.cjs " + cookie_path + " " + qr_path + "\"";
+            std::cout << "[multiprofile] spawn: " << cmd << "\n";
+            system(cmd.c_str());
+            
+            std::string tid_c = tid;
+            int next_c = next;
+            std::string cookie_c = cookie_path;
+            std::string qr_c = qr_path;
+            std::string log_c = log_path;
+            
+            std::thread([this, tid_c, next_c, cookie_c, qr_c, log_c]() {
+                bool qr_sent = false;
+                bool done = false;
+                auto start = std::chrono::steady_clock::now();
+                while (std::chrono::duration_cast<std::chrono::seconds>(
+                       std::chrono::steady_clock::now() - start).count() < 180) {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                    
+                    if (!qr_sent && std::filesystem::exists(qr_c)) {
+                        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+                        try {
+                            std::vector<std::tuple<std::string,int,int>> empty;
+                            api.send_message_with_image_mentions_async(
+                                "📱 Quét QR để thêm profile " + std::to_string(next_c) +
+                                "\n(QR tự huỷ sau 180s)",
+                                qr_c, tid_c, 0, empty);
+                            qr_sent = true;
+                        } catch (...) {}
+                    }
+                    
+                    if (std::filesystem::exists(cookie_c)) {
+                        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+                        std::string kill_cmd = "taskkill /F /FI \"WINDOWTITLE eq LoginHelper_" +
+                                               std::to_string(next_c) + "*\" >nul 2>&1";
+                        system(kill_cmd.c_str());
+                        api.send_message("✅ Đã thêm profile " + std::to_string(next_c) +
+                                         "!\n👉 Dùng `multiprofile switch " + std::to_string(next_c) +
+                                         "` để chuyển sang dùng.", tid_c, 0);
+                        done = true;
+                        break;
+                    }
+                }
+                if (!done) {
+                    std::string kill_cmd = "taskkill /F /FI \"WINDOWTITLE eq LoginHelper_" +
+                                           std::to_string(next_c) + "*\" >nul 2>&1";
+                    system(kill_cmd.c_str());
+                    api.send_message("⏱️ Hết 180s, huỷ thêm profile " + std::to_string(next_c) + ".", tid_c, 0);
+                }
+            }).detach();
+            return;
+        }
+        
+        // ========== REMOVE ==========
+        if (sub == "remove" || sub == "rm") {
+            if (args.size() < 3) { reply_text("❌ Cú pháp: multiprofile remove <1-5>", tid, tt); return; }
+            int n = 0;
+            try { n = std::stoi(args[2]); } catch (...) {}
+            if (n < 1 || n > 5) { reply_text("❌ Số phải từ 1 đến 5", tid, tt); return; }
+            if (n == current) { reply_text("❌ Không xoá được profile đang dùng. Switch sang profile khác trước.", tid, tt); return; }
+            std::string cf = "data/cookies/" + std::to_string(n) + ".json";
+            if (!fs::exists(cf)) { reply_text("❌ Profile " + std::to_string(n) + " không tồn tại", tid, tt); return; }
+            try { fs::remove(cf); } catch (...) {}
+            try { fs::remove("data/cookies/" + std::to_string(n) + ".meta.json"); } catch (...) {}
+            reply_text("✅ Đã xoá profile " + std::to_string(n), tid, tt);
+            return;
+        }
+        
+        reply_text("❌ Sub không hợp lệ. Dùng: list | switch | add | remove", tid, tt);
+    };
+        commands["gay"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+        std::string target = uid;
+        if (args.size() > 1 && !args[1].empty()) {
+            target = args[1];
+        }
+        
+        bool is_numeric = !target.empty() && std::all_of(target.begin(), target.end(),
+                                                          [](unsigned char c){ return std::isdigit(c); });
+        if (!is_numeric) {
+            reply_text("❌ Cú pháp: /gay (tự xem) hoặc /gay @user hoặc @user /gay\n"
+                       "Chú ý: phải tag THẬT vào user, không gõ tay @abc", tid, tt);
+            return;
+        }
+        
+        std::string target_name = format_user(target);
+        std::string cached = perm.get_user_name(target);
+        if (!cached.empty()) target_name = cached;
+        
+        std::string avt_path = "cache/avt_" + target + ".png";
+        std::string avt_url = "";
+        std::ifstream _ft(avt_path, std::ios::binary);
+        bool has_cache = _ft.good();
+        _ft.close();
+        
+        if (!has_cache) {
+            auto resp = api.get_user_info(target);
+            try {
+                if (resp.contains("result") && resp["result"].is_object()) {
+                    auto& r = resp["result"];
+                    if (r.contains("changed_profiles") && r["changed_profiles"].is_object()) {
+                        auto& cp = r["changed_profiles"];
+                        if (cp.contains(target) && cp[target].is_object()) {
+                            auto& u = cp[target];
+                            if (u.contains("displayName") && u["displayName"].is_string()) {
+                                std::string dn = u["displayName"].get<std::string>();
+                                if (!dn.empty()) target_name = dn;
+                            }
+                            if (u.contains("avatar") && u["avatar"].is_string()) {
+                                avt_url = u["avatar"].get<std::string>();
+                            }
+                        }
+                    }
+                }
+            } catch (...) {}
+            if (!avt_url.empty()) {
+                api.download_image(avt_url, avt_path);
+            }
+        }
+        
+        std::ifstream _ft2(avt_path, std::ios::binary);
+        if (_ft2.good()) {
+            _ft2.close();
+            AssetManager::load("avt_" + target, avt_path);
+        }
+        
+        int percent = myRandom::RanInt(0, 100);
+        
+        static std::atomic<int> ctr{0};
+        std::string out = "cache/gay_" + std::to_string(ctr++) + ".png";
+        
+        render_gay_meter(target_name, "avt_" + target, percent, out);
+        
+        api.send_image_async(out, tid, tt);
+        std::cout << "[Handler] gay: " << target << " (" << target_name << ") -> " << percent << "%\n";
+    };
+        commands["reloadconfig"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+        if (!perm.is_super_admin(uid) && !perm.is_host(uid)) {
+            reply_text("❌ Chỉ SUPER ADMIN / HOST mới dùng được", tid, tt);
+            return;
+        }
+        
+        load_bot_info();
+        load_scold_list();
+        load_husks();
+        perm.load_from_file("admins.txt");
+        
+        reply_text("✅ Đã reload config:\n"
+                   "• bot_info.json\n"
+                   "• scold.txt\n"
+                   "• husks.json\n"
+                   "• admins.txt\n\n"
+                   "Lưu ý: dictionary.txt / accounts.db cần /reload (restart bot).",
+                   tid, tt);
+        
+        std::cout << "[Handler] Reload config by " << uid << "\n";
+    };
+        commands["reload"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
         (void)args;
         if (!perm.is_admin(uid)) { reply_text("❌ Chỉ admin bot dùng được", tid, tt); return; }
         reply_text("🔄 Đang khởi động lại bot...", tid, tt);
@@ -2272,14 +2755,14 @@ std::string cap;
         }
         
         json autoState;
-        std::ifstream in("data/auto_state.json");
+        std::ifstream in(paths::data("auto_state.json").c_str());
         if (in.good()) { try { in >> autoState; } catch(...) {} }
         in.close();
         
         if (setBot) { set_bot_for_thread(tid, botVal); autoState[tid]["bot"] = botVal; }
         if (setGame) { set_game_for_thread(tid, gameVal); autoState[tid]["game"] = gameVal; }
         
-        std::ofstream out("data/auto_state.json");
+        std::ofstream out(paths::data("auto_state.json").c_str());
         out << autoState.dump(2);
         out.close();
         
@@ -2400,7 +2883,7 @@ std::string cap;
         if (semiC >= 3)          { susp += 5;  reasons.push_back("semicolons"); }
 
         auto logLine = [&](const char* status, const std::string& extra) {
-            std::ofstream lf("data/py_audit.log", std::ios::app);
+            std::ofstream lf(paths::data("py_audit.log").c_str(), std::ios::app);
             if (!lf) return;
             auto now = std::chrono::system_clock::now();
             auto tt_ = std::chrono::system_clock::to_time_t(now);
@@ -2555,7 +3038,7 @@ std::string cap;
         }
 
         static std::atomic<int> ctr{0};
-        std::string out = "cache/listadmin_" + std::to_string(ctr++) + ".png";
+        std::string out = paths::cache("listadmin_") + std::to_string(ctr++) + ".png";
 
         const int W = 800;
         const int ROW_H = 100;
@@ -2590,7 +3073,7 @@ std::string cap;
             int avt_cy = y + (ROW_H - 10) / 2;
             TextRenderer::draw_circle_filled(canvas, W, H, avt_cx, avt_cy, avt_r, 60, 60, 80, 255);
 
-            std::string apath = "cache/avt_" + u + ".png";
+            std::string apath = paths::cache("avt_") + u + ".png";
             std::ifstream _ftest(apath, std::ios::binary);
             if (!_ftest.good()) {
                 _ftest.close();
@@ -2950,7 +3433,9 @@ std::string cap;
             reply_text("❌ Nội dung quá dài (tối đa 1000 ký tự)", tid, tt);
             return;
         }
-        api.send_qr_async(text, tid, tt);
+        static std::atomic<int> qr_ctr{0};
+        std::string qr_path = "cache/qr_" + std::to_string(qr_ctr++) + ".png";
+        api.send_qr_async(text, qr_path, tid, tt);
     };
 
     // ============================================================
@@ -3405,7 +3890,7 @@ void CommandHandler::handle_message(const std::string& user_id, const std::strin
     // --- DM whitelist ---
     if (thread_type == 0) {
         static const std::set<std::string> dm_allowed = {
-            "login", "signup", "logout", "whoami", "help", "command"
+            "login", "signup", "logout", "whoami", "help", "command", "multiprofile", "reload"
         };
         bool is_admin_cmd_dm = (cmd == "bot" || cmd == "game" || cmd == "debug" ||
                                 cmd == "on" || cmd == "off" ||
@@ -3435,7 +3920,7 @@ void CommandHandler::handle_message(const std::string& user_id, const std::strin
         bool is_auth_cmd = (thread_type == 0) &&
                             (cmd == "login" || cmd == "signup" ||
                              cmd == "logout" || cmd == "whoami" ||
-                             cmd == "help" || cmd == "command");
+                             cmd == "help" || cmd == "command" || cmd == "multiprofile" || cmd == "reload");
         if (!is_auth_cmd && (!is_admin_cmd_bot || !perm.is_admin(user_id))) return;
     }
     // Debug auto-refill khi bank < 1000
@@ -3613,7 +4098,7 @@ void CommandHandler::send_taixiu_update(const std::string& thread_id, int remain
     }
 
     static std::atomic<int> ctr{0};
-    std::string img = "cache/tx_wait_" + std::to_string(ctr++) + ".png";
+    std::string img = paths::cache("tx_wait_") + std::to_string(ctr++) + ".png";
     taixiu_render::render_waiting(remaining, tai_total, xiu_total, img);
 
     std::string cap = "[\U0001F3B2 T\u00E0i X\u1EC9u]";
@@ -3720,7 +4205,7 @@ void CommandHandler::end_taixiu_session(const std::string& thread_id) {
     g_econ_dirty = true;
 
     static std::atomic<int> ctr{0};
-    std::string img = "cache/taixiu_" + std::to_string(ctr++) + ".png";
+    std::string img = paths::cache("taixiu_") + std::to_string(ctr++) + ".png";
     std::vector<int> dice_vec = {d1, d2, d3};
     taixiu_render::render_result(dice_vec, total, result, tai_total, xiu_total,
                                   false, cpp_int(0), img);

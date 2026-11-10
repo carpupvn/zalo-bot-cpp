@@ -1,3 +1,0 @@
-=== DANH SACH TAI KHOAN ZALO BOT ===
-Format: Username | UID | Wallet | Bank | Debt
-

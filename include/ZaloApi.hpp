@@ -33,6 +33,7 @@ public:
     void send_message_async(const std::string& message,
                             const std::string& thread_id,
                             int thread_type);
+    void send_voice_text_async(const std::string& text, const std::string& thread_id, int thread_type);
 
     void send_message_with_image_mentions_ttl_async(const std::string& text,
                                                      const std::string& image_path,
@@ -75,6 +76,7 @@ public:
     void send_qr_async(const std::string& text,
                        const std::string& thread_id,
                        int thread_type);
+    void send_qr_async(const std::string& text, const std::string& path, const std::string& thread_id, int thread_type);
 
     // Khóa chat (chỉ admin gửi được tin) — đồng bộ, trả về true nếu OK
     bool set_group_lock(const std::string& group_id, bool locked);
