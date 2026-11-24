@@ -1,0 +1,14 @@
+[2026-11-11T05:05:45.763Z] === HELPER START ===
+[2026-11-11T05:05:45.783Z] fakeHome=C:\Users\ADMINI~1\AppData\Local\Temp\zalo-fake-home-1794373545760
+[2026-11-11T05:05:45.795Z] os.homedir()=C:\Users\ADMINI~1\AppData\Local\Temp\zalo-fake-home-1794373545760
+[2026-11-11T05:05:45.813Z] cwd=E:\zalo-bot-cpp-main\zalo-bot-cpp-main
+[2026-11-11T05:05:45.841Z] node=v26.13.0
+[2026-11-11T05:05:45.855Z] after chdir cwd=C:\Users\ADMINI~1\AppData\Local\Temp\zalo-fake-home-1794373545760
+[2026-11-11T05:05:45.871Z] Loading zca-js...
+[2026-11-11T05:05:46.643Z] zca-js loaded
+[2026-11-11T05:05:46.770Z] Creating Zalo instance (fresh, no cache)...
+[2026-11-11T05:05:46.788Z] Zalo instance created
+[2026-11-11T05:05:46.813Z] Calling loginQR -> will create NEW session, not reuse cache...
+
+[34mINFO[0m Got login version: 2606161423
+[34mINFO[0m Scan the QR code at 'E:\zalo-bot-cpp-main\zalo-bot-cpp-main\cache\qr_login_2.png' to proceed with login

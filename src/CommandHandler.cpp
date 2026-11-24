@@ -2608,6 +2608,24 @@ std::string cap;
                         done = true;
                         break;
                     }
+                    
+                    // Kiem tra log de phat hien loi quet nham acc chinh
+                    std::ifstream logFile(log_c);
+                    if (logFile.good()) {
+                        std::string line, lastLines = "";
+                        while (std::getline(logFile, line)) {
+                            if (line.find("CANH BAO: Ban vua quet QR bang ACC CHINH") != std::string::npos) {
+                                std::string kill_cmd = "taskkill /F /FI \"WINDOWTITLE eq LoginHelper_" +
+                                                       std::to_string(next_c) + "*\" >nul 2>&1";
+                                system(kill_cmd.c_str());
+                                api.send_message("❌ Lỗi: Bạn vừa quét mã bằng **chính acc đang chạy**!\n"
+                                                 "Vui lòng đăng xuất acc đó khỏi Zalo điện thoại, "
+                                                 "sau đó quét lại bằng một tài khoản khác.", tid_c, 0);
+                                done = true;
+                                break;
+                            }
+                        }
+                    }
                 }
                 if (!done) {
                     std::string kill_cmd = "taskkill /F /FI \"WINDOWTITLE eq LoginHelper_" +
@@ -3862,14 +3880,20 @@ void CommandHandler::handle_message(const std::string& user_id, const std::strin
     std::string mention_uid;
     std::string cmd_token;
     std::vector<std::string> clean_args;
+    bool consumed_first = false;
     for (const auto& tok : raw_args) {
         if (tok.size() >= 4 && tok.substr(0, 2) == "<@" && tok.back() == '>') {
             if (mention_uid.empty()) mention_uid = tok.substr(2, tok.size() - 3);
             continue;
         }
-        if (cmd_token.empty() && tok.size() > prefix.size() &&
-            tok.substr(0, prefix.size()) == prefix) {
-            cmd_token = tok;
+        if (!consumed_first) {
+            consumed_first = true;
+            if (tok.size() > prefix.size() &&
+                tok.substr(0, prefix.size()) == prefix) {
+                cmd_token = tok;
+                continue;
+            }
+            clean_args.push_back(tok);
             continue;
         }
         clean_args.push_back(tok);
@@ -3883,6 +3907,7 @@ void CommandHandler::handle_message(const std::string& user_id, const std::strin
 
     std::string cmd = cmd_token.substr(prefix.length());
     std::transform(cmd.begin(), cmd.end(), cmd.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+    if (!cmd.empty() && (cmd[0] == '-' || cmd[0] == ':')) return;
     std::cout << "[hmsg] cmd=" << cmd << " tt=" << thread_type << " tid=" << thread_id
               << " bot=" << (get_bot_for_thread(thread_id) ? 1 : 0)
               << " game=" << (get_game_for_thread(thread_id) ? 1 : 0) << "\n";

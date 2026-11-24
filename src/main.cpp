@@ -112,6 +112,36 @@ static void migrate_root_configs(const std::string& profile_dir) {
         }
     }
 }
+// Don cache cu hon 1 gio (giam phinh o dia)
+static void cleanup_old_cache() {
+    namespace fs = std::filesystem;
+    if (!fs::exists("cache")) return;
+    auto now = fs::file_time_type::clock::now();
+    int removed = 0;
+    try {
+        for (auto& entry : fs::directory_iterator("cache")) {
+            if (!entry.is_regular_file()) continue;
+            try {
+                // Bỏ qua các file cache cần giữ lâu dài
+                auto fname = entry.path().filename().string();
+                bool is_persistent =
+                    (fname.rfind("avt_",      0) == 0) ||
+                    (fname.rfind("cov_",      0) == 0) ||
+                    (fname.rfind("qr_login_", 0) == 0);
+                if (is_persistent) continue;
+
+                auto age = now - fs::last_write_time(entry);
+                if (age > std::chrono::hours(1)) {
+                    fs::remove(entry.path());
+                    removed++;
+                }
+            } catch (...) {}
+        }
+    } catch (...) {}
+    if (removed > 0) {
+        std::cout << "[Cache] Cleaned " << removed << " old files\n";
+    }
+}
 int main() {
     paths::g_profile.clear();
     {
@@ -122,7 +152,8 @@ int main() {
         
         // Tạo thư mục nếu chưa có
         std::filesystem::create_directories(paths::data(""));
-        std::filesystem::create_directories(paths::cache(""));
+        std::filesystem::create_directories(paths::cache(""));
+
         migrate_root_configs(paths::data(""));
     }
     setup_console();
@@ -204,6 +235,27 @@ ZaloBridge bridge;
 
             std::cout << "✅ Bot own_id: " << own_id << "\n";
             std::cout << "👑 Đã set " << own_id << " làm HOST\n";
+
+            // Cập nhật .meta.json với uid, name và last_used
+            try {
+                int cur_prof = 1;
+                { std::ifstream pf("data/current_profile.txt"); if (pf.good()) pf >> cur_prof; }
+                std::string meta_path = "data/cookies/" + std::to_string(cur_prof) + ".meta.json";
+
+                nlohmann::json mj;
+                { std::ifstream mf(meta_path); if (mf.good()) { try { mf >> mj; } catch (...) {} } }
+
+                mj["uid"] = own_id;
+                mj["last_used"] = (long long)std::time(nullptr);
+
+                std::string bot_name_meta = perm.get_user_name(own_id);
+                if (!bot_name_meta.empty()) mj["name"] = bot_name_meta;
+
+                { std::ofstream mfw(meta_path); mfw << mj.dump(2); }
+                std::cout << "[Meta] Đã ghi " << meta_path << "\n";
+            } catch (const std::exception& e) {
+                std::cerr << "[Meta] Lỗi ghi meta: " << e.what() << "\n";
+            }
         }
         else if (event == "closed") {
             std::cout << "⚠️ WebSocket đóng: " << ev.value("code", 0)
@@ -263,7 +315,7 @@ ZaloBridge bridge;
                 }
 
                 if (is_self) {
-                    std::string marker = "[Bot " + handler.get_bot_name() + " TRẢ LỜI";
+                    std::string marker = "[" + handler.get_bot_name() + "]";
                     if (content.find(marker) != std::string::npos) return;
                     if (content.find("[Bot ") == 0) return;
                     std::cout << "[SELF] " << sender_name << ": " << content << "\n";
@@ -567,7 +619,15 @@ ZaloBridge bridge;
         auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(
                             now - last_flush).count();
         if (elapsed >= 30) {
-            if (g_farm_mgr && g_farm_mgr->is_dirty()) { g_farm_mgr->save("data/nong_trai.json"); }
+            {
+            static auto last_cleanup = std::chrono::steady_clock::now();
+            auto now_cleanup = std::chrono::steady_clock::now();
+            if (std::chrono::duration_cast<std::chrono::minutes>(now_cleanup - last_cleanup).count() >= 30) {
+                cleanup_old_cache();
+                last_cleanup = now_cleanup;
+            }
+        }
+        if (g_farm_mgr && g_farm_mgr->is_dirty()) { g_farm_mgr->save("data/nong_trai.json"); }
     perm.flush_if_dirty();
             last_flush = now;
         }
@@ -593,7 +653,15 @@ ZaloBridge bridge;
     }
 
     // Flush lan cuoi khi thoat
-    if (g_farm_mgr && g_farm_mgr->is_dirty()) { g_farm_mgr->save("data/nong_trai.json"); }
+    {
+            static auto last_cleanup = std::chrono::steady_clock::now();
+            auto now_cleanup = std::chrono::steady_clock::now();
+            if (std::chrono::duration_cast<std::chrono::minutes>(now_cleanup - last_cleanup).count() >= 30) {
+                cleanup_old_cache();
+                last_cleanup = now_cleanup;
+            }
+        }
+        if (g_farm_mgr && g_farm_mgr->is_dirty()) { g_farm_mgr->save("data/nong_trai.json"); }
     perm.flush_if_dirty();
 
     // Flush economy lan cuoi
