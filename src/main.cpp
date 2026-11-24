@@ -14,6 +14,7 @@ extern NongTraiManager* g_farm_mgr;
 #include "TextRenderer.hpp"
 #include "AssetManager.hpp"
 #include "EmojiRenderer.hpp"
+#include "ExtraRender.inc"
 #include "json.hpp"
 #include "paths.hpp"
 #include <filesystem>
@@ -165,6 +166,7 @@ int main() {
     }
 
     TextRenderer::init_emoji("assets/TwemojiMozilla.ttf");
+    TextRenderer::init_alt_font("assets/SVN-Transformer.ttf");
 
     AssetManager::preload_common();
     EmojiRenderer::init("assets/emoji");
@@ -213,6 +215,20 @@ ZaloBridge bridge;
     GameManager       game(econ);
     GroupManager      group(api);
     CommandHandler    handler(api, perm, econ, game, group, account);
+
+    // Restore persisted economy data for all restored sessions
+    {
+        auto restored = account.get_logged_in_map();
+        for (const auto& kv : restored) {
+            AccountEconomyData ed;
+            if (account.load_economy(kv.second, ed)) {
+                econ.set_full_data(kv.first, ed.wallet, ed.bank, ed.debt,
+                                   ed.games_played, ed.games_won,
+                                   ed.total_won, ed.total_lost);
+                econ.set_last_daily(kv.first, (std::time_t)ed.last_daily);
+            }
+        }
+    }
 
     NongTraiManager farm(econ);
     farm.load(paths::data("nong_trai.json"));
@@ -431,6 +447,16 @@ ZaloBridge bridge;
 
     // Gate bot/game duoc xu ly trong CommandHandler::handle_message (per-thread)
 
+                // KIỂM TRA CẤM CHAT (MUTE)
+                if (!is_self && type == 1 && !perm.is_admin(sender_id) && group.is_muted(thread_id, sender_id)) {
+                    std::string msg_id = data.value("msgId", "");
+                    std::string cli_msg_id = data.value("cliMsgId", "");
+                    if (!msg_id.empty() && !cli_msg_id.empty()) {
+                        api.delete_message(msg_id, cli_msg_id, sender_id, thread_id, type);
+                    }
+                    return;
+                }
+
                 // CHỐNG SPAM
                 if (group.check_spam(sender_id, thread_id)) {
                     std::string msg_id     = data.value("msgId", "");
@@ -535,6 +561,76 @@ ZaloBridge bridge;
                                        content_resolved, sender_name, is_self, quote);
             } catch (const std::exception& e) {
                 std::cerr << "[main] Event error: " << e.what() << "\n";
+            }
+        }
+        else if (event == "group_event") {
+            try {
+                const auto& d = ev["data"];
+                std::string evType = d.value("type", "");
+                std::string gid = d.value("threadId", "");
+                std::string gname = d.value("groupName", "Nhóm Chat");
+                std::string srcId = d.value("sourceId", "");
+                if (gid.empty()) return;
+
+                if (evType == "add_admin" || evType == "remove_admin") {
+                    group.invalidate_admin_cache(gid);
+                    return;
+                }
+
+                std::string actor_name = srcId.empty() ? "" : handler.format_user(srcId);
+                if (d.contains("updateMembers") && d["updateMembers"].is_array()) {
+                    for (const auto& mem : d["updateMembers"]) {
+                        std::string mid = mem.value("id", "");
+                        std::string mname = mem.value("dName", "");
+                        std::string mavt = mem.value("avatar", "");
+                        if (mid.empty()) continue;
+                        if (mname.empty()) mname = handler.format_user(mid);
+                        else {
+                            handler.cache_user_name(mid, mname);
+                            perm.set_user_name(mid, mname);
+                        }
+
+                        auto load_member_avt = [&](const std::string& uid_target, const std::string& url) -> std::string {
+                            std::string avt_key = "avt_" + uid_target;
+                            if (AssetManager::get(avt_key)) return avt_key;
+                            std::string avt_path = paths::cache("avt_") + uid_target + ".png";
+                            std::ifstream ft(avt_path, std::ios::binary);
+                            bool exists = ft.good();
+                            ft.close();
+                            if (!exists && !url.empty()) {
+                                api.download_image(url, avt_path);
+                            }
+                            if (AssetManager::load(avt_key, avt_path)) return avt_key;
+                            return "";
+                        };
+
+                        if (evType == "join" && group.is_welcome_enabled(gid)) {
+                            if (g_use_image_mode) {
+                                std::string avt_key = load_member_avt(mid, mavt);
+                                static std::atomic<int> w_ctr{0};
+                                std::string out = paths::cache("welcome_") + std::to_string(w_ctr++) + ".png";
+                                extra_render::render_event_banner(true, mname, gname, avt_key, out);
+                                api.send_message_with_image_async("👋 Chào mừng " + mname + " tham gia " + gname + "!", out, gid, 1);
+                            } else {
+                                group.on_member_join(gid, mid, mname);
+                            }
+                        } else if (evType == "leave" && group.is_goodbye_enabled(gid)) {
+                            if (g_use_image_mode) {
+                                std::string avt_key = load_member_avt(mid, mavt);
+                                static std::atomic<int> b_ctr{0};
+                                std::string out = paths::cache("bye_") + std::to_string(b_ctr++) + ".png";
+                                extra_render::render_event_banner(false, mname, gname, avt_key, out);
+                                api.send_message_with_image_async("👋 Tạm biệt " + mname + "!", out, gid, 1);
+                            } else {
+                                group.on_member_leave(gid, mid, mname);
+                            }
+                        } else if ((evType == "remove_member" || evType == "block_member") && group.is_goodbye_enabled(gid)) {
+                            group.on_member_kick(gid, mid, mname, actor_name);
+                        }
+                    }
+                }
+            } catch (const std::exception& e) {
+                std::cerr << "[main] group_event error: " << e.what() << "\n";
             }
         }
         else if (event == "undo") {
@@ -646,6 +742,9 @@ ZaloBridge bridge;
                 d.debt         = e.debt;
                 d.games_played = e.games_played;
                 d.games_won    = e.games_won;
+                d.total_won    = e.total_won;
+                d.total_lost   = e.total_lost;
+                d.last_daily   = (long long)econ.get_last_daily(uid);
                 account.save_economy(un, d);
             }
             std::cout << "[main] Save economy (dirty): " << logged.size() << " user\n";
@@ -677,6 +776,9 @@ ZaloBridge bridge;
             d.debt         = e.debt;
             d.games_played = e.games_played;
             d.games_won    = e.games_won;
+            d.total_won    = e.total_won;
+            d.total_lost   = e.total_lost;
+            d.last_daily   = (long long)econ.get_last_daily(uid);
             account.save_economy(un, d);
         }
         account.export_to_txt(paths::data("accounts.txt"));

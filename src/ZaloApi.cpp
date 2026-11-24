@@ -486,10 +486,32 @@ void ZaloApi::send_voice_text_async(const std::string& text, const std::string& 
 
 void ZaloApi::send_qr_async(const std::string& text, const std::string& path,
                               const std::string& thread_id, int thread_type) {
-    bridge_->send_command("create_qr", {
+    if (!bridge_) return;
+    throttle();
+    auto r = bridge_->send_command("create_qr", {
         {"text", text},
-        {"path", path},
-        {"threadId", thread_id},
-        {"type", thread_type}
-    });
+        {"path", path}
+    }, 15000);
+    if (!r.value("ok", false)) {
+        send_message_async("❌ Tạo QR thất bại", thread_id, thread_type);
+        return;
+    }
+    std::string realPath = path;
+    if (r.contains("result") && r["result"].is_object()) {
+        realPath = r["result"].value("path", path);
+    }
+    send_message_with_image_async("📱 QR Code", realPath, thread_id, thread_type);
+}
+
+json ZaloApi::call_bridge(const std::string& action, const json& params, int timeout_ms) {
+    if (!bridge_) return json{{"ok", false}, {"error", "no bridge"}};
+    return bridge_->send_command(action, params, timeout_ms);
+}
+
+json ZaloApi::translate_text(const std::string& text, const std::string& to_lang) {
+    return call_bridge("translate_text", {{"text", text}, {"to", to_lang}}, 15000);
+}
+
+json ZaloApi::get_weather(const std::string& city) {
+    return call_bridge("get_weather", {{"city", city}}, 15000);
 }

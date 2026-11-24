@@ -124,6 +124,9 @@ public:
     bool was_sent_by_bot(const std::string& content, const std::string& thread_id);
 
     nativeHTTP::Client& get_client() { return http_client; }
+    json call_bridge(const std::string& action, const json& params, int timeout_ms = 15000);
+    json translate_text(const std::string& text, const std::string& to_lang = "vi");
+    json get_weather(const std::string& city);
 
 private:
     struct SentMsg {

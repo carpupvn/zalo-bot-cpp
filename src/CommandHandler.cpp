@@ -29,6 +29,7 @@ NongTraiManager* g_farm_mgr = nullptr;
 #include "NongTraiRender.inc"
 #include "ShopRender.inc"
 #include "BauCuaKbbRender.inc"
+#include "ExtraRender.inc"
 #include "SystemInfo.hpp"
 #include <random>
 #include <ctime>
@@ -232,6 +233,7 @@ struct TaixiuSession {
 };
 
 static std::map<std::string, TaixiuSession> g_taixiu_sessions;
+static std::vector<std::pair<int, bool>> g_taixiu_history_pts; // (total 3..18, is_tai)
 static std::mutex g_taixiu_mtx;
 
 // Husks - load tu data/husks.json
@@ -368,15 +370,15 @@ static void render_game_image(
     // Thắng / thua
     if (won) {
         TextRenderer::draw_text_on_canvas(canvas, W, H, 230, 160, 22, 255, 200, 80,
-            "Thang: +" + money_str(payout) + " VND");
+            "Thắng: +" + money_str(payout) + " VNĐ");
     } else {
         TextRenderer::draw_text_on_canvas(canvas, W, H, 230, 160, 22, 255, 120, 120,
-            "Thua: -" + money_str(bet) + " VND");
+            "Thua: -" + money_str(bet) + " VNĐ");
     }
 
     // Số dư
     TextRenderer::draw_text_on_canvas(canvas, W, H, 230, 190, 18, 180, 200, 230,
-        "So du: " + money_str(bal_before) + " -> " + money_str(bal_after) + " VND");
+        "Số dư: " + money_str(bal_before) + " -> " + money_str(bal_after) + " VNĐ");
 
     // Lịch sử
     draw_history_dots(canvas, W, H, 490, 145, history);
@@ -403,79 +405,135 @@ static void render_help_image(
     const std::string& footer_right,
     const std::string& out_path)
 {
-    const int W = 699;
-    const int SPACE = 30;
-    const int ROW_H = 48;
-    const int TITLE_SIZE = 28;
-    const int TEXT_SIZE  = 24;
-    const int ICON_SIZE  = 28;
-    const int ICON_GAP   = 8;
+    const int W = 920;
+    const int PAD = 28;
+    const int INNER_X = PAD + 26;
+    const int TITLE_SIZE = 32;
+    const int HEADER_SIZE = 24;
+    const int TEXT_SIZE = 22;
+    const int ICON_SIZE = 26;
+    const int ICON_GAP = 10;
+    const int ROW_STEP = 38;
+    const int SUB_STEP = 30;
+    const int MAX_RIGHT = W - PAD - 24;
 
-    // Đo chiều cao
-    int y = 60;
+    struct RowLayout {
+        int text_x = 0;
+        std::string icon;
+        std::string cmd;
+        int cmd_w = 0;
+        std::vector<std::string> desc_lines;
+        bool implemented = true;
+    };
+    struct SecLayout {
+        std::string header;
+        std::vector<RowLayout> rows;
+    };
+
+    std::vector<SecLayout> layout;
+    int y = PAD + 68;
     for (const auto& sec : sections) {
-        if (!sec.header.empty()) y += 52;
-        y += (int)sec.rows.size() * ROW_H;
-        y += 20;
+        SecLayout sl;
+        sl.header = sec.header;
+        if (!sec.header.empty()) y += 44;
+        for (const auto& r : sec.rows) {
+            RowLayout rl;
+            rl.icon = r.icon;
+            rl.cmd = r.cmd;
+            rl.implemented = r.implemented;
+            rl.text_x = INNER_X + (r.icon.empty() ? 0 : (ICON_SIZE + ICON_GAP));
+            rl.cmd_w = TextRenderer::measure_text_width(TEXT_SIZE, r.cmd);
+            std::string full_desc = "  ->  " + r.desc + (r.implemented ? "" : " [sắp có]");
+            int avail_first = MAX_RIGHT - (rl.text_x + rl.cmd_w);
+            if (avail_first >= 180 && TextRenderer::measure_text_width(TEXT_SIZE, full_desc) <= avail_first) {
+                rl.desc_lines.push_back(full_desc);
+                y += ROW_STEP;
+            } else if (avail_first >= 240) {
+                auto wrapped = TextRenderer::wrap_text(TEXT_SIZE, full_desc, avail_first);
+                if (wrapped.size() <= 1) {
+                    rl.desc_lines = std::move(wrapped);
+                    y += ROW_STEP;
+                } else {
+                    rl.desc_lines.push_back(wrapped[0]);
+                    std::string rest;
+                    for (size_t k = 1; k < wrapped.size(); ++k) {
+                        if (k > 1) rest += " ";
+                        rest += wrapped[k];
+                    }
+                    auto rest_lines = TextRenderer::wrap_text(TEXT_SIZE, rest, MAX_RIGHT - (rl.text_x + 24));
+                    for (auto& ln : rest_lines) rl.desc_lines.push_back(ln);
+                    y += ROW_STEP + (int)rest_lines.size() * SUB_STEP;
+                }
+            } else {
+                rl.desc_lines = TextRenderer::wrap_text(TEXT_SIZE, "-> " + r.desc + (r.implemented ? "" : " [sắp có]"), MAX_RIGHT - (rl.text_x + 24));
+                y += ROW_STEP + (int)rl.desc_lines.size() * SUB_STEP;
+            }
+            sl.rows.push_back(std::move(rl));
+        }
+        y += 18;
+        layout.push_back(std::move(sl));
     }
-    y += 60;
-    int H = y;
-    if (H < 430) H = 430;
+    int H = std::max(460, y + PAD + 48);
 
-    // Canvas + nền
     std::vector<uint8_t> canvas;
-    TextRenderer::init_canvas(canvas, W, H, 0, 0, 0);
-
-    render::gradient::LinearGradient bg(0, 0, 0, (float)H);
-    bg.add_stop(0.0f, render::color::from_hex("#3B82F6"));
-    bg.add_stop(1.0f, render::color::from_hex("#111827"));
+    TextRenderer::init_canvas(canvas, W, H, 15, 23, 42);
+    render::gradient::LinearGradient bg(0, 0, (float)W, (float)H);
+    bg.add_stop(0.0f, render::color::from_hex("#1e3a8a"));
+    bg.add_stop(0.55f, render::color::from_hex("#0f172a"));
+    bg.add_stop(1.0f, render::color::from_hex("#020617"));
     bg.fill(canvas, W, H);
 
-    // Title
-    int yy = 60;
-    TextRenderer::draw_text_gradient_random(canvas, W, H, SPACE, yy, TITLE_SIZE, title);
-    yy += 60;
+    // Outer glass card
+    TextRenderer::draw_rounded_rect_shadow(canvas, W, H, PAD, PAD, W - 2 * PAD, H - 2 * PAD, 22, 10, 90);
+    TextRenderer::draw_rounded_rect_filled(canvas, W, H, PAD, PAD, W - 2 * PAD, H - 2 * PAD, 22, 17, 24, 39, 235);
+    TextRenderer::draw_rounded_rect_outline(canvas, W, H, PAD, PAD, W - 2 * PAD, H - 2 * PAD, 22, 2, 96, 165, 250, 150);
 
-    // Sections
-    for (const auto& sec : sections) {
-        if (!sec.header.empty()) {
-            TextRenderer::draw_text_gradient_random(canvas, W, H, SPACE, yy, TEXT_SIZE, sec.header);
-            yy += 52;
+    // Title centered
+    int tw = TextRenderer::measure_text_width(TITLE_SIZE, title);
+    TextRenderer::draw_text_gradient_random(canvas, W, H, std::max(INNER_X, (W - tw) / 2), PAD + 46, TITLE_SIZE, title);
+    TextRenderer::draw_line(canvas, W, H, INNER_X, PAD + 62, W - INNER_X, PAD + 62, 96, 165, 250, 2, 120);
+
+    int yy = PAD + 98;
+    for (const auto& sl : layout) {
+        if (!sl.header.empty()) {
+            TextRenderer::draw_text_on_canvas(canvas, W, H, INNER_X, yy, HEADER_SIZE, 250, 204, 21, sl.header);
+            yy += 42;
         }
-        for (const auto& r : sec.rows) {
-            int text_x = SPACE;
-
+        for (const auto& r : sl.rows) {
             if (!r.icon.empty()) {
-                EmojiRenderer::draw(canvas, W, H, SPACE, yy - 21, ICON_SIZE, r.icon);
-                text_x = SPACE + ICON_SIZE + ICON_GAP;
+                EmojiRenderer::draw(canvas, W, H, INNER_X, yy - 21, ICON_SIZE, r.icon);
             }
-
-            TextRenderer::draw_text_gradient_random(canvas, W, H, text_x, yy, TEXT_SIZE, r.cmd);
-            int lw = TextRenderer::measure_text_width(TEXT_SIZE, r.cmd);
-
-            std::string arrow_desc = " -> " + r.desc;
-            TextRenderer::draw_text_on_canvas(canvas, W, H,
-                text_x + lw, yy, TEXT_SIZE, 255, 255, 255, arrow_desc);
-
-            if (!r.implemented) {
-                int adw = TextRenderer::measure_text_width(TEXT_SIZE, arrow_desc);
-                TextRenderer::draw_text_on_canvas(canvas, W, H,
-                    text_x + lw + adw + 6, yy, TEXT_SIZE,
-                    255, 180, 80, "[sắp có]");
+            TextRenderer::draw_text_on_canvas(canvas, W, H, r.text_x, yy, TEXT_SIZE, 103, 232, 249, r.cmd);
+            if (!r.desc_lines.empty()) {
+                bool on_same_line = r.desc_lines[0].rfind("  ->", 0) == 0;
+                if (on_same_line) {
+                    TextRenderer::draw_text_on_canvas(canvas, W, H, r.text_x + r.cmd_w, yy, TEXT_SIZE, 226, 232, 240, r.desc_lines[0]);
+                    for (size_t k = 1; k < r.desc_lines.size(); ++k) {
+                        yy += SUB_STEP;
+                        TextRenderer::draw_text_on_canvas(canvas, W, H, r.text_x + 24, yy, TEXT_SIZE, 203, 213, 225, r.desc_lines[k]);
+                    }
+                    yy += ROW_STEP;
+                } else {
+                    for (size_t k = 0; k < r.desc_lines.size(); ++k) {
+                        yy += SUB_STEP;
+                        TextRenderer::draw_text_on_canvas(canvas, W, H, r.text_x + 24, yy, TEXT_SIZE, 203, 213, 225, r.desc_lines[k]);
+                    }
+                    yy += ROW_STEP;
+                }
+            } else {
+                yy += ROW_STEP;
             }
-
-            yy += ROW_H;
         }
-        yy += 20;
+        yy += 16;
     }
 
-    // Footer
+    TextRenderer::draw_line(canvas, W, H, INNER_X, H - PAD - 46, W - INNER_X, H - PAD - 46, 148, 163, 184, 1, 90);
     if (!footer_left.empty()) {
-        TextRenderer::draw_text_on_canvas(canvas, W, H, SPACE, H - 32, 18, 170, 200, 220, footer_left);
+        TextRenderer::draw_text_on_canvas(canvas, W, H, INNER_X, H - PAD - 18, 18, 148, 163, 184, footer_left);
     }
     if (!footer_right.empty()) {
         int fw = TextRenderer::measure_text_width(18, footer_right);
-        TextRenderer::draw_text_on_canvas(canvas, W, H, W - SPACE - fw, H - 32, 18, 170, 200, 220, footer_right);
+        TextRenderer::draw_text_on_canvas(canvas, W, H, W - INNER_X - fw, H - PAD - 18, 18, 125, 211, 252, footer_right);
     }
 
     TextRenderer::save_canvas(canvas, W, H, out_path);
@@ -654,7 +712,7 @@ void CommandHandler::load_scold_list() {
     g_scold_list.clear();
     std::ifstream f(paths::data("scold.txt").c_str());
     if (!f.good()) {
-        std::cout << "[Scold] Khong tim thay data/scold.txt\n";
+        std::cout << "[Scold] Không tìm thấy data/scold.txt\n";
         return;
     }
     std::string line;
@@ -678,25 +736,31 @@ void CommandHandler::load_scold_list() {
 // ============================================================
 void CommandHandler::load_husks() {
     std::lock_guard<std::mutex> lk(g_husks_mtx);
-    g_husks.clear();
-    g_husks["chan_le"] = cpp_int(1000000);
-    g_husks["tai_xiu"] = cpp_int(1000000);
+    econ.set_husk("chan_le", cpp_int(1000000));
+    econ.set_husk("tai_xiu", cpp_int(1000000));
+    econ.set_husk("bau_cua", cpp_int(1000000));
+    econ.set_husk("vietlott", cpp_int(50000000LL));
     std::ifstream f(paths::data("husks.json").c_str());
     if (!f.good()) {
-        std::cout << "[Husks] Chua co data/husks.json, dung mac dinh 1M\n";
+        std::cout << "[Husks] Chưa có data/husks.json, dùng mặc định\n";
         return;
     }
     try {
         json j;
         f >> j;
         for (auto& [k, v] : j.items()) {
+            cpp_int val = 0;
             if (v.is_string()) {
-                g_husks[k] = cpp_int(v.get<std::string>());
+                try { val = cpp_int(v.get<std::string>()); } catch (...) { val = 0; }
             } else if (v.is_number_integer()) {
-                g_husks[k] = cpp_int(v.get<long long>());
+                val = cpp_int(v.get<long long>());
+            }
+            if (val > 0) {
+                g_husks[k] = val;
+                econ.set_husk(k, val);
             }
         }
-        std::cout << "[Husks] Loaded " << g_husks.size() << " hu\n";
+        std::cout << "[Husks] Loaded " << j.size() << " hu\n";
     } catch (const std::exception& e) {
         std::cout << "[Husks] Load loi: " << e.what() << ", dung mac dinh\n";
     }
@@ -706,12 +770,16 @@ void CommandHandler::save_husks() {
     std::lock_guard<std::mutex> lk(g_husks_mtx);
     try {
         json j = json::object();
-        for (auto& [k, v] : g_husks) {
+        const char* keys[] = {"chan_le", "tai_xiu", "bau_cua", "vietlott"};
+        for (const char* k : keys) {
+            cpp_int v = econ.get_husk(k);
+            if (v <= 0) v = (std::string(k) == "vietlott") ? cpp_int(50000000LL) : cpp_int(1000000);
+            g_husks[k] = v;
             j[k] = v.convert_to<std::string>();
         }
         std::ofstream f(paths::data("husks.json").c_str());
         if (!f.good()) {
-            std::cout << "[Husks] Khong ghi duoc data/husks.json\n";
+            std::cout << "[Husks] Không ghi được data/husks.json\n";
             return;
         }
         f << j.dump(2);
@@ -732,11 +800,12 @@ CommandHandler::CommandHandler(ZaloApi& api, PermissionManager& perm, EconomyMan
 void CommandHandler::load_user_economy_impl(const std::string& uid, const std::string& username) {
     AccountEconomyData d;
     if (account.load_economy(username, d)) {
-        econ.set_full_data(uid, d.wallet, d.bank, d.debt, d.games_played, d.games_won);
+        econ.set_full_data(uid, d.wallet, d.bank, d.debt, d.games_played, d.games_won, d.total_won, d.total_lost);
+        econ.set_last_daily(uid, (std::time_t)d.last_daily);
         std::cout << "[Handler] Loaded economy for " << username
                   << ": wallet=" << d.wallet << " bank=" << d.bank << "\n";
     } else {
-        econ.set_full_data(uid, 0, 0, 0, 0, 0);
+        econ.set_full_data(uid, 0, 0, 0, 0, 0, 0, 0);
     }
 }
 
@@ -750,6 +819,9 @@ void CommandHandler::save_user_economy_impl(const std::string& uid) {
     d.debt   = e.debt;
     d.games_played = e.games_played;
     d.games_won    = e.games_won;
+    d.total_won    = e.total_won;
+    d.total_lost   = e.total_lost;
+    d.last_daily   = (long long)econ.get_last_daily(uid);
     account.save_economy(un, d);
 }
 
@@ -814,38 +886,59 @@ void CommandHandler::reply_text(const std::string& msg, const std::string& threa
 void CommandHandler::reply_image(const std::string& title, const std::string& msg,
                                   const std::string& thread_id, int thread_type) {
     if (!g_use_image_mode) { reply_text(msg, thread_id, thread_type); return; }
-        static std::atomic<int> counter{0};
-    std::string out = paths::data("reply_") + std::to_string(counter++) + ".png";
-    const int W = 1200, PADDING = 55, TITLE_SIZE = 56, TEXT_SIZE = 36, LINE_H = 58;
+    static std::atomic<int> counter{0};
+    std::string out = paths::cache("reply_") + std::to_string(counter++) + ".png";
+    const int W = 1040;
+    const int PAD = 38;
+    const int INNER_PAD = 36;
+    const int TITLE_SIZE = 38;
+    const int TEXT_SIZE = 28;
+    const int LINE_H = 42;
+    const int MAX_TEXT_W = W - 2 * PAD - 2 * INNER_PAD;
+
     std::vector<std::string> lines;
-    std::string cur;
-    for (char c : msg) {
-        if (c == '\n') { lines.push_back(cur); cur.clear(); }
-        else cur += c;
+    {
+        std::istringstream iss(msg);
+        std::string raw_line;
+        while (std::getline(iss, raw_line)) {
+            if (!raw_line.empty() && raw_line.back() == '\r') raw_line.pop_back();
+            if (raw_line.empty()) {
+                lines.push_back("");
+                continue;
+            }
+            auto wrapped = TextRenderer::wrap_text(TEXT_SIZE, raw_line, MAX_TEXT_W);
+            for (auto& wline : wrapped) lines.push_back(std::move(wline));
+        }
     }
-    if (!cur.empty()) lines.push_back(cur);
-    int H = PADDING * 2 + TITLE_SIZE + 40 + (int)lines.size() * LINE_H + 50;
+    if (lines.empty()) lines.push_back(" ");
+
+    int card_x = PAD, card_y = PAD;
+    int card_w = W - 2 * PAD;
+    int header_h = 84;
+    int body_h = (int)lines.size() * LINE_H + 34;
+    int card_h = header_h + body_h;
+    int H = std::max(260, card_h + 2 * PAD);
+
     std::vector<uint8_t> canvas;
-    TextRenderer::init_canvas(canvas, W, H, 25, 15, 45);
-    TextRenderer::fill_linear_gradient(canvas, W, H, 0, H, 25, 15, 45, 10, 8, 25);
-    int cx = PADDING - 15, cy = PADDING - 15;
-    int cw = W - cx * 2, ch = H - cy * 2;
-    TextRenderer::draw_rounded_rect_filled(canvas, W, H, cx, cy, cw, ch, 26, 32, 28, 52, 250);
-    TextRenderer::draw_rounded_rect_outline(canvas, W, H, cx, cy, cw, ch, 26, 3, 140, 100, 240, 240);
-    TextRenderer::draw_text_shadow(canvas, W, H, PADDING + 25, PADDING, TITLE_SIZE, 255, 200, 80, title);
-    int ly = PADDING + TITLE_SIZE + 28;
-    for (int x = PADDING + 25; x < W - PADDING - 25; x++) {
-        float t = (float)(x - PADDING - 25) / (float)(W - 2 * PADDING - 50);
-        unsigned char r = (unsigned char)(255 * (1 - t) + 120 * t);
-        unsigned char g = (unsigned char)(180 * (1 - t) + 90 * t);
-        unsigned char b = (unsigned char)(70 * (1 - t) + 220 * t);
-        TextRenderer::draw_line(canvas, W, H, x, ly, x, ly + 3, r, g, b, 1, 230);
-    }
-    int y = ly + 45;
+    TextRenderer::init_canvas(canvas, W, H, 15, 23, 42);
+    TextRenderer::fill_linear_gradient(canvas, W, H, 0, H, 30, 27, 75, 15, 23, 42);
+
+    TextRenderer::draw_rounded_rect_shadow(canvas, W, H, card_x, card_y, card_w, card_h, 24, 12, 95);
+    TextRenderer::draw_rounded_rect_filled(canvas, W, H, card_x, card_y, card_w, card_h, 24, 17, 24, 39, 242);
+    TextRenderer::draw_rounded_rect_outline(canvas, W, H, card_x, card_y, card_w, card_h, 24, 2, 139, 92, 246, 190);
+
+    TextRenderer::draw_text_shadow(canvas, W, H, card_x + INNER_PAD, card_y + 52, TITLE_SIZE, 250, 204, 21, title);
+    int div_y = card_y + header_h - 10;
+    TextRenderer::draw_line(canvas, W, H, card_x + INNER_PAD, div_y, card_x + card_w - INNER_PAD, div_y, 139, 92, 246, 2, 160);
+
+    int y = div_y + 42;
     for (const auto& line : lines) {
-        TextRenderer::draw_text_on_canvas(canvas, W, H, PADDING + 35, y, TEXT_SIZE, 240, 240, 250, line);
+        if (!line.empty()) {
+            TextRenderer::draw_text_on_canvas(canvas, W, H, card_x + INNER_PAD, y, TEXT_SIZE, 241, 245, 249, line);
+        }
         y += LINE_H;
     }
+
     if (TextRenderer::save_canvas(canvas, W, H, out)) {
         api.send_message_with_image_async(title, out, thread_id, thread_type);
         std::cout << "[Handler] Đã gửi ảnh: " << out << "\n";
@@ -903,7 +996,7 @@ void CommandHandler::register_commands() {
                                   const std::string& tid,
                                   int tt, bool is_self) {
         (void)is_self;
-        if (!g_farm_mgr) { reply_text("Nong trai chua san sang.", tid, tt); return; }
+        if (!g_farm_mgr) { reply_text("❌ Nông trại chưa sẵn sàng.", tid, tt); return; }
         std::string sub = (args.size() > 1) ? args[1] : "help";
         std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
 
@@ -959,11 +1052,11 @@ void CommandHandler::register_commands() {
             api.send_image_async(imgPath, tid, tt);
             return;
         } else if (sub == "buy") {
-            if (args.size() < 3) { reply_text("Dung: nongtrai buy <code> [qty]", tid, tt); return; }
+            if (args.size() < 3) { reply_text("ℹ️ Cú pháp: nongtrai buy <mã> [số lượng]", tid, tt); return; }
             int qty = (args.size() > 3) ? std::atoi(args[3].c_str()) : 1;
             out = g_farm_mgr->cmd_buy(uid, args[2], qty);
         } else if (sub == "sell") {
-            if (args.size() < 3) { reply_text("Dung: nongtrai sell <code> [qty|all]", tid, tt); return; }
+            if (args.size() < 3) { reply_text("ℹ️ Cú pháp: nongtrai sell <mã> [số lượng|all]", tid, tt); return; }
             int qty = 1;
             if (args.size() > 3) {
                 std::string a = args[3];
@@ -974,22 +1067,22 @@ void CommandHandler::register_commands() {
         } else if (sub == "kho" || sub == "bag" || sub == "tui") {
             out = g_farm_mgr->cmd_bag(uid);
         } else if (sub == "gieohat") {
-            if (args.size() < 4) { reply_text("Dung: nongtrai gieohat <code> <slots>", tid, tt); return; }
+            if (args.size() < 4) { reply_text("ℹ️ Cú pháp: nongtrai gieohat <mã> <các ô đất (vd: 0 1)>", tid, tt); return; }
             out = g_farm_mgr->cmd_gieohat(uid, args[2], NongTraiManager::parse_slots(join_args(3)));
         } else if (sub == "tuoinuoc") {
-            if (args.size() < 3) { reply_text("Dung: nongtrai tuoinuoc <slots>", tid, tt); return; }
+            if (args.size() < 3) { reply_text("ℹ️ Cú pháp: nongtrai tuoinuoc <các ô đất (vd: 0 1)>", tid, tt); return; }
             out = g_farm_mgr->cmd_tuoinuoc(uid, NongTraiManager::parse_slots(join_args(2)));
         } else if (sub == "cuocdat") {
-            if (args.size() < 3) { reply_text("Dung: nongtrai cuocdat <slots>", tid, tt); return; }
+            if (args.size() < 3) { reply_text("ℹ️ Cú pháp: nongtrai cuocdat <các ô đất (vd: 0 1)>", tid, tt); return; }
             out = g_farm_mgr->cmd_cuocdat(uid, NongTraiManager::parse_slots(join_args(2)));
         } else if (sub == "thuhoach") {
-            if (args.size() < 3) { reply_text("Dung: nongtrai thuhoach <slots>", tid, tt); return; }
+            if (args.size() < 3) { reply_text("ℹ️ Cú pháp: nongtrai thuhoach <các ô đất (vd: 0 1)>", tid, tt); return; }
             out = g_farm_mgr->cmd_thuhoach(uid, NongTraiManager::parse_slots(join_args(2)));
         } else if (sub == "use") {
-            if (args.size() < 4) { reply_text("Dung: nongtrai use <code> <slots>", tid, tt); return; }
+            if (args.size() < 4) { reply_text("ℹ️ Cú pháp: nongtrai use <mã> <các ô đất>", tid, tt); return; }
             out = g_farm_mgr->cmd_use(uid, args[2], NongTraiManager::parse_slots(join_args(3)));
         } else {
-            out = "Lenh khong hop le. Go 'nongtrai help'.";
+            out = "❌ Lệnh không hợp lệ. Gõ 'nongtrai help' để xem hướng dẫn.";
         }
         if (!out.empty()) {
             reply_text(out, tid, tt);
@@ -1010,180 +1103,140 @@ void CommandHandler::register_commands() {
 
             commands["help"] = [this](const auto& args, const auto& uid,
                               const auto& tid, int tt, bool) {
-        // --- Parse page (mặc định 1) ---
         int page = 1;
         if (args.size() > 1) {
             try { page = std::stoi(args[1]); } catch (...) { page = 1; }
         }
-        if (page < 1) page = 1;
-        if (page > 4) page = 4;
-
-        bool logged = account.is_logged_in(uid);
         bool is_admin = perm.is_admin(uid);
+        int max_page = is_admin ? 4 : 3;
+        if (page < 1) page = 1;
+        if (page > max_page) page = max_page;
 
-        std::string status = logged
-            ? "Đăng nhập: " + account.get_username(uid)
-            : "Chưa đăng nhập";
+        std::string status = std::string("Bot: ") + (get_bot_for_thread(tid) ? "ON" : "OFF")
+                           + " | Game: " + (get_game_for_thread(tid) ? "ON" : "OFF")
+                           + " | Prefix: " + prefix;
 
-        std::vector<HelpSection> sections;
         std::string title;
+        std::vector<HelpSection> sections;
 
-        // ============================================================
-        // TRANG 1 — JS-style (member 15 + admin 3, y hệt bot JS)
-        // ============================================================
         if (page == 1) {
-            title = "🌟 DANH SÁCH LỆNH 🌟";
+            title = "🌟 DANH SÁCH LỆNH BOT 🌟";
             {
                 HelpSection sec;
-                sec.header = "📌 Lệnh cho tất cả thành viên:";
+                sec.header = "📌 Thông tin & Giải trí:";
                 sec.rows = {
-                    {"🤖", "/gpt [câu hỏi]",       "Hỏi AI",                  false},
-                    {"💬", "/chat [nội dung]",     "Trò chuyện với Bot",      false},
-                    {"📖", "/help",                "Xem danh sách lệnh",      true},
-                    {"📰", "/info [@user]",        "Xem thông tin tài khoản", true},
-                    {"🎮", "/game",                "Xem danh sách lệnh game", false},
-                    {"🌤️", "/thoitiet [tp]",      "Xem thời tiết",           false},
-                    {"🌐", "/dich [nội dung]",     "Dịch văn bản",            false},
-                    {"📋", "/group",               "Xem thông tin nhóm",      false},
-                    {"🏆", "/topchat",             "Xem BXH tương tác nhóm",  false},
-                    {"👧", "/girl",                "Gửi ảnh girl",            false},
-                    {"👦", "/boy",                 "Gửi ảnh boy",             false},
-                    {"🖼️", "/image [tên]",        "Tìm ảnh ngẫu nhiên",      false},
-                    {"🎧", "/music [bài hát]",     "Tìm bài hát",             false},
-                    {"🎥", "/tiktok [nội dung]",   "Tìm video tiktok",        false},
-                    {"🔖", "/command",             "Xem danh sách lệnh",      false},
+                    {"📖", prefix + "help [1-4]",        "Xem danh sách lệnh theo trang", true},
+                    {"📰", prefix + "info [@user]",      "Thông tin tài khoản Zalo",      true},
+                    {"🏠", prefix + "group",             "Thông tin nhóm hiện tại",       true},
+                    {"🤖", prefix + "detail",            "Xem thông số hệ thống bot",     true},
+                    {"🔖", prefix + "command [admin]",   "Danh sách lệnh dạng chữ",       true},
+                    {"🌐", prefix + "dich [ngôn ngữ] <text>", "Dịch văn bản (hoặc reply)",true},
+                    {"🌤️", prefix + "thoitiet <thành phố>",   "Xem thời tiết hiện tại",   true},
+                    {"🗣️", prefix + "voice <nội dung>",  "Chuyển văn bản thành giọng nói",true},
                 };
                 sections.push_back(std::move(sec));
             }
-            if (is_admin) {
-                HelpSection sec;
-                sec.header = "👮 Lệnh dành cho Admin:";
-                sec.rows = {
-                    {"🔧", "/manager",       "Xem danh sách lệnh quản lý", false},
-                    {"🔧", "/detail",        "Xem thông tin bot",          false},
-                    {"🔖", "/command admin", "Xem danh sách lệnh admin",   false},
-                };
-                sections.push_back(std::move(sec));
-            }
-        }
-
-        // ============================================================
-        // TRANG 2 — Tiện ích tài khoản
-        // ============================================================
-        else if (page == 2) {
-            title = "💰 TIỆN ÍCH TÀI KHOẢN 💰";
             {
                 HelpSection sec;
-                sec.header = "";
+                sec.header = "🖼️ Ảnh & Nội dung vui:";
                 sec.rows = {
-                    {"💳", "/mycard | /sodu",  "Thông tin tài khoản", true},
-                    {"💰", "/nap <n>",         "Nạp ví",              true},
-                    {"💸", "/rut <n>",         "Rút vào bank",        true},
-                    {"🏦", "/bank",            "Xem bank",            true},
-                    {"📤", "/chuyen <@u> <n>", "Chuyển tiền",         true},
-                    {"📥", "/vay <n>",         "Vay bank",            true},
-                    {"💵", "/tra <n>",         "Trả nợ",              true},
-                    {"🎁", "/daily",           "Điểm danh +10k",      true},
-                    {"👑", "/top [n]",         "Top đại gia",         true},
-                    {"📱", "/qr <nội dung>",   "Tạo QR code",         true},
-                    {"🪪", "/whoami",          "Xem UID & role",      true},
-                    {"📝", "/signup <u> <p>",  "Đăng ký",             true},
-                    {"🔐", "/login <u> <p>",   "Đăng nhập",           true},
-                    {"🚪", "/logout",          "Đăng xuất",           true},
+                    {"📸", prefix + "girl | boy | anime | cosplay", "Gửi ảnh ngẫu nhiên", true},
+                    {"📜", prefix + "cadao | thinh | tarot | truyencuoi", "Giải trí văn bản", true},
+                    {"🏳️‍🌈", prefix + "gay [@user]",     "Đo độ gay vui nhộn",          true},
+                    {"🎨", prefix + "sticker <id>",      "Gửi sticker Zalo theo ID",      true},
                 };
                 sections.push_back(std::move(sec));
             }
-        }
-
-        // ============================================================
-        // TRANG 3 — Trò chơi
-        // ============================================================
-        else if (page == 3) {
-            title = "🎮 TRÒ CHƠI 🎮";
+        } else if (page == 2) {
+            title = "💰 TÀI KHOẢN & KINH TẾ 💰";
             {
                 HelpSection sec;
-                sec.header = "";
+                sec.header = "💳 Ví & Ngân hàng:";
                 sec.rows = {
-                    {"🎲", "/chanle <chẵn/lẻ> <n>", "Chẵn lẻ",       true},
-                    {"🎲", "/taixiu <tài/xỉu> <n>", "Tài xỉu",       true},
-                    {"🦀", "/baucua <con> <n>",     "Bầu cua",       true},
-                    {"🔢", "/doanso <min> <max>",   "Đoán số trong khoảng", true},
-                    {"📝", "/noitu <từ>",           "Nối từ",        true},
-                    {"♟️", "/caro <@u> <n>",       "Cờ caro",       true},
-                    {"🏆", "/rank",                 "Top chat nhóm", true},
-                    {"🎨", "/sticker <id>",         "Gửi sticker",   true},
+                    {"💳", prefix + "mycard | sodu",     "Thẻ tài khoản & thống kê game", true},
+                    {"🏦", prefix + "bank",              "Xem số dư ví, bank và nợ",      true},
+                    {"💰", prefix + "nap <số>",          "Nạp từ ví cá nhân vào bank",    true},
+                    {"💸", prefix + "rut <số>",          "Rút tiền từ bank về ví",        true},
+                    {"📤", prefix + "chuyen <@u> <số>",  "Chuyển tiền cho người khác",    true},
+                    {"📥", prefix + "vay <số> | tra <số>","Vay / trả nợ ngân hàng",       true},
+                    {"🎁", prefix + "daily",             "Điểm danh nhận 50.000 VNĐ",     true},
+                    {"👑", prefix + "top [n]",           "Bảng xếp hạng đại gia",         true},
                 };
                 sections.push_back(std::move(sec));
             }
-        }
-
-        // ============================================================
-        // TRANG 4 — Admin C++ (chỉ hiện nếu là admin)
-        // ============================================================
-        else if (page == 4) {
-            if (!is_admin) {
-                // Không phải admin → về trang 1
-                title = "🌟 DANH SÁCH LỆNH 🌟";
+            {
                 HelpSection sec;
-                sec.header = "📌 Lệnh cho tất cả thành viên:";
+                sec.header = "🔐 Phiên đăng nhập & Tiện ích:";
                 sec.rows = {
-                    {"📖", "/help",         "Xem danh sách lệnh",      true},
-                    {"📰", "/info [@user]", "Xem thông tin tài khoản", true},
+                    {"📝", prefix + "signup <u> <p>",    "Đăng ký tài khoản (IB riêng)",  true},
+                    {"🔐", prefix + "login <u> <p>",     "Đăng nhập tài khoản",           true},
+                    {"🚪", prefix + "logout | whoami",   "Đăng xuất / xem UID & quyền",   true},
+                    {"📱", prefix + "qr <nội dung>",     "Tạo mã QR dạng ảnh",            true},
                 };
                 sections.push_back(std::move(sec));
-            } else {
-                title = "👮 LỆNH ADMIN 👮";
-                {
-                    HelpSection sec;
-                    sec.header = "🛡️ Bảo vệ nhóm:";
-                    sec.rows = {
-                        {"🛡️", "/groupprotect",               "Bảng điều khiển bảo vệ", true},
-                        {"🚫", "/groupprotect ban <@u>",      "Ban user",               true},
-                        {"🔒", "/groupprotect lock on|off",   "Khóa chat",              true},
-                        {"🆕", "/groupprotect approve on|off","Duyệt thành viên",       true},
-                        {"👢", "/kick <@u>",                  "Kick thành viên",        true},
-                        {"⚠️", "/warn <@u>",                  "Cảnh cáo",               true},
-                    };
-                    sections.push_back(std::move(sec));
-                }
-                {
-                    HelpSection sec;
-                    sec.header = "⚙️ Quản trị bot:";
-                    sec.rows = {
-                        {"✅", "/on",               "Bật bot",        true},
-                        {"💤", "/off",              "Tắt bot",        true},
-                        {"🖼️", "/image on|off",    "Chế độ ảnh",     true},
-                        {"💰", "/setmoney <@u> <n>","Đặt tiền",       true},
-                        {"🏆", "/sethu <game> <n>", "Đặt hũ",         true},
-                        {"✨", "/buff <@u> <n>",    "Tăng tiền",      true},
-                        {"💀", "/nerf <@u> <n>",    "Giảm tiền",      true},
-                        {"👑", "/listadmin",        "Xem admin",      true},
-                        {"➕", "/setad add <@u>",   "Thêm admin",     true},
-                        {"⭐", "/setad add sp <@u>","Thêm super admin",true},
-                        {"➖", "/setad remove <@u>","Xóa admin",      true},
-                        {"📋", "/setad list",       "Danh sách admin",true},
-                        {"🔧", "/setprefix <s>",    "Đổi prefix",     true},
-                        {"🚪", "/exit",             "Thoát bot",      true},
-                    };
-                    sections.push_back(std::move(sec));
-                }
+            }
+        } else if (page == 3) {
+            title = "🎮 TRÒ CHƠI & NÔNG TRẠI 🎮";
+            {
+                HelpSection sec;
+                sec.header = "🎲 Cá cược & Mini-game:";
+                sec.rows = {
+                    {"🎲", prefix + "taixiu <tài|xỉu> <n>", "Tài xỉu theo phiên 60s",     true},
+                    {"⚪", prefix + "chanle <c|l> <n>",     "Chẵn lẻ 3 xúc xắc + nổ hũ",  true},
+                    {"🦀", prefix + "baucua <con> <n>",     "Bầu cua (nhiều cửa 1 lượt)", true},
+                    {"✊", prefix + "keobuabao <cửa> <n>",  "Oẳn tù tì với Bot",          true},
+                    {"🎟️", prefix + "vietlott <6 số|auto> <n>", "Xổ số Vietlott 6/55",   true},
+                    {"📈", prefix + "soicau [tx|cl]",       "Biểu đồ soi cầu Tài Xỉu/CL", true},
+                    {"♟️", prefix + "caro <@u|bot> [n]",    "Cờ caro 15x15 (gõ <dòng> <cột>)", true},
+                    {"🔢", prefix + "doanso [min] [max]",   "Đoán số bí mật",             true},
+                    {"📝", prefix + "noitu [từ|cancel]",    "Nối từ tiếng Việt",          true},
+                    {"🔤", prefix + "doantu [cancel]",      "Đoán từ tiếng Việt",         true},
+                    {"🌾", prefix + "nongtrai (ntr)",       "Nông trại & cửa hàng",       true},
+                    {"🏆", prefix + "rank | topchat",       "Top tương tác tin nhắn nhóm",true},
+                };
+                sections.push_back(std::move(sec));
+            }
+        } else {
+            title = "👮 LỆNH QUẢN TRỊ ADMIN 👮";
+            {
+                HelpSection sec;
+                sec.header = "🛡️ Bảo vệ & Quản lý nhóm:";
+                sec.rows = {
+                    {"🛡️", prefix + "groupprotect",               "Bảng điều khiển bảo vệ", true},
+                    {"🚫", prefix + "groupprotect ban <@u>",      "Kick thành viên vi phạm",true},
+                    {"🔒", prefix + "groupprotect lock|approve on|off","Khóa chat / duyệt TV",true},
+                    {"🔇", prefix + "mute <@u> [phút] | unmute",  "Cấm / bỏ cấm chat nhóm", true},
+                    {"👢", prefix + "kick <@u> | warn <@u>",      "Kick hoặc cảnh cáo",     true},
+                    {"♻️", prefix + "undo",                       "Thu hồi tin nhắn bot",   true},
+                };
+                sections.push_back(std::move(sec));
+            }
+            {
+                HelpSection sec;
+                sec.header = "⚙️ Cấu hình Bot & Tài chính:";
+                sec.rows = {
+                    {"✅", prefix + "on | off | bot | game",      "Bật/tắt bot & game nhóm",true},
+                    {"🖼️", prefix + "image on|off",               "Bật/tắt trả lời bằng ảnh",true},
+                    {"💰", prefix + "setmoney | buff | nerf | sethu","Chỉnh tiền & hũ game",true},
+                    {"👑", prefix + "setad | listadmin | setprefix","Quản lý admin & prefix",true},
+                    {"🐛", prefix + "debug | txend | exit",       "Debug / kết phiên TX / tắt",true},
+                };
+                sections.push_back(std::move(sec));
             }
         }
 
-        // --- Footer pagination ---
-        int total_pages = is_admin ? 4 : 3;
-        std::string nav = "Trang " + std::to_string(page) + "/" + std::to_string(total_pages);
-        if (page > 1) nav = "<< /help " + std::to_string(page - 1) + "    " + nav;
-        if (page < total_pages) nav = nav + "    /help " + std::to_string(page + 1) + " >>";
+        std::string nav = "Trang " + std::to_string(page) + "/" + std::to_string(max_page);
+        if (page > 1) nav = "<< " + prefix + "help " + std::to_string(page - 1) + "  |  " + nav;
+        if (page < max_page) nav = nav + "  |  " + prefix + "help " + std::to_string(page + 1) + " >>";
 
         static std::atomic<int> ctr{0};
         std::string out = paths::cache("help_") + std::to_string(ctr++) + ".png";
-
         render_help_image(title, sections, status, nav, out);
         api.send_image_async(out, tid, tt);
         std::cout << "[Handler] help page " << page << ": " << out << "\n";
     };
-commands["signup"] = [this](const auto& args, const auto& uid,
+
+    commands["signup"] = [this](const auto& args, const auto& uid,
                                 const auto& tid, int tt, bool) {
         if (args.size() < 3) { reply_text("❌ Cú pháp: signup <user> <pass>", tid, tt); return; }
         if (account.is_logged_in(uid)) { reply_text("❌ Đã đăng nhập: " + account.get_username(uid), tid, tt); return; }
@@ -1268,7 +1321,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         d.win_rate = (ed.games_played > 0)
             ? (100 * ed.games_won / ed.games_played) : 0;
         d.created_time = "Ẩn";
-        d.daily_status = "Chưa nhận quà";
+        d.daily_status = econ.has_claimed_daily(target) ? "Đã nhận quà hôm nay" : "Chưa nhận quà";
         d.is_online     = true;
         d.is_active     = true;
         d.is_active_pc  = false;
@@ -1295,7 +1348,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
                         } else if (!cp.empty()) {
                             for (auto& [k, v] : cp.items()) {
                                 if (v.is_object() && v.contains("avatar") && v["avatar"].is_string()) {
-                                    avt_url = v["avatar"].get<std::string>();
+                                    avt_url = v.value("avatar", std::string(""));
                                     break;
                                 }
                             }
@@ -1322,24 +1375,6 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         profile_render::render_player_card(d, out);
         api.send_image_async(out, tid, tt);
         std::cout << "[Handler] mycard: " << out << "\n";
-    };
-
-    commands["command"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
-        std::string sub = (args.size() > 1) ? args[1] : "";
-        std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
-        if (sub == "admin") {
-            if (!perm.is_admin(uid)) { reply_text("❌ Chỉ admin mới xem được lệnh này.", tid, tt); return; }
-            std::string msg = "🛠️ LỆNH ADMIN:\n/bot, /game, /debug, /setad, /listadmin, /setprefix\n/setmoney, /sethu, /buff, /nerf, /txend, /undo, /boost";
-            reply_text(msg, tid, tt);
-        } else {
-            std::string msg = "📖 DANH SÁCH LỆNH:\n";
-            msg += "🎮 Game: /taixiu (tx), /chanle (cl), /baucua, /keobuabao (kbb), /vietlott\n";
-            msg += "🎲 Mini-game: /doanso, /noitu, /doantu\n";
-            msg += "🌾 Nông trại: /nongtrai (ntr)\n";
-            msg += "💰 Kinh tế: /bank, /nap, /rut, /vay, /tra, /chuyen, /daily\n";
-            msg += "👤 Tài khoản: /signup, /login, /logout, /whoami, /info, /mycard, /top\n";
-            reply_text(msg, tid, tt);
-        }
     };
 
     commands["doanso"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
@@ -1415,21 +1450,6 @@ commands["signup"] = [this](const auto& args, const auto& uid,
             "B\u1EA1n c\u00F3 " + std::to_string(s.maxAttempts) + " l\u01B0\u1EE3t.\n"
             "G\u00F5 s\u1ED1 b\u1EA5t k\u1EF3 \u0111\u1EC3 \u0111o\u00E1n!",
             tid, tt);
-    };
-
-    commands["noitu"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
-        if (args.size() > 1 && args[1] == "cancel") {
-            g_mini_games.erase(tid);
-            reply_text("Trò chơi nối từ đã được hủy bỏ.", tid, tt); return;
-        }
-        if (g_mini_games.count(tid)) { reply_text("Đang có trò chơi khác diễn ra trong nhóm này.", tid, tt); return; }
-        
-        MiniGameState s;
-        s.type = "wordChain";
-        s.lastPhrase = "";
-        s.active = true;
-        g_mini_games[tid] = s;
-        reply_text("Trò chơi nối từ bắt đầu! Hãy nhập một cụm từ (tối đa 2 từ) để bắt đầu.", tid, tt);
     };
 
     commands["doantu"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
@@ -1519,7 +1539,6 @@ commands["signup"] = [this](const auto& args, const auto& uid,
 
         std::string status = gs("status", "");
         for (auto& c : status) if (c == '\n' || c == '\r') c = ' ';
-        if (status.size() > 90) status = status.substr(0, 87) + "...";
 
         std::string avt_path = paths::cache("avt_") + target + ".png";
         std::string cov_path = paths::cache("cov_") + target + ".png";
@@ -1544,71 +1563,88 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         std::string out = paths::cache("info_") + std::to_string(ctr++) + ".png";
 
         const int W = 1100;
-        const int H = 820;
+        const int H = 760;
         std::vector<uint8_t> canvas;
-        TextRenderer::init_canvas(canvas, W, H, 20, 15, 40);
+        TextRenderer::init_canvas(canvas, W, H, 15, 23, 42);
 
-        if (cov_img) {
-            TextRenderer::draw_image_on_canvas(canvas, W, H, cov_img, 0, 0, W, H);
-            TextRenderer::blur_region(canvas, W, H, 8);
-            TextRenderer::darken_region(canvas, W, H, 0, 0, W, H, 170);
+        if (cov_img && cov_img->valid()) {
+            TextRenderer::draw_image_aspect_cover(canvas, W, H, cov_img, 0, 0, W, H);
+            TextRenderer::blur_region(canvas, W, H, 6);
+            TextRenderer::darken_region(canvas, W, H, 0, 0, W, H, 165);
         } else {
-            TextRenderer::fill_linear_gradient(canvas, W, H, 0, H, 40, 20, 70, 15, 10, 30);
+            TextRenderer::fill_linear_gradient(canvas, W, H, 0, H, 37, 99, 235, 15, 23, 42);
         }
 
-        TextRenderer::draw_rounded_rect_filled(canvas, W, H, 20, 140, W-40, H-180, 30, 15, 15, 30, 185);
-        TextRenderer::draw_rounded_rect_outline(canvas, W, H, 20, 140, W-40, H-180, 30, 4, 140, 100, 240, 230);
+        TextRenderer::draw_rounded_rect_shadow(canvas, W, H, 28, 108, W - 56, H - 136, 28, 12, 95);
+        TextRenderer::draw_rounded_rect_filled(canvas, W, H, 28, 108, W - 56, H - 136, 28, 17, 24, 39, 215);
+        TextRenderer::draw_rounded_rect_outline(canvas, W, H, 28, 108, W - 56, H - 136, 28, 2, 139, 92, 246, 210);
 
-        // Title — day xuong, khong bi cat
         std::string ttl = "THÔNG TIN NGƯỜI DÙNG";
-        int title_w = TextRenderer::measure_text_width(68, ttl);
-        TextRenderer::draw_text_shadow(canvas, W, H, (W - title_w) / 2, 70, 68, 255, 220, 100, ttl);
+        int title_w = TextRenderer::measure_text_width(48, ttl);
+        TextRenderer::draw_text_shadow(canvas, W, H, (W - title_w) / 2, 68, 48, 250, 204, 21, ttl);
 
-        // Avatar
-        int avt_cx = 210;
-        int avt_cy = 380;
-        int avt_r = 135;
-        TextRenderer::draw_circle_filled(canvas, W, H, avt_cx, avt_cy, avt_r, 60, 60, 80, 255);
-        if (avt_img) TextRenderer::draw_circle_image(canvas, W, H, avt_img, avt_cx, avt_cy, avt_r);
-        TextRenderer::draw_circle_outline_rainbow(canvas, W, H, avt_cx, avt_cy, avt_r + 4, 8);
+        // Left profile column
+        int avt_cx = 215;
+        int avt_cy = 305;
+        int avt_r = 122;
+        TextRenderer::draw_circle_filled(canvas, W, H, avt_cx, avt_cy, avt_r, 51, 65, 85, 255);
+        if (avt_img && avt_img->valid()) TextRenderer::draw_circle_image(canvas, W, H, avt_img, avt_cx, avt_cy, avt_r);
+        TextRenderer::draw_circle_outline_rainbow(canvas, W, H, avt_cx, avt_cy, avt_r + 4, 6);
 
-        // Cham xanh online
-        TextRenderer::draw_circle_filled(canvas, W, H,
-            avt_cx + (int)(avt_r * 0.75), avt_cy + (int)(avt_r * 0.75), 22, 30, 180, 60, 255);
-        TextRenderer::draw_circle_filled(canvas, W, H,
-            avt_cx + (int)(avt_r * 0.75), avt_cy + (int)(avt_r * 0.75), 14, 60, 230, 90, 255);
+        int dot_x = avt_cx + (int)(avt_r * 0.72);
+        int dot_y = avt_cy + (int)(avt_r * 0.72);
+        TextRenderer::draw_circle_filled(canvas, W, H, dot_x, dot_y, 20, 255, 255, 255, 255);
+        TextRenderer::draw_circle_filled(canvas, W, H, dot_x, dot_y, 14, 34, 197, 94, 255);
 
-        // Ten duoi avatar
-        int name_w = TextRenderer::measure_text_width(48, name);
-        TextRenderer::draw_text_shadow(canvas, W, H, avt_cx - name_w / 2, avt_cy + avt_r + 65, 48, 255, 255, 255, name);
+        auto name_lines = TextRenderer::wrap_text(34, name, 330);
+        if (name_lines.size() > 2) {
+            name_lines.resize(2);
+            name_lines[1] = safe_utf8_truncate(name_lines[1], 18) + "...";
+        }
+        int ny = avt_cy + avt_r + 54;
+        for (const auto& nl : name_lines) {
+            int nw = TextRenderer::measure_text_width(34, nl);
+            TextRenderer::draw_text_shadow(canvas, W, H, avt_cx - nw / 2, ny, 34, 255, 255, 255, nl);
+            ny += 42;
+        }
+        std::string uid_tag = "UID: " + target;
+        int uidw = TextRenderer::measure_text_width(20, uid_tag);
+        TextRenderer::draw_text_on_canvas(canvas, W, H, avt_cx - uidw / 2, ny + 4, 20, 148, 163, 184, uid_tag);
 
-        // Info list — to hon, thoang hon
+        // Vertical separator
+        TextRenderer::draw_line(canvas, W, H, 405, 145, 405, H - 150, 148, 163, 184, 1, 70);
+
+        // Right info rows
         int info_x = 440;
-        int info_y = 260;
-        int lh = 76;
-        int sz = 42;
-
+        int info_y = 195;
+        int lh = 64;
+        int sz = 30;
         struct Row { std::string icon; std::string label; std::string value; };
         std::vector<Row> rows = {
-            {"📛", "Username:  ", uname},
-            {"🎂", "Ngày sinh:  ", "Ẩn"},
-            {"⚧",  "Giới tính:  ", gender},
-            {"📋", "Business:  ", "Chưa Đăng Ký"},
-            {"📅", "Tạo:  ", created},
-            {"⏰", "HĐ cuối:  ", lastact},
+            {"📛", "Zalo Name: ", safe_utf8_truncate(zname, 32)},
+            {"🏷️", "Username: ", safe_utf8_truncate(uname, 32)},
+            {"📞", "Điện thoại: ", safe_utf8_truncate(phone, 24)},
+            {"⚧",  "Giới tính: ", gender},
+            {"📅", "Tạo TK: ", created},
+            {"⏰", "HĐ cuối: ", lastact},
         };
-
         int yy = info_y;
         for (const auto& r : rows) {
-            std::string line = r.icon + " " + r.label + r.value;
-            TextRenderer::draw_text_on_canvas(canvas, W, H, info_x, yy, sz, 255, 255, 255, line);
+            TextRenderer::draw_text_on_canvas(canvas, W, H, info_x, yy, sz, 148, 163, 184, r.icon + " " + r.label);
+            int lw = TextRenderer::measure_text_width(sz, r.icon + " " + r.label);
+            TextRenderer::draw_text_on_canvas(canvas, W, H, info_x + lw, yy, sz, 248, 250, 252, r.value);
             yy += lh;
         }
 
-        // Status — chu to, nang len
         if (!status.empty()) {
-            TextRenderer::draw_line(canvas, W, H, 70, H - 120, W - 70, H - 120, 140, 100, 240, 2, 220);
-            TextRenderer::draw_text_on_canvas(canvas, W, H, 80, H - 90, 40, 180, 220, 255, "💬 " + status);
+            TextRenderer::draw_line(canvas, W, H, 65, H - 132, W - 65, H - 132, 139, 92, 246, 2, 150);
+            auto st_lines = TextRenderer::wrap_text(26, "💬 " + status, W - 150);
+            if (st_lines.size() > 2) st_lines.resize(2);
+            int sy = H - 88;
+            for (const auto& sl : st_lines) {
+                TextRenderer::draw_text_on_canvas(canvas, W, H, 70, sy, 26, 186, 230, 253, sl);
+                sy += 34;
+            }
         }
 
         if (TextRenderer::save_canvas(canvas, W, H, out)) {
@@ -1676,16 +1712,16 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         std::transform(sub.begin(), sub.end(), sub.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
         if (sub == "admin") {
             if (!perm.is_admin(uid)) { reply_text("❌ Chỉ admin mới xem được lệnh này.", tid, tt); return; }
-            std::string msg = "🛠️ LỆNH ADMIN:\n/bot, /game, /debug, /setad, /listadmin, /setprefix\n/setmoney, /sethu, /buff, /nerf, /txend, /undo, /boost";
+            std::string msg = "🛠️ LỆNH ADMIN:\n/on, /off, /bot, /game, /debug, /image\n/groupprotect, /mute, /unmute, /kick, /warn\n/setad, /listadmin, /setprefix, /setmoney, /sethu, /buff, /nerf, /txend, /undo, /boost";
             reply_text(msg, tid, tt);
         } else {
             std::string msg = "📖 DANH SÁCH LỆNH:\n";
-            msg += "🎮 Game: /taixiu (tx), /chanle (cl), /baucua, /keobuabao (kbb), /vietlott, /doanso, /noitu\n";
+            msg += "🎮 Game: /taixiu (tx), /chanle (cl), /baucua, /keobuabao (kbb), /vietlott, /soicau, /caro, /doanso, /noitu, /doantu\n";
             msg += "🌾 Nông trại: /nongtrai (ntr)\n";
-            msg += "💰 Kinh tế: /bank, /nap, /rut, /vay, /tra, /chuyen, /daily\n";
-            msg += "👤 Tài khoản: /signup, /login, /logout, /whoami, /info, /mycard, /top\n";
-            msg += "📊 Khác: /command, /help, /ping\n";
-            msg += "\n👉 Gõ /command admin để xem lệnh quản trị.";
+            msg += "💰 Kinh tế: /bank, /nap, /rut, /vay, /tra, /chuyen, /daily, /top\n";
+            msg += "👤 Thông tin: /signup, /login, /logout, /whoami, /info, /mycard, /group, /detail, /rank\n";
+            msg += "✨ Tiện ích: /dich, /thoitiet, /voice, /qr, /sticker, /girl, /boy, /anime, /cosplay, /cadao, /tarot, /thinh, /truyencuoi, /gay\n";
+            msg += "\n👉 Gõ /help [1-4] để xem menu ảnh đẹp | /command admin để xem lệnh quản trị.";
             reply_text(msg, tid, tt);
         }
     };
@@ -2092,7 +2128,7 @@ commands["signup"] = [this](const auto& args, const auto& uid,
             return;
         }
         if (args.size() < 3) {
-            reply_text("Cu phap: /chanle <chan|le> <cuoc>\nVD: /cl c 20k, /chanle le 5m", tid, tt);
+            reply_text("ℹ️ Cú pháp: /chanle <chẵn|lẻ> <tiền cược>\nVí dụ: /cl c 20k, /chanle le 5m", tid, tt);
             return;
         }
         std::string choice = args[1];
@@ -2100,22 +2136,22 @@ commands["signup"] = [this](const auto& args, const auto& uid,
         if (choice == "c" || choice == "chan") choice = "chan";
         if (choice == "l" || choice == "le") choice = "le";
         if (choice != "chan" && choice != "le") {
-            reply_text("Chon chan hoac le", tid, tt);
+            reply_text("⚠️ Vui lòng chọn chẵn hoặc lẻ (vd: /chanle c 50k)", tid, tt);
             return;
         }
         cpp_int bal0 = econ.get_bank(uid);
         cpp_int bet = parse_bet_amount(args[2], bal0);
         if (bet < 0) {
-            reply_text("So tien khong hop le. VD: 10000, 10k, 5m, 1b", tid, tt);
+            reply_text("⚠️ Số tiền cược không hợp lệ. Ví dụ: 10000, 10k, 5m, 1b", tid, tt);
             return;
         }
         if (bet < 1000) { reply_text("C\u01B0\u1EE3c t\u1ED1i thi\u1EC3u 1.000", tid, tt); return; }
         if (bet > 1000000000000000LL) {
-            reply_text("Cuoc toi da 1.000.000.000.000.000", tid, tt); return;
+            reply_text("⚠️ Cược tối đa 1.000.000.000.000.000 VNĐ", tid, tt); return;
         }
         cpp_int bal_before = bal0;
         if (bal_before < bet) {
-            reply_text("Khong du tien. Bank: " + money_str(bal_before), tid, tt);
+            reply_text("❌ Bạn không đủ tiền! Số dư ngân hàng: " + money_str(bal_before) + " VNĐ", tid, tt);
             return;
         }
         econ.place_bet(uid, bet);
@@ -2150,10 +2186,12 @@ commands["signup"] = [this](const auto& args, const auto& uid,
             winnings = bet * 19 / 10;
             econ.add_winnings(uid, winnings);
         } else {
+            econ.record_loss(uid, bet);
             int pct = roll_dice_mt(31) + 29;
             cpp_int contrib = bet * pct / 100;
             game.add_chanle_jackpot(contrib);
         }
+        save_husks();
 
         cpp_int net = winnings - bet;
         cpp_int bal_after = bal_before + net;
@@ -2244,83 +2282,82 @@ std::string cap;
     commands["tx"] = commands["taixiu"];
 
     commands["baucua"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
-        if ((!account.is_logged_in(uid) && !g_debug_mode)) { reply_text("❌ Cần đăng nhập", tid, tt); return; }
-        if (args.size() < 3) { reply_text("❌ Cú pháp: baucua <con> <tiền>:<con> <tiền>... (VD: baucua bau 100k:cua 50k)", tid, tt); return; }
-        
-        // Parse các cửa cược
-        std::map<int, cpp_int> bets; // index: 0-bau, 1-cua, 2-tom, 3-ca, 4-ga, 5-nai
-        std::map<std::string, int> nameMap = {{"bau",0},{"cua",1},{"tom",2},{"ca",3},{"ga",4},{"nai",5}};
+        if ((!account.is_logged_in(uid) && !g_debug_mode)) { reply_text("❌ Cần đăng nhập. Dùng /login <user> <pass>", tid, tt); return; }
+        if (args.size() < 3 || args.size() % 2 == 0) {
+            reply_text("❌ Cú pháp: /baucua <con> <tiền> [<con> <tiền>...]\nVí dụ: /baucua bau 10k cua 20k", tid, tt);
+            return;
+        }
+
+        std::map<std::string, int> symMap = {
+            {"bau", 0}, {"bầu", 0}, {"cua", 1}, {"tom", 2}, {"tôm", 2},
+            {"ca", 3}, {"cá", 3}, {"ga", 4}, {"gà", 4}, {"nai", 5}
+        };
+
+        std::vector<std::pair<int, cpp_int>> bets;
         cpp_int total_bet = 0;
-        
-        std::string betStr = "";
-        for (size_t i = 1; i < args.size(); i++) {
-            if (!betStr.empty()) betStr += " ";
-            betStr += args[i];
+        cpp_int bal_avail = econ.get_bank(uid);
+        for (size_t i = 1; i + 1 < args.size(); i += 2) {
+            std::string con = args[i];
+            std::transform(con.begin(), con.end(), con.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+            if (!symMap.count(con)) { reply_text("❌ Con vật không hợp lệ: " + args[i] + "\nChọn: bau, cua, tom, ca, ga, nai", tid, tt); return; }
+            cpp_int b = parse_bet_amount(args[i + 1], bal_avail - total_bet);
+            if (b < 1000) { reply_text("❌ Cược tối thiểu 1.000 VNĐ mỗi cửa!", tid, tt); return; }
+            bets.push_back({symMap[con], b});
+            total_bet += b;
         }
-        
-        std::stringstream ss(betStr);
-        std::string part;
-        while (std::getline(ss, part, ':')) {
-            std::istringstream iss(part);
-            std::string con; cpp_int amount;
-            if (iss >> con >> part) { // Tạm dùng part để lấy số tiền
-                std::transform(con.begin(), con.end(), con.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
-                if (nameMap.find(con) == nameMap.end()) { reply_text("❌ Con vật không hợp lệ: " + con, tid, tt); return; }
-                amount = parse_money(part);
-                if (amount <= 0) { reply_text("❌ Số tiền không hợp lệ", tid, tt); return; }
-                bets[nameMap[con]] += amount;
-                total_bet += amount;
-            }
+
+        if (total_bet <= 0 || bal_avail < total_bet) {
+            reply_text("❌ Không đủ tiền trong Bank! Hiện có: " + money_str(bal_avail) + " VNĐ", tid, tt);
+            return;
         }
-        
-        if (total_bet <= 0) { reply_text("❌ Không có cược hợp lệ", tid, tt); return; }
-        if (econ.get_bank(uid) < total_bet) { reply_text("❌ Không đủ tiền. Cần " + money_str(total_bet), tid, tt); return; }
-        
-        econ.set_full_data(uid, econ.get_user_economy(uid).wallet, econ.get_bank(uid) - total_bet, econ.get_user_economy(uid).debt, econ.get_user_economy(uid).games_played, econ.get_user_economy(uid).games_won);
-        
-        // Tung 3 xúc xắc
-        std::vector<int> dices = {myRandom::RanInt(0, 5), myRandom::RanInt(0, 5), myRandom::RanInt(0, 5)};
+
+        cpp_int oldBank = bal_avail;
+        econ.place_bet(uid, total_bet);
+
+        std::vector<int> dices = { myRandom::RanInt(0, 5), myRandom::RanInt(0, 5), myRandom::RanInt(0, 5) };
         int count[6] = {0};
         for (int d : dices) count[d]++;
-        
-        // Tính tiền thắng
+
         cpp_int total_win = 0;
-        std::string resDetail = "🎲 Kết quả: ";
-        const char* names[] = {"Bầu", "Cua", "Tôm", "Cá", "Gà", "Nai"};
-        for (int i=0; i<3; i++) resDetail += std::string(names[dices[i]]) + (i<2?", ":"");
-        
         bool isJackpot = (count[dices[0]] == 3);
         cpp_int husk_add = 0;
-        
+
         for (auto& pair : bets) {
             int con = pair.first;
             cpp_int bet = pair.second;
             if (count[con] > 0) {
-                cpp_int win = bet + (bet * 95 * count[con]) / 100; // 1 + 0.95*count
+                cpp_int win = bet + (bet * 95 * count[con]) / 100;
                 total_win += win;
             } else {
-                husk_add += bet * 60 / 100; // Trích 60% vào hũ
+                husk_add += bet * 60 / 100;
             }
         }
-        
-        // Xử lý hũ (nếu nổ hũ)
+
         cpp_int husk = econ.get_husk("bau_cua");
+        if (husk <= 0) { husk = 1000000; econ.set_husk("bau_cua", husk); }
         cpp_int jackpot_win = 0;
-        if (isJackpot && bets.count(dices[0])) {
+        bool hit_jackpot = false;
+        if (isJackpot) {
+            for (auto& pair : bets) {
+                if (pair.first == dices[0]) { hit_jackpot = true; break; }
+            }
+        }
+        if (hit_jackpot) {
             cpp_int max_jackpot = total_bet * 1000;
             jackpot_win = std::min(husk, max_jackpot);
             total_win += jackpot_win;
             if (husk > max_jackpot) econ.add_to_husk("bau_cua", -jackpot_win);
             else econ.set_husk("bau_cua", 1000000);
-            resDetail += "\n💥 NỔ HŨ! Nhận thêm " + money_str(jackpot_win);
-        } else {
-            if (husk_add > 0) econ.add_to_husk("bau_cua", husk_add);
+        } else if (husk_add > 0) {
+            econ.add_to_husk("bau_cua", husk_add);
         }
-        
-        econ.add_winnings(uid, total_win);
+
+        if (total_win > 0) econ.add_winnings(uid, total_win);
+        else econ.record_loss(uid, total_bet);
+        save_husks();
         g_econ_dirty = true;
-        
-        // Format tin nhắn theo chuẩn JS gốc
+
+        cpp_int newBank = econ.get_bank(uid);
         std::string playerName = format_user(uid);
         std::string msg = "[ " + playerName + " ] đã đặt:\n";
         const char* symNames[] = {"Bầu", "Cua", "Tôm", "Cá", "Gà", "Nai"};
@@ -2328,115 +2365,100 @@ std::string cap;
             int con = pair.first;
             cpp_int bet = pair.second;
             bool isWin = count[con] > 0;
-            msg += std::string(symNames[con]) + ": " + money_str(bet) + " VNĐ (" + (isWin ? "Win" : "Lose") + ")\n";
+            msg += "• " + std::string(symNames[con]) + ": " + money_str(bet) + " VNĐ (" + (isWin ? "Thắng x" + std::to_string(count[con]) : "Trượt") + ")\n";
         }
-        msg += "Tổng thắng: " + money_str(total_win) + " VNĐ\n";
-        if (isJackpot) {
-            msg += "💥 NỔ HŨ\n";
-            msg += "Tiền trúng hũ: +" + money_str(jackpot_win) + " VNĐ\n";
+        msg += "Tổng nhận: " + money_str(total_win) + " VNĐ\n";
+        if (hit_jackpot) {
+            msg += "💥 NỔ HŨ BẦU CUA! +" + money_str(jackpot_win) + " VNĐ\n";
         }
         cpp_int net_win = total_win - total_bet;
-        if (net_win > 0) msg += "Lợi nhuận: +" + money_str(net_win) + " VNĐ 🎉\n";
-        else msg += "Thua lỗ: " + money_str(net_win) + " VNĐ 😢\n";
-        if (!isJackpot) msg += "Hũ hiện tại: " + money_str(econ.get_husk("bau_cua")) + " VNĐ 💰\n";
-        msg += "\nSố dư biến động: " + money_str(econ.get_bank(uid) + total_bet) + " -> " + money_str(econ.get_bank(uid)) + " VNĐ";
-        resDetail = msg;
-        
+        if (net_win > 0) msg += "🎉 Lợi nhuận: +" + money_str(net_win) + " VNĐ\n";
+        else if (net_win == 0) msg += "🤝 Hòa vốn!\n";
+        else msg += "😢 Thua lỗ: " + money_str(net_win) + " VNĐ\n";
+        msg += "💰 Hũ Bầu Cua: " + money_str(econ.get_husk("bau_cua")) + " VNĐ\n";
+        msg += "💳 Số dư: " + money_str(oldBank) + " → " + money_str(newBank) + " VNĐ";
+
         static std::atomic<int> ctr{0};
         std::string imgPath = paths::cache("baucua_") + std::to_string(ctr++) + ".png";
-        long long tw_ll = 0; try { tw_ll = total_win.convert_to<long long>(); } catch(...) {}
-        game_render::render_baucua_result(dices, tw_ll, imgPath);
-        
+        game_render::render_baucua_result_rich(dices, total_bet, total_win, hit_jackpot, econ.get_husk("bau_cua"), imgPath);
+
         std::vector<std::tuple<std::string,int,int>> empty;
-        api.send_message_with_image_mentions_async(resDetail, imgPath, tid, tt, empty);
+        api.send_message_with_image_mentions_async(msg, imgPath, tid, tt, empty);
     };
 
     commands["keobuabao"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
-        if ((!account.is_logged_in(uid) && !g_debug_mode)) { reply_text("❌ Cần đăng nhập", tid, tt); return; }
-        if (args.size() < 3) { reply_text("❌ Cú pháp: kbb <keo/bua/bao> <tiền>", tid, tt); return; }
-        
+        if ((!account.is_logged_in(uid) && !g_debug_mode)) { reply_text("❌ Cần đăng nhập. Dùng /login <user> <pass>", tid, tt); return; }
+        if (args.size() < 3) { reply_text("❌ Cú pháp: /kbb <keo|bua|bao> <tiền>", tid, tt); return; }
+
         std::string choice = args[1];
         std::transform(choice.begin(), choice.end(), choice.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
         int p_choice = -1;
-        if (choice == "keo" || choice == "kéo") p_choice = 0;
-        else if (choice == "bua" || choice == "búa") p_choice = 1;
-        else if (choice == "bao" || choice == "bào") p_choice = 2;
-        else { reply_text("❌ Chọn keo, bua hoặc bao", tid, tt); return; }
-        
-        cpp_int bet = parse_money(args[2]);
-        if (bet <= 0) { reply_text("❌ Số tiền không hợp lệ", tid, tt); return; }
-        if (econ.get_bank(uid) < bet) { reply_text("❌ Không đủ tiền", tid, tt); return; }
-        
-        econ.set_full_data(uid, econ.get_user_economy(uid).wallet, econ.get_bank(uid) - bet, econ.get_user_economy(uid).debt, econ.get_user_economy(uid).games_played, econ.get_user_economy(uid).games_won);
-        
-        // Mapping index: 0=Kéo, 1=Búa, 2=Bao
-        // beats[i] = cửa mà i đánh bại
-        int beats[3] = {2, 0, 1}; // Kéo thắng Bao, Búa thắng Kéo, Bao thắng Búa
-        
-        int p_beats = beats[p_choice]; // Cửa mà player đánh bại
+        if (choice == "keo" || choice == "kéo" || choice == "k") p_choice = 0;
+        else if (choice == "bua" || choice == "búa" || choice == "b") p_choice = 1;
+        else if (choice == "bao" || choice == "bào" || choice == "giay" || choice == "giấy") p_choice = 2;
+        else { reply_text("❌ Chọn keo, bua hoặc bao!", tid, tt); return; }
+
+        cpp_int oldBank = econ.get_bank(uid);
+        cpp_int bet = parse_bet_amount(args[2], oldBank);
+        if (bet < 1000) { reply_text("❌ Cược tối thiểu 1.000 VNĐ!", tid, tt); return; }
+        if (oldBank < bet) { reply_text("❌ Không đủ tiền! Bank: " + money_str(oldBank) + " VNĐ", tid, tt); return; }
+
+        econ.place_bet(uid, bet);
+
+        int beats[3] = {2, 0, 1};
+        int p_beats = beats[p_choice];
         int p_loses_to = -1;
         for (int i = 0; i < 3; i++) {
             if (beats[i] == p_choice) { p_loses_to = i; break; }
         }
-        
+
         int randVal = myRandom::RanInt(0, 99);
         int b_choice = 0;
-        int result = 0; // 0: Player thắng, 1: Hòa, 2: Player thua
-        
+        int result = 0;
         if (randVal < 35) {
-            // Bot thua: bot chọn cửa mà player đánh bại
             b_choice = p_beats;
             result = 0;
         } else if (randVal < 70) {
-            // Hòa
             b_choice = p_choice;
             result = 1;
         } else {
-            // Bot thắng: bot chọn cửa đánh bại player
             b_choice = p_loses_to;
             result = 2;
         }
-        
+
         const char* kbbNames[] = {"Kéo", "Búa", "Bao"};
         const char* kbbEmojis[] = {"✌️", "✊", "🖐️"};
-        
-        cpp_int oldBank = econ.get_bank(uid) + bet; // Số dư trước khi cược
-        cpp_int win_amount = 0;
+
         cpp_int net_amount = 0;
-        
         if (result == 0) {
-            win_amount = bet * 2;
             net_amount = bet;
-            econ.add_winnings(uid, win_amount);
+            econ.add_winnings(uid, bet * 2);
         } else if (result == 1) {
-            win_amount = bet;
             net_amount = 0;
-            econ.add_winnings(uid, win_amount);
+            econ.refund(uid, bet);
         } else {
-            win_amount = 0;
             net_amount = -bet;
             econ.record_loss(uid, bet);
         }
         g_econ_dirty = true;
-        
+
         cpp_int newBank = econ.get_bank(uid);
-        
         std::string playerName = format_user(uid);
-        std::string resText = "[ " + playerName + " ] đã chọn " + std::string(kbbNames[p_choice]) + " " + std::string(kbbEmojis[p_choice]) + "\n";
+        std::string resText = "[ " + playerName + " ] chọn " + std::string(kbbNames[p_choice]) + " " + std::string(kbbEmojis[p_choice]) + "\n";
         resText += "Bot chọn " + std::string(kbbNames[b_choice]) + " " + std::string(kbbEmojis[b_choice]) + "\n\n";
         if (result == 0) resText += "🎉 Bạn đã thắng!\n";
         else if (result == 1) resText += "🤝 Hòa!\n";
         else resText += "😢 Bạn đã thua!\n";
         resText += "Đặt cược: " + money_str(bet) + " VNĐ\n";
-        if (net_amount == 0) resText += "Hoàn Tiền: " + money_str(bet) + " VNĐ\n";
-        else if (net_amount > 0) resText += "Tiền Thắng Cược: +" + money_str(net_amount) + " VNĐ\n";
-        else resText += "Thua Lỗ: " + money_str(net_amount) + " VNĐ\n";
-        resText += "Số dư biến động: " + money_str(oldBank) + " -> " + money_str(newBank) + " VNĐ";
-        
+        if (net_amount == 0) resText += "Hoàn tiền: " + money_str(bet) + " VNĐ\n";
+        else if (net_amount > 0) resText += "Tiền thắng: +" + money_str(net_amount) + " VNĐ\n";
+        else resText += "Thua lỗ: " + money_str(net_amount) + " VNĐ\n";
+        resText += "💳 Số dư: " + money_str(oldBank) + " → " + money_str(newBank) + " VNĐ";
+
         static std::atomic<int> ctr{0};
         std::string imgPath = paths::cache("kbb_") + std::to_string(ctr++) + ".png";
-        game_render::render_kbb_result(p_choice, b_choice, result, imgPath);
-        
+        game_render::render_kbb_result_rich(p_choice, b_choice, result, bet, net_amount, imgPath);
+
         std::vector<std::tuple<std::string,int,int>> empty;
         api.send_message_with_image_mentions_async(resText, imgPath, tid, tt, empty);
     };
@@ -2948,7 +2970,7 @@ std::string cap;
         std::cerr << "[PY-AFTER-RUN] ok=" << r.value("ok", false) << std::endl;
         if (r.value("ok", false)) {
             std::string out = r.value("result", json::object()).value("output", "");
-            if (out.empty()) out = "(khong co output)";
+            if (out.empty()) out = "(không có output)";
             
             // FIX: Cắt chuỗi an toàn UTF-8 (tránh lỗi invalid UTF-8 byte)
             const size_t MAX_LEN = 1500;
@@ -2969,7 +2991,7 @@ std::string cap;
     commands["python"] = commands["py"];
     commands["kick"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
         if (!perm.has_permission(uid, "kick")) { reply_text("❌ Không có quyền", tid, tt); return; }
-        if (args.size() < 2) { reply_text("❌ kick <@user>", tid, tt); return; }
+        if (args.size() < 2) { reply_text("❌ Cú pháp: /kick @user", tid, tt); return; }
         if (!group.is_bot_admin_in_group(tid)) { reply_text("❌ Bot không phải admin nhóm", tid, tt); return; }
         std::string t = args[1];
         bool ok = !t.empty() && std::all_of(t.begin(), t.end(), ::isdigit);
@@ -2980,7 +3002,7 @@ std::string cap;
     };
     commands["warn"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
         if (!perm.has_permission(uid, "warn")) { reply_text("❌ Không có quyền", tid, tt); return; }
-        if (args.size() < 2) { reply_text("❌ warn <@user>", tid, tt); return; }
+        if (args.size() < 2) { reply_text("❌ Cú pháp: /warn @user [lý do]", tid, tt); return; }
         if (!group.is_bot_admin_in_group(tid)) { reply_text("❌ Bot không phải admin", tid, tt); return; }
         group.warn_user(tid, args[1]);
         reply_text("⚠️ Đã cảnh cáo", tid, tt);
@@ -3021,16 +3043,6 @@ std::string cap;
         reply_text(en ? "✅ Antilink ON" : "✅ Antilink OFF", tid, tt);
     };
     commands["antil"] = commands["antilink"];
-    commands["on"] = [this](const auto&, const auto& uid, const auto& tid, int tt, bool) {
-        if (!perm.is_admin(uid)) { reply_text("❌ Không có quyền", tid, tt); return; }
-        g_bot_enabled = true;
-        reply_text("✅ Bot ON", tid, tt);
-    };
-    commands["off"] = [this](const auto&, const auto& uid, const auto& tid, int tt, bool) {
-        if (!perm.is_admin(uid)) { reply_text("❌ Không có quyền", tid, tt); return; }
-        reply_text("💤 Bot OFF\nGõ /on để bật lại", tid, tt);
-        g_bot_enabled = false;
-    };
     commands["listadmin"] = [this](const auto&, const auto& uid, const auto& tid, int tt, bool) {
         if (!perm.is_admin(uid)) { reply_text("❌ Không có quyền", tid, tt); return; }
 
@@ -3192,7 +3204,7 @@ std::string cap;
         else { reply_text("❌ setmoney <@user> <số tiền>", tid, tt); return; }
         if (a < 0) { reply_text("❌ Số tiền không hợp lệ. VD: 10k, 5m, 1b", tid, tt); return; }
         bool ok = !t.empty() && std::all_of(t.begin(), t.end(), ::isdigit);
-        if (!ok) { reply_text("❌ UID sai", tid, tt); return; }
+        if (!ok) { reply_text("❌ UID không hợp lệ.", tid, tt); return; }
         cpp_int before = econ.get_bank(t);
         econ.set_money(t, a);
         cpp_int after = econ.get_bank(t);
@@ -3229,7 +3241,7 @@ std::string cap;
         else { reply_text("❌ buff <@user> <số tiền>", tid, tt); return; }
         if (a <= 0) { reply_text("❌ Số tiền không hợp lệ. VD: 10k, 5m, 1b", tid, tt); return; }
         bool ok = !t.empty() && std::all_of(t.begin(), t.end(), ::isdigit);
-        if (!ok) { reply_text("❌ UID sai", tid, tt); return; }
+        if (!ok) { reply_text("❌ UID không hợp lệ.", tid, tt); return; }
         cpp_int before = econ.get_bank(t);
         econ.buff(t, a);
         cpp_int after = econ.get_bank(t);
@@ -3248,7 +3260,7 @@ std::string cap;
         else { reply_text("❌ nerf <@user> <số tiền>", tid, tt); return; }
         if (a <= 0) { reply_text("❌ Số tiền không hợp lệ. VD: 10k, 5m, 1b", tid, tt); return; }
         bool ok = !t.empty() && std::all_of(t.begin(), t.end(), ::isdigit);
-        if (!ok) { reply_text("❌ UID sai", tid, tt); return; }
+        if (!ok) { reply_text("❌ UID không hợp lệ.", tid, tt); return; }
         cpp_int before = econ.get_bank(t);
         econ.nerf(t, a);
         cpp_int after = econ.get_bank(t);
@@ -3343,7 +3355,7 @@ std::string cap;
     commands["setadmin"] = commands["setad"];
     commands["setprefix"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
         if (!perm.is_super_admin(uid)) { reply_text("❌ Chỉ SUPER ADMIN!", tid, tt); return; }
-        if (args.size() < 2) { reply_text("❌ setprefix <prefix>", tid, tt); return; }
+        if (args.size() < 2) { reply_text("❌ Cú pháp: /setprefix <tiền tố mới>", tid, tt); return; }
         set_prefix(args[1]);
         reply_text("✅ Đổi prefix thành " + args[1], tid, tt);
     };
@@ -3356,9 +3368,11 @@ std::string cap;
             reply_text("❌ Cần đăng nhập trước", tid, tt);
             return;
         }
-        std::string err = econ.claim_daily(uid, 1000000);
+        const cpp_int DAILY_REWARD = 50000;
+        std::string err = econ.claim_daily(uid, DAILY_REWARD);
         if (err.empty()) {
-            reply_text("🎁 Điểm danh thành công! +10,000", tid, tt);
+            g_econ_dirty = true;
+            reply_text("🎁 Điểm danh thành công! +" + money_str(DAILY_REWARD) + " VNĐ vào Bank!\n💳 Số dư Bank: " + money_str(econ.get_bank(uid)) + " VNĐ", tid, tt);
         } else {
             reply_text(err, tid, tt);
         }
@@ -3550,9 +3564,28 @@ std::string cap;
             return;
         }
 
+        if (sub == "ban") {
+            if (args.size() < 3) {
+                reply_text("❌ Cú pháp: /groupprotect ban <@user>", tid, tt);
+                return;
+            }
+            if (!bot_is_admin) {
+                reply_text("❌ Bot phải là admin nhóm mới kick/ban được thành viên!", tid, tt);
+                return;
+            }
+            std::string target = args[2];
+            auto r = api.remove_user_from_group(tid, target);
+            if (r.value("ok", false)) {
+                reply_text("🚫 Đã ban & mời " + format_user(target) + " ra khỏi nhóm!", tid, tt);
+            } else {
+                reply_text("❌ Không kick được " + format_user(target) + ".", tid, tt);
+            }
+            return;
+        }
+
         if (args.size() < 3) {
             reply_text("❌ Cú pháp: /groupprotect <tên> <on|off>\n"
-                       "Tên: spam | badword | link | antiundo | welcome | goodbye | lock | approve",
+                       "Tên: spam | badword | link | antiundo | welcome | goodbye | lock | approve | ban <@u>",
                        tid, tt);
             return;
         }
@@ -3627,25 +3660,47 @@ std::string cap;
     // ============================================================
     commands["bot"] = [this](const auto& args, const auto& uid,
                             const auto& tid, int tt, bool) {
-        if (!perm.is_admin(uid)) { reply_text("\u274C Ch\u1EC9 admin bot", tid, tt); return; }
-        bool on = (args.size() > 1 && args[1] == "on");
+        if (!perm.is_admin(uid)) { reply_text("❌ Chỉ admin bot", tid, tt); return; }
+        if (args.size() < 2) {
+            reply_text(std::string("🤖 Trạng thái Bot nhóm này: ") + (get_bot_for_thread(tid) ? "ON ✅" : "OFF 💤"), tid, tt);
+            return;
+        }
+        std::string v = args[1];
+        std::transform(v.begin(), v.end(), v.begin(), [](unsigned char c){ return (char)std::tolower(c); });
+        bool on = (v == "on" || v == "1" || v == "bat");
         set_bot_for_thread(tid, on);
         g_econ_dirty = true;
-        reply_text(on ? "\u2705 Bot ON" : "\U0001F4A4 Bot OFF", tid, tt);
+        reply_text(on ? "✅ Bot ON" : "💤 Bot OFF\nGõ /on để bật lại", tid, tt);
     };
-    commands["on"] = commands["bot"];
-    commands["off"] = commands["bot"];
+    commands["on"] = [this](const auto&, const auto& uid, const auto& tid, int tt, bool) {
+        if (!perm.is_admin(uid)) { reply_text("❌ Chỉ admin bot", tid, tt); return; }
+        set_bot_for_thread(tid, true);
+        g_econ_dirty = true;
+        reply_text("✅ Bot ON", tid, tt);
+    };
+    commands["off"] = [this](const auto&, const auto& uid, const auto& tid, int tt, bool) {
+        if (!perm.is_admin(uid)) { reply_text("❌ Chỉ admin bot", tid, tt); return; }
+        reply_text("💤 Bot OFF\nGõ /on để bật lại", tid, tt);
+        set_bot_for_thread(tid, false);
+        g_econ_dirty = true;
+    };
 
     // ============================================================
     // /game on|off - bat/tat game (default off)
     // ============================================================
     commands["game"] = [this](const auto& args, const auto& uid,
                               const auto& tid, int tt, bool) {
-        if (!perm.is_admin(uid)) { reply_text("\u274C Ch\u1EC9 admin bot", tid, tt); return; }
-        bool on = (args.size() > 1 && args[1] == "on");
+        if (!perm.is_admin(uid)) { reply_text("❌ Chỉ admin bot", tid, tt); return; }
+        if (args.size() < 2) {
+            reply_text(std::string("🎮 Trạng thái Game nhóm này: ") + (get_game_for_thread(tid) ? "ON ✅" : "OFF 💤"), tid, tt);
+            return;
+        }
+        std::string v = args[1];
+        std::transform(v.begin(), v.end(), v.begin(), [](unsigned char c){ return (char)std::tolower(c); });
+        bool on = (v == "on" || v == "1" || v == "bat");
         set_game_for_thread(tid, on);
         g_econ_dirty = true;
-        reply_text(on ? "\u2705 Game ON" : "\U0001F4A4 Game OFF", tid, tt);
+        reply_text(on ? "✅ Game ON" : "💤 Game OFF", tid, tt);
     };
 
     // ============================================================
@@ -3661,7 +3716,7 @@ std::string cap;
         bool turn_off = (args.size() > 1 && args[1] == "off");
 
         if (turn_off) {
-            if (!g_debug_mode) { reply_text("\u26A0\uFE0F Debug dang T\u1EAET", tid, tt); return; }
+            if (!g_debug_mode) { reply_text("⚠️ Chế độ Debug đang TẮT.", tid, tt); return; }
             set_bot_for_thread(tid, g_debug_saved_bot);
             set_game_for_thread(tid, g_debug_saved_game);
             g_debug_mode = false;
@@ -3788,6 +3843,484 @@ std::string cap;
         }).detach();
         reply_text("\U0001F525 B\u1EAFt \u0111\u1EA7u ch\u1EEDi " + format_user(target), tid, tt);
     };
+
+    // ============================================================
+    // Alias & new commands: topchat, soicau, vietlott, caro, group, voice,
+    // girl/boy/anime/cosplay, cadao/tarot/thinh/truyencuoi, dich, thoitiet, mute/unmute
+    // ============================================================
+    commands["topchat"] = commands["rank"];
+    commands["bc"] = commands["baucua"];
+
+    commands["soicau"] = [this](const auto& args, const auto&, const auto& tid, int tt, bool) {
+        std::string mode = "all";
+        if (args.size() > 1) {
+            mode = args[1];
+            std::transform(mode.begin(), mode.end(), mode.begin(), [](unsigned char c){ return (char)std::tolower(c); });
+            if (mode == "tx" || mode == "taixiu") mode = "taixiu";
+            else if (mode == "cl" || mode == "chanle") mode = "chanle";
+            else mode = "all";
+        }
+        std::vector<std::pair<int, bool>> tx_pts;
+        {
+            std::lock_guard<std::mutex> lk(g_taixiu_mtx);
+            tx_pts = g_taixiu_history_pts;
+        }
+        auto cl_hist = game.get_chanle_history();
+        static std::atomic<int> sc_ctr{0};
+        std::string out = paths::cache("soicau_") + std::to_string(sc_ctr++) + ".png";
+        extra_render::render_soicau(tx_pts, cl_hist, mode, out);
+        std::string cap = "📊 SOI CẦU (" + std::to_string(tx_pts.size()) + " phiên Tài Xỉu | " + std::to_string(cl_hist.size()) + " ván Chẵn Lẻ)";
+        api.send_message_with_image_async(cap, out, tid, tt);
+    };
+    commands["sc"] = commands["soicau"];
+
+    commands["vietlott"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+        if (!account.is_logged_in(uid) && !g_debug_mode) {
+            reply_text("❌ Cần đăng nhập. Dùng /login <user> <pass>", tid, tt);
+            return;
+        }
+        if (args.size() < 3) {
+            reply_text("🎟️ Cú pháp:\n• /vietlott <s1> <s2> <s3> <s4> <s5> <s6> <cược>\n• /vietlott auto <cược>\nSố từ 1 đến 55 (6 số khác nhau).", tid, tt);
+            return;
+        }
+        std::vector<int> player_nums;
+        cpp_int bal = econ.get_bank(uid);
+        cpp_int bet = 0;
+
+        std::string first_arg = args[1];
+        std::transform(first_arg.begin(), first_arg.end(), first_arg.begin(), [](unsigned char c){ return (char)std::tolower(c); });
+        if (first_arg == "auto" || first_arg == "ngau" || first_arg == "random") {
+            bet = parse_bet_amount(args[2], bal);
+            std::vector<int> pool;
+            for (int n = 1; n <= 55; n++) pool.push_back(n);
+            std::shuffle(pool.begin(), pool.end(), game_rng());
+            for (int i = 0; i < 6; i++) player_nums.push_back(pool[i]);
+            std::sort(player_nums.begin(), player_nums.end());
+        } else {
+            if (args.size() < 8) {
+                reply_text("❌ Nhập đủ 6 số (1-55) + tiền cược, hoặc dùng /vietlott auto <cược>", tid, tt);
+                return;
+            }
+            std::set<int> uniq;
+            for (int i = 1; i <= 6; i++) {
+                try {
+                    int num = std::stoi(args[i]);
+                    if (num < 1 || num > 55 || uniq.count(num)) {
+                        reply_text("❌ 6 số phải khác nhau và trong khoảng 1 → 55!", tid, tt);
+                        return;
+                    }
+                    uniq.insert(num);
+                    player_nums.push_back(num);
+                } catch (...) {
+                    reply_text("❌ Số không hợp lệ: " + args[i], tid, tt);
+                    return;
+                }
+            }
+            std::sort(player_nums.begin(), player_nums.end());
+            bet = parse_bet_amount(args[7], bal);
+        }
+
+        if (bet < 1000) { reply_text("❌ Cược tối thiểu 1.000 VNĐ!", tid, tt); return; }
+        if (bal < bet) { reply_text("❌ Không đủ tiền! Bank: " + money_str(bal) + " VNĐ", tid, tt); return; }
+
+        cpp_int oldBank = bal;
+        econ.place_bet(uid, bet);
+
+        std::vector<int> pool;
+        for (int n = 1; n <= 55; n++) pool.push_back(n);
+        std::shuffle(pool.begin(), pool.end(), game_rng());
+        std::vector<int> draw_nums(pool.begin(), pool.begin() + 6);
+        std::sort(draw_nums.begin(), draw_nums.end());
+        int extra_num = pool[6];
+
+        int matches = 0;
+        bool has_extra = false;
+        for (int pn : player_nums) {
+            if (std::find(draw_nums.begin(), draw_nums.end(), pn) != draw_nums.end()) matches++;
+            if (pn == extra_num) has_extra = true;
+        }
+
+        cpp_int husk = econ.get_husk("vietlott");
+        if (husk <= 0) { husk = 50000000LL; econ.set_husk("vietlott", husk); }
+        cpp_int prize = 0;
+        bool is_jp = false;
+        std::string rank_label = "Không trúng giải";
+
+        if (matches == 6) {
+            is_jp = true;
+            prize = bet * 500 + husk;
+            econ.set_husk("vietlott", cpp_int(50000000LL));
+            rank_label = "💥 JACKPOT 1 (6/6)!";
+        } else if (matches == 5 && has_extra) {
+            is_jp = true;
+            cpp_int jp2 = husk / 5;
+            prize = bet * 80 + jp2;
+            econ.add_to_husk("vietlott", -jp2);
+            rank_label = "🌟 JACKPOT 2 (5/6 + Phụ)!";
+        } else if (matches == 5) {
+            prize = bet * 25;
+            rank_label = "🥇 Giải Nhất (5/6)";
+        } else if (matches == 4) {
+            prize = bet * 6;
+            rank_label = "🥈 Giải Nhì (4/6)";
+        } else if (matches == 3) {
+            prize = bet * 2;
+            rank_label = "🥉 Giải Ba (3/6)";
+        } else {
+            econ.add_to_husk("vietlott", bet * 50 / 100);
+        }
+
+        if (prize > 0) econ.add_winnings(uid, prize);
+        else econ.record_loss(uid, bet);
+        save_husks();
+        g_econ_dirty = true;
+
+        cpp_int newBank = econ.get_bank(uid);
+        std::string pnums_str;
+        for (size_t i = 0; i < player_nums.size(); i++) {
+            if (i) pnums_str += " - ";
+            pnums_str += std::to_string(player_nums[i]);
+        }
+        std::string sub = rank_label + " | Trung " + std::to_string(matches) + "/6"
+                        + (has_extra ? " + Phu" : "") + " | Hu: " + money_str(econ.get_husk("vietlott")) + " VND";
+
+        static std::atomic<int> vl_ctr{0};
+        std::string out = paths::cache("vietlott_") + std::to_string(vl_ctr++) + ".png";
+        extra_render::render_vietlott_result(draw_nums, extra_num, is_jp, sub, out);
+
+        std::string cap = "🎟️ VIETLOTT 6/55 — [ " + format_user(uid) + " ]\n";
+        cap += "• Bộ số bạn chọn: " + pnums_str + "\n";
+        cap += "• Kết quả: " + rank_label + " (Trùng " + std::to_string(matches) + "/6" + (has_extra ? " + Phụ" : "") + ")\n";
+        cap += "• Cược: " + money_str(bet) + " VNĐ\n";
+        if (prize > 0) cap += "🎉 Tiền thưởng: +" + money_str(prize) + " VNĐ\n";
+        else cap += "💸 Chúc bạn may mắn lần sau!\n";
+        cap += "💳 Số dư: " + money_str(oldBank) + " → " + money_str(newBank) + " VNĐ\n";
+        cap += "💰 Hũ Vietlott: " + money_str(econ.get_husk("vietlott")) + " VNĐ";
+        api.send_message_with_image_async(cap, out, tid, tt);
+    };
+
+    commands["caro"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+        if (args.size() > 1) {
+            std::string a1 = args[1];
+            std::transform(a1.begin(), a1.end(), a1.begin(), [](unsigned char c){ return (char)std::tolower(c); });
+            if (a1 == "cancel" || a1 == "huy" || a1 == "stop") {
+                if (game.cancel_caro_game(tid)) {
+                    g_econ_dirty = true;
+                    reply_text("♟️ Đã huỷ ván cờ Caro hiện tại (đã hoàn cược nếu có).", tid, tt);
+                } else {
+                    reply_text("♟️ Không có ván cờ Caro nào đang diễn ra.", tid, tt);
+                }
+                return;
+            }
+        }
+        if (game.get_caro_game(tid) != nullptr) {
+            reply_text("⚠️ Nhóm đang có ván Caro! Gõ \"<dòng> <cột>\" (0-14) để đánh hoặc /caro cancel để huỷ.", tid, tt);
+            return;
+        }
+        if (args.size() < 2) {
+            reply_text("♟️ Cú pháp:\n• /caro bot [cược] — Đấu với Bot\n• /caro @user [cược] — Đấu PvP\n• /caro cancel — Huỷ ván", tid, tt);
+            return;
+        }
+        std::string target = args[1];
+        std::string target_lower = target;
+        std::transform(target_lower.begin(), target_lower.end(), target_lower.begin(), [](unsigned char c){ return (char)std::tolower(c); });
+        bool vs_bot = (target_lower == "bot" || target_lower == "ai");
+        if (!vs_bot) {
+            bool is_num = !target.empty() && std::all_of(target.begin(), target.end(), [](unsigned char c){ return std::isdigit(c); });
+            if (!is_num || target == uid) {
+                reply_text("❌ Hãy tag một người chơi hợp lệ hoặc chọn /caro bot!", tid, tt);
+                return;
+            }
+        }
+        cpp_int bet = 0;
+        if (args.size() >= 3) {
+            if (!account.is_logged_in(uid) && !g_debug_mode) {
+                reply_text("❌ Cần đăng nhập để đặt cược!", tid, tt);
+                return;
+            }
+            if (!vs_bot && !account.is_logged_in(target) && !g_debug_mode) {
+                reply_text("❌ " + format_user(target) + " chưa đăng nhập để cược!", tid, tt);
+                return;
+            }
+            bet = parse_bet_amount(args[2], econ.get_bank(uid));
+            if (bet < 1000) { reply_text("❌ Cược tối thiểu 1.000 VNĐ!", tid, tt); return; }
+            if (econ.get_bank(uid) < bet) { reply_text("❌ Bạn không đủ tiền cược!", tid, tt); return; }
+            if (!vs_bot && econ.get_bank(target) < bet) {
+                reply_text("❌ " + format_user(target) + " không đủ tiền cược!", tid, tt);
+                return;
+            }
+            econ.place_bet(uid, bet);
+            if (!vs_bot) econ.place_bet(target, bet);
+            g_econ_dirty = true;
+        }
+
+        std::string p2 = vs_bot ? "__BOT__" : target;
+        game.create_caro_game(uid, p2, tid, tt, bet);
+        CaroBoard* b = game.get_caro_game(tid);
+        std::string p1_name = format_user(uid);
+        std::string p2_name = vs_bot ? get_bot_name() : format_user(target);
+        static std::atomic<int> cr_ctr{0};
+        std::string out = paths::cache("caro_") + std::to_string(cr_ctr++) + ".png";
+        extra_render::render_caro_board(b->board, -1, -1, p1_name, p2_name, 1,
+                                        "Go <dong> <cot> (VD: 7 7) de danh!", out);
+        std::string cap = "♟️ CỜ CARO 15x15 BẮT ĐẦU!\n❌ " + p1_name + "  vs  ⭕ " + p2_name;
+        if (bet > 0) cap += "\n💰 Tiền cược: " + money_str(bet) + " VNĐ";
+        cap += "\n👉 Lượt của " + p1_name + " (X): gõ \"<dòng> <cột>\" (VD: 7 7)";
+        api.send_message_with_image_async(cap, out, tid, tt);
+    };
+
+    commands["group"] = [this](const auto&, const auto&, const auto& tid, int tt, bool) {
+        if (tt == 0) { reply_text("❌ Lệnh này chỉ dùng trong nhóm!", tid, tt); return; }
+        auto resp = api.get_group_info(tid);
+        if (resp.contains("error") || !resp.value("ok", true)) {
+            reply_text("❌ Không lấy được thông tin nhóm.", tid, tt);
+            return;
+        }
+        json info = json::object();
+        if (resp.contains("result") && resp["result"].is_object()) {
+            auto& r = resp["result"];
+            if (r.contains("gridInfoMap") && r["gridInfoMap"].is_object()) {
+                auto& gm = r["gridInfoMap"];
+                if (gm.contains(tid) && gm[tid].is_object()) info = gm[tid];
+                else if (!gm.empty()) {
+                    for (auto& [k, v] : gm.items()) { if (v.is_object()) { info = v; break; } }
+                }
+            }
+            if (info.empty() && r.contains("name")) info = r;
+        }
+        if (info.empty()) { reply_text("❌ Không đọc được dữ liệu nhóm.", tid, tt); return; }
+
+        std::string gname = info.value("name", "Nhóm Zalo");
+        int members = info.value("totalMember", 0);
+        if (members <= 0 && info.contains("memberIds") && info["memberIds"].is_array())
+            members = (int)info["memberIds"].size();
+        int admins = 0;
+        if (info.contains("adminIds") && info["adminIds"].is_array())
+            admins = (int)info["adminIds"].size();
+        std::string creator = info.value("creatorId", "");
+        std::string owner_name = creator.empty() ? "Ẩn" : format_user(creator);
+        std::string desc = info.value("desc", "");
+        bool lock_chat = false, join_appr = false;
+        if (info.contains("setting") && info["setting"].is_object()) {
+            lock_chat = info["setting"].value("lockSendMsg", 0) == 1;
+            join_appr = info["setting"].value("joinAppr", 0) == 1;
+        }
+        long long created_ts = info.value("createdTime", 0LL);
+        std::string created_str = "Ẩn";
+        if (created_ts > 0) {
+            if (created_ts > 100000000000LL) created_ts /= 1000;
+            time_t ct = (time_t)created_ts;
+            struct tm* tmi = localtime(&ct);
+            char buf[32];
+            strftime(buf, sizeof(buf), "%d/%m/%Y", tmi);
+            created_str = buf;
+        }
+        std::string avt_url = info.value("fullAvt", info.value("avt", ""));
+        std::string avt_key;
+        if (!avt_url.empty()) {
+            std::string avt_path = paths::cache("grp_") + tid + ".png";
+            std::ifstream ft(avt_path, std::ios::binary);
+            bool ex = ft.good(); ft.close();
+            if (!ex) api.download_image(avt_url, avt_path);
+            if (AssetManager::load("grp_" + tid, avt_path)) avt_key = "grp_" + tid;
+        }
+        static std::atomic<int> grp_ctr{0};
+        std::string out = paths::cache("group_") + std::to_string(grp_ctr++) + ".png";
+        extra_render::render_group_info(gname, tid, members, admins, owner_name, created_str, desc, lock_chat, join_appr, avt_key, out);
+        api.send_message_with_image_async("🏠 Thông tin nhóm: " + gname, out, tid, tt);
+    };
+    commands["groupinfo"] = commands["group"];
+
+    commands["voice"] = [this](const auto& args, const auto&, const auto& tid, int tt, bool) {
+        if (args.size() < 2) {
+            reply_text("❌ Cú pháp: /voice <nội dung cần đọc>", tid, tt);
+            return;
+        }
+        std::string raw = ctx().msg_text;
+        size_t sp = raw.find_first_of(" \t\n");
+        std::string text = (sp == std::string::npos) ? "" : raw.substr(sp + 1);
+        size_t b = text.find_first_not_of(" \t\r\n");
+        if (b == std::string::npos) { reply_text("❌ Nội dung trống!", tid, tt); return; }
+        text = text.substr(b);
+        api.send_voice_text_async(text, tid, tt);
+    };
+
+    auto register_media_cmd = [this](const std::string& cmd_name, const std::string& filename, const std::string& label) {
+        commands[cmd_name] = [this, cmd_name, filename, label](const auto&, const auto&, const auto& tid, int tt, bool) {
+            std::ifstream f(paths::data(filename).c_str());
+            if (!f.good()) { reply_text("❌ Không tìm thấy dữ liệu " + filename, tid, tt); return; }
+            std::vector<std::string> urls;
+            std::string line;
+            while (std::getline(f, line)) {
+                if (!line.empty() && line.back() == '\r') line.pop_back();
+                if (line.rfind("http", 0) == 0) urls.push_back(line);
+            }
+            if (urls.empty()) { reply_text("❌ Danh sách ảnh trống!", tid, tt); return; }
+            static std::atomic<int> m_ctr{0};
+            for (int attempt = 0; attempt < 2; attempt++) {
+                std::string url = urls[myRandom::RanInt(0, (int)urls.size() - 1)];
+                std::string out = paths::cache(cmd_name + "_") + std::to_string(m_ctr++) + ".jpg";
+                if (api.download_image(url, out)) {
+                    api.send_message_with_image_async(label, out, tid, tt);
+                    return;
+                }
+            }
+            reply_text("❌ Tải ảnh thất bại, thử lại sau nhé!", tid, tt);
+        };
+    };
+    register_media_cmd("girl",    "girl.txt",    "📸 Ảnh gái xinh ngẫu nhiên");
+    register_media_cmd("boy",     "boy.txt",     "📸 Ảnh trai đẹp ngẫu nhiên");
+    register_media_cmd("anime",   "anime.txt",   "✨ Ảnh Anime ngẫu nhiên");
+    register_media_cmd("cosplay", "cosplay.txt", "🎭 Ảnh Cosplay ngẫu nhiên");
+
+    auto register_line_text_cmd = [this](const std::string& cmd_name, const std::string& filename, const std::string& header, bool unescape_nl) {
+        commands[cmd_name] = [this, filename, header, unescape_nl](const auto&, const auto&, const auto& tid, int tt, bool) {
+            std::ifstream f(paths::data(filename).c_str());
+            if (!f.good()) { reply_text("❌ Không tìm thấy " + filename, tid, tt); return; }
+            std::vector<std::string> items;
+            std::string line;
+            while (std::getline(f, line)) {
+                if (!line.empty() && line.back() == '\r') line.pop_back();
+                if (!line.empty()) items.push_back(line);
+            }
+            if (items.empty()) { reply_text("❌ Dữ liệu trống!", tid, tt); return; }
+            std::string pick = items[myRandom::RanInt(0, (int)items.size() - 1)];
+            if (unescape_nl) {
+                std::string out;
+                for (size_t i = 0; i < pick.size(); i++) {
+                    if (pick[i] == '\\' && i + 1 < pick.size() && pick[i + 1] == 'n') {
+                        out += '\n'; i++;
+                    } else out += pick[i];
+                }
+                pick = out;
+            }
+            reply_text(header + "\n" + pick, tid, tt);
+        };
+    };
+    register_line_text_cmd("cadao", "cadao.txt", "📜 CA DAO TỤC NGỮ", true);
+    register_line_text_cmd("tarot", "tarot.txt", "🔮 LÁ BÀI TAROT HÔM NAY", true);
+    register_line_text_cmd("thinh", "thinh.txt", "💘 THẢ THÍNH", true);
+
+    commands["truyencuoi"] = [this](const auto&, const auto&, const auto& tid, int tt, bool) {
+        std::ifstream f(paths::data("truyencuoi.txt").c_str());
+        if (!f.good()) { reply_text("❌ Không tìm thấy truyencuoi.txt", tid, tt); return; }
+        std::string all((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+        std::vector<std::string> stories;
+        const std::string delim = "Truyện:";
+        size_t pos = 0;
+        while ((pos = all.find(delim, pos)) != std::string::npos) {
+            size_t next = all.find(delim, pos + delim.size());
+            std::string chunk = (next == std::string::npos) ? all.substr(pos) : all.substr(pos, next - pos);
+            std::string unesc;
+            for (size_t i = 0; i < chunk.size(); i++) {
+                if (chunk[i] == '\\' && i + 1 < chunk.size() && chunk[i + 1] == 'n') {
+                    unesc += '\n'; i++;
+                } else unesc += chunk[i];
+            }
+            if (!unesc.empty()) stories.push_back(unesc);
+            if (next == std::string::npos) break;
+            pos = next;
+        }
+        if (stories.empty()) { reply_text("❌ Dữ liệu truyện cười trống!", tid, tt); return; }
+        std::string pick = stories[myRandom::RanInt(0, (int)stories.size() - 1)];
+        reply_text("😂 " + pick, tid, tt);
+    };
+
+    commands["dich"] = [this](const auto& args, const auto&, const auto& tid, int tt, bool) {
+        std::string target_lang = "vi";
+        std::string text;
+        if (args.size() >= 2) {
+            std::string a1 = args[1];
+            std::transform(a1.begin(), a1.end(), a1.begin(), [](unsigned char c){ return (char)std::tolower(c); });
+            static const std::set<std::string> langs = {"vi","en","ja","ko","zh","fr","de","es","th","ru"};
+            if (langs.count(a1)) {
+                target_lang = a1;
+                for (size_t i = 2; i < args.size(); i++) { if (i > 2) text += " "; text += args[i]; }
+            } else {
+                for (size_t i = 1; i < args.size(); i++) { if (i > 1) text += " "; text += args[i]; }
+            }
+        }
+        if (text.empty() && ctx().quote.has_quote) text = ctx().quote.content;
+        if (text.empty()) {
+            reply_text("🌐 Cú pháp: /dich [en|vi|ja|ko|zh|...] <văn bản>\nHoặc reply một tin nhắn rồi gõ /dich [lang]", tid, tt);
+            return;
+        }
+        auto r = api.translate_text(text, target_lang);
+        if (!r.value("ok", false)) {
+            reply_text("❌ Lỗi dịch: " + r.value("error", "không xác định"), tid, tt);
+            return;
+        }
+        const auto& res = r.contains("result") ? r["result"] : r;
+        std::string out_txt = res.value("text", "");
+        std::string from_l  = res.value("from", "auto");
+        reply_text("🌐 DỊCH (" + from_l + " → " + target_lang + "):\n" + out_txt, tid, tt);
+    };
+
+    commands["thoitiet"] = [this](const auto& args, const auto&, const auto& tid, int tt, bool) {
+        std::string city;
+        for (size_t i = 1; i < args.size(); i++) { if (i > 1) city += " "; city += args[i]; }
+        if (city.empty()) city = "Hanoi";
+        auto r = api.get_weather(city);
+        if (!r.value("ok", false)) {
+            reply_text("❌ Không lấy được thời tiết cho \"" + city + "\".", tid, tt);
+            return;
+        }
+        const auto& res = r.contains("result") ? r["result"] : r;
+        std::string name = res.value("name", city);
+        std::string country = res.value("country", "");
+        auto cur = res.value("current", json::object());
+        auto day = res.value("daily", json::object());
+        double temp = cur.value("temperature_2m", 0.0);
+        double feels = cur.value("apparent_temperature", temp);
+        int hum = cur.value("relative_humidity_2m", 0);
+        double wind = cur.value("wind_speed_10m", 0.0);
+        int wcode = cur.value("weather_code", 0);
+        auto wmo_desc = [](int c) -> std::string {
+            if (c == 0) return "☀️ Trời quang đãng";
+            if (c <= 3) return "⛅ Ít mây / Có mây";
+            if (c == 45 || c == 48) return "🌫️ Có sương mù";
+            if (c >= 51 && c <= 67) return "🌧️ Có mưa";
+            if (c >= 80 && c <= 82) return "🌦️ Mưa rào";
+            if (c >= 95) return "⛈️ Có dông bão";
+            return "🌤️ Thời tiết ổn định";
+        };
+        std::ostringstream os;
+        os.precision(1);
+        os << std::fixed;
+        os << "🌤️ THỜI TIẾT: " << name << (country.empty() ? "" : ", " + country) << "\n";
+        os << "• Trạng thái: " << wmo_desc(wcode) << "\n";
+        os << "• Nhiệt độ: " << temp << "°C (cảm giác " << feels << "°C)\n";
+        if (day.contains("temperature_2m_min") && day["temperature_2m_min"].is_array() && !day["temperature_2m_min"].empty()) {
+            os << "• Thấp / Cao: " << day["temperature_2m_min"][0].get<double>() << "°C / "
+               << day["temperature_2m_max"][0].get<double>() << "°C\n";
+        }
+        os << "• Độ ẩm: " << hum << "% | Gió: " << wind << " km/h";
+        reply_text(os.str(), tid, tt);
+    };
+
+    commands["mute"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+        if (tt == 0) { reply_text("❌ Chỉ dùng trong nhóm!", tid, tt); return; }
+        if (!perm.is_admin(uid)) { reply_text("❌ Chỉ admin bot mới dùng được lệnh này!", tid, tt); return; }
+        if (args.size() < 2) { reply_text("❌ Cú pháp: /mute <@user> [số phút]", tid, tt); return; }
+        std::string target = args[1];
+        if (perm.is_admin(target)) { reply_text("❌ Không thể mute admin bot!", tid, tt); return; }
+        int mins = 10;
+        if (args.size() >= 3) {
+            try { mins = std::stoi(args[2]); } catch (...) { mins = 10; }
+        }
+        group.mute_user(tid, target, mins);
+        reply_text("🔇 Đã cấm chat " + format_user(target) + (mins > 0 ? (" trong " + std::to_string(mins) + " phút.") : " vô thời hạn."), tid, tt);
+    };
+
+    commands["unmute"] = [this](const auto& args, const auto& uid, const auto& tid, int tt, bool) {
+        if (tt == 0) { reply_text("❌ Chỉ dùng trong nhóm!", tid, tt); return; }
+        if (!perm.is_admin(uid)) { reply_text("❌ Chỉ admin bot mới dùng được lệnh này!", tid, tt); return; }
+        if (args.size() < 2) { reply_text("❌ Cú pháp: /unmute <@user>", tid, tt); return; }
+        std::string target = args[1];
+        group.unmute_user(tid, target);
+        reply_text("🔊 Đã bỏ cấm chat cho " + format_user(target) + ".", tid, tt);
+    };
+
 commands["stop"] = exit_handler;
 
 }
@@ -3930,8 +4463,10 @@ void CommandHandler::handle_message(const std::string& user_id, const std::strin
     // --- Game gate per-thread ---
     {
         bool is_game_cmd = (cmd == "chanle" || cmd == "cl" || cmd == "taixiu" || cmd == "tx" ||
-                            cmd == "baucua" || cmd == "doanso" || cmd == "caro" ||
-                            cmd == "noitu" || cmd == "keobuabao" || cmd == "vietlott");
+                            cmd == "baucua" || cmd == "bc" || cmd == "doanso" || cmd == "doantu" ||
+                            cmd == "caro" || cmd == "noitu" || cmd == "keobuabao" || cmd == "kbb" ||
+                            cmd == "vietlott" || cmd == "soicau" || cmd == "sc" ||
+                            cmd == "nongtrai" || cmd == "ntr");
         if (is_game_cmd && !get_game_for_thread(thread_id) && !perm.is_admin(user_id)) {
             return;
         }
@@ -3957,84 +4492,6 @@ void CommandHandler::handle_message(const std::string& user_id, const std::strin
         }
     }
 
-        // XỬ LÝ MINI-GAME (Bắt tin nhắn chat nếu đang có game)
-    if (g_mini_games.count(thread_id)) {
-        auto& g = g_mini_games[thread_id];
-        std::string text = message;
-        std::transform(text.begin(), text.end(), text.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
-        
-        if (g.type == "guessNumber") {
-            try {
-                int guess = std::stoi(text);
-                if (guess < g.range_min || guess > g.range_max) {
-                    reply_text("\u274C S\u1ED1 ph\u1EA3i trong kho\u1EA3ng " + std::to_string(g.range_min) + " \u2192 " + std::to_string(g.range_max), thread_id, thread_type);
-                    return;
-                }
-                g.attempts++;
-                int remain = g.maxAttempts - g.attempts;
-                if (guess == g.targetNumber) {
-                    reply_text("\U0001F389 Ch\u00FAc m\u1EEBng! \u0110\u00FAng r\u1ED3i! S\u1ED1 l\u00E0 " + std::to_string(g.targetNumber) + ".\nB\u1EA1n \u0111o\u00E1n sau " + std::to_string(g.attempts) + " l\u01B0\u1EE3t.", thread_id, thread_type);
-                    g_mini_games.erase(thread_id);
-                    return;
-                }
-                if (g.attempts >= g.maxAttempts) {
-                    reply_text("\U0001F480 H\u1EBFt l\u01B0\u1EE3t! S\u1ED1 c\u1EA7n \u0111o\u00E1n l\u00E0 " + std::to_string(g.targetNumber) + ".\nG\u00F5 /doanso <min> <max> \u0111\u1EC3 ch\u01A1i l\u1EA1i.", thread_id, thread_type);
-                    g_mini_games.erase(thread_id);
-                    return;
-                }
-                std::string hint = (guess < g.targetNumber) ? "\U0001F4C8 Cao h\u01A1n" : "\U0001F4C9 Th\u1EA5p h\u01A1n";
-                reply_text(hint + " (c\u00F2n " + std::to_string(remain) + " l\u01B0\u1EE3t)", thread_id, thread_type);
-                return;
-            } catch (...) {}
-        }
-        else if (g.type == "wordGuess") {
-            g.attempts++;
-            if (text == g.targetWord) {
-                reply_text("Chúc mừng! Bạn đã đoán đúng từ \"" + g.targetWord + "\" sau " + std::to_string(g.attempts) + " lần thử.", thread_id, thread_type);
-                g_mini_games.erase(thread_id);
-            } else {
-                reply_text("Đoán sai rồi! Hãy thử lại.", thread_id, thread_type);
-            }
-            if (g.attempts >= 10 && g_mini_games.count(thread_id)) {
-                reply_text("Trò chơi kết thúc! Từ cần đoán là \"" + g.targetWord + "\".", thread_id, thread_type);
-                g_mini_games.erase(thread_id);
-            }
-            return;
-        }
-        else if (g.type == "wordChain") {
-            std::string clean = "";
-            for(char c : text) if (std::isalnum((unsigned char)c) || c == ' ') clean += c;
-            
-            std::vector<std::string> words;
-            std::istringstream iss(clean); std::string w;
-            while(iss >> w) words.push_back(w);
-            
-            if (words.size() > 2) {
-                reply_text("Bạn đã thua! Cụm từ vượt quá 2 từ cho phép.", thread_id, thread_type);
-                g_mini_games.erase(thread_id); return;
-            }
-            if (!words.empty()) {
-                if (g.lastPhrase != "") {
-                    std::vector<std::string> lastWords;
-                    std::istringstream iss2(g.lastPhrase); std::string w2;
-                    while(iss2 >> w2) lastWords.push_back(w2);
-                    char lastChar = lastWords.back().back();
-                    char firstChar = words[0].front();
-                    if (std::tolower(static_cast<unsigned char>(firstChar)) != std::tolower(static_cast<unsigned char>(lastChar))) {
-                        reply_text("Cụm từ không hợp lệ! Phải bắt đầu bằng \"" + std::string(1, lastChar) + "\".", thread_id, thread_type);
-                        return;
-                    }
-                }
-                g.lastPhrase = clean;
-                char lastChar = clean.back();
-                std::string botWord = std::string(1, lastChar) + "u";
-                g.lastPhrase = botWord;
-                reply_text("Bot: " + botWord + "\nCụm từ tiếp theo phải bắt đầu bằng \"" + std::string(1, botWord.back()) + "\".", thread_id, thread_type);
-                return;
-            }
-        }
-    }
-
     auto it = commands.find(cmd);
     if (it != commands.end()) {
         it->second(args, user_id, thread_id, thread_type, is_self);
@@ -4042,7 +4499,8 @@ void CommandHandler::handle_message(const std::string& user_id, const std::strin
         if (cmd == "nap" || cmd == "rut" || cmd == "bank" || cmd == "vay" ||
             cmd == "tra" || cmd == "chuyen" ||
             cmd == "chanle" || cmd == "cl" || cmd == "taixiu" || cmd == "tx" ||
-            cmd == "baucua" || cmd == "doanso" || cmd == "caro" ||
+            cmd == "baucua" || cmd == "bc" || cmd == "keobuabao" || cmd == "kbb" ||
+            cmd == "vietlott" || cmd == "nongtrai" || cmd == "ntr" || cmd == "doanso" || cmd == "caro" ||
             cmd == "setmoney" || cmd == "sethu" || cmd == "buff" ||
             cmd == "nerf" || cmd == "daily") {
             g_econ_dirty = true;
@@ -4212,6 +4670,11 @@ void CommandHandler::end_taixiu_session(const std::string& thread_id) {
     int d1 = myRandom::Dice(), d2 = myRandom::Dice(), d3 = myRandom::Dice();
     int total = d1 + d2 + d3;
     std::string result = (total > 10) ? "tai" : "xiu";
+    {
+        std::lock_guard<std::mutex> lk(g_taixiu_mtx);
+        g_taixiu_history_pts.push_back({total, result == "tai"});
+        if (g_taixiu_history_pts.size() > 20) g_taixiu_history_pts.erase(g_taixiu_history_pts.begin());
+    }
 
     cpp_int tai_total = 0, xiu_total = 0, husk_add = 0;
     for (auto& p : sess.players) {
@@ -4277,129 +4740,148 @@ void CommandHandler::handle_game_chat(const std::string& thread_id, int thread_t
     ctx().sender_name.clear();
     ctx().quote = QuoteInfo{};
 
-    ctx().sender_id.clear();
-    ctx().msg_text.clear();
-    ctx().sender_name.clear();
-    ctx().quote = QuoteInfo{};
-    // FIX TAG NHAM: set state de reply_text mention dung nguoi gui
     ctx().sender_id   = sender_uid;
     ctx().sender_name = sender_name;
     ctx().msg_text    = text;
-    // ===== WordChain hook (auto-capture, khong check own_id de test duoc tu bot account) =====
+
+    const bool isCmd = !text.empty() && !prefix.empty() && text.rfind(prefix, 0) == 0;
+    const bool hasNewline = text.find('\n') != std::string::npos;
+    if (isCmd || text.empty()) return;
+
+    // 1. Cờ Caro 15x15 (<dòng> <cột>)
+    if (CaroBoard* cb = game.get_caro_game(thread_id)) {
+        std::istringstream iss(text);
+        int r = -1, c = -1;
+        std::string extra;
+        if ((iss >> r >> c) && !(iss >> extra) && r >= 0 && r < 15 && c >= 0 && c < 15) {
+            std::string expected_uid = (cb->current_turn == 1) ? cb->player1_id : cb->player2_id;
+            if (sender_uid != expected_uid) return;
+            if (cb->board[r][c] != '.') {
+                reply_text("⚠️ Ô (" + std::to_string(r) + ", " + std::to_string(c) + ") đã được đánh rồi!", thread_id, thread_type);
+                return;
+            }
+            bool won = game.caro_move(sender_uid, r, c);
+            std::string p1n = format_user(cb->player1_id);
+            std::string p2n = cb->vs_bot ? get_bot_name() : format_user(cb->player2_id);
+            std::string winner_name = format_user(sender_uid);
+
+            if (won) {
+                g_econ_dirty = true;
+                static std::atomic<int> cr_ctr{0};
+                std::string out = paths::cache("caro_") + std::to_string(cr_ctr++) + ".png";
+                extra_render::render_caro_board(cb->board, cb->last_r, cb->last_c, p1n, p2n, cb->current_turn,
+                                                winner_name + " THANG CUOC!", out);
+                std::string cap = "🏆 " + winner_name + " ĐÃ CHIẾN THẮNG CỜ CARO!";
+                if (cb->bet_amount > 0) cap += "\n💰 Tiền thưởng: +" + money_str(cb->bet_amount) + " VNĐ";
+                api.send_message_with_image_async(cap, out, thread_id, thread_type);
+                return;
+            }
+
+            if (!cb->is_active) {
+                g_econ_dirty = true;
+                static std::atomic<int> cr_ctr{0};
+                std::string out = paths::cache("caro_") + std::to_string(cr_ctr++) + ".png";
+                extra_render::render_caro_board(cb->board, cb->last_r, cb->last_c, p1n, p2n, cb->current_turn,
+                                                "HOA NHAU!", out);
+                api.send_message_with_image_async("🤝 Bàn cờ đầy — HÒA!", out, thread_id, thread_type);
+                return;
+            }
+
+            if (cb->vs_bot && cb->is_active) {
+                auto ai_mv = game.pick_caro_ai_move(thread_id);
+                bool bot_won = game.caro_move("__BOT__", ai_mv.first, ai_mv.second);
+                static std::atomic<int> cr_ctr{0};
+                std::string out = paths::cache("caro_") + std::to_string(cr_ctr++) + ".png";
+                if (bot_won) {
+                    g_econ_dirty = true;
+                    extra_render::render_caro_board(cb->board, cb->last_r, cb->last_c, p1n, p2n, 2,
+                                                    p2n + " THANG CUOC!", out);
+                    api.send_message_with_image_async("🤖 " + p2n + " đã đánh (" + std::to_string(ai_mv.first) + ", " + std::to_string(ai_mv.second) + ") và CHIẾN THẮNG!", out, thread_id, thread_type);
+                    return;
+                }
+                if (!cb->is_active) {
+                    g_econ_dirty = true;
+                    extra_render::render_caro_board(cb->board, cb->last_r, cb->last_c, p1n, p2n, 1, "HOA NHAU!", out);
+                    api.send_message_with_image_async("🤝 Bàn cờ đầy — HÒA!", out, thread_id, thread_type);
+                    return;
+                }
+                extra_render::render_caro_board(cb->board, cb->last_r, cb->last_c, p1n, p2n, cb->current_turn,
+                                                "Bot danh (" + std::to_string(ai_mv.first) + "," + std::to_string(ai_mv.second) + ") - Den luot " + p1n, out);
+                api.send_message_with_image_async("♟️ Bot vừa đánh (" + std::to_string(ai_mv.first) + ", " + std::to_string(ai_mv.second) + "). Đến lượt bạn (X)!", out, thread_id, thread_type);
+                return;
+            }
+
+            std::string next_name = (cb->current_turn == 1) ? p1n : p2n;
+            std::string mark = (cb->current_turn == 1) ? "X" : "O";
+            static std::atomic<int> cr_ctr{0};
+            std::string out = paths::cache("caro_") + std::to_string(cr_ctr++) + ".png";
+            extra_render::render_caro_board(cb->board, cb->last_r, cb->last_c, p1n, p2n, cb->current_turn,
+                                            "Den luot " + next_name + " (" + mark + ")", out);
+            api.send_message_with_image_async("♟️ " + winner_name + " đánh (" + std::to_string(r) + ", " + std::to_string(c) + "). Đến lượt " + next_name + " (" + mark + ")!", out, thread_id, thread_type);
+            return;
+        }
+    }
+
+    // 2. WordChain hook (real Vietnamese dictionary)
     {
         auto& wc = getWordChain();
-        const bool isCmd       = !text.empty() && (text[0] == '/' || text[0] == '!');
-        const bool hasNewline  = text.find('\n') != std::string::npos;
-        const bool emptyText   = text.empty();
-
-        std::cerr << "[WC-DEBUG] tid=" << thread_id
-                  << " uid=" << sender_uid
-                  << " own=" << api.get_own_id()
-                  << " loaded=" << wc.isLoaded()
-                  << " active=" << wc.hasActiveGame(thread_id)
-                  << " isCmd=" << isCmd
-                  << " hasNL=" << hasNewline
-                  << " textlen=" << text.size()
-                  << " text=[" << text.substr(0, 40) << "]"
-                  << std::endl;
-
-        if (wc.isLoaded() && wc.hasActiveGame(thread_id)
-            && !isCmd && !hasNewline && !emptyText)
-        {
+        if (wc.isLoaded() && wc.hasActiveGame(thread_id) && !hasNewline) {
             PlayOutcome o = wc.playWord(thread_id, sender_uid, text);
-            std::cerr << "[WC-DEBUG] playWord result=" << (int)o.result
-                      << " err=[" << o.error_msg << "]" << std::endl;
-
             if (o.result == PlayResult::OK || o.result == PlayResult::WIN) {
                 reply_text(o.bot_reply, thread_id, thread_type);
                 return;
-            } else if (o.result == PlayResult::WORD_NOT_TWO_SYLLABLES) {
-                // chat thuong -> bo qua
-            } else {
-                reply_text("\u274C " + o.error_msg, thread_id, thread_type);
+            } else if (o.result != PlayResult::WORD_NOT_TWO_SYLLABLES) {
+                reply_text("❌ " + o.error_msg, thread_id, thread_type);
                 return;
             }
         }
     }
-    std::cout << "[GameChat] Nhan duoc text: " << text << "\n";
+
+    // 3. GuessNumber & WordGuess
     std::lock_guard<std::mutex> lk(g_taixiu_mtx);
-    if (!g_mini_games.count(thread_id)) {
-        std::cout << "[GameChat] Khong co game nao trong thread nay.\n";
-        return;
-    }
-    std::cout << "[GameChat] Tim thay game: " << g_mini_games[thread_id].type << "\n";
-    
+    if (!g_mini_games.count(thread_id)) return;
+
     auto& g = g_mini_games[thread_id];
     std::string lower = text;
     std::transform(lower.begin(), lower.end(), lower.begin(), [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
 
-        if (g.type == "guessNumber") {
-            try {
-                int guess = std::stoi(text);
-                if (guess < g.range_min || guess > g.range_max) {
-                    reply_text("\u274C S\u1ED1 ph\u1EA3i trong kho\u1EA3ng " + std::to_string(g.range_min) + " \u2192 " + std::to_string(g.range_max), thread_id, thread_type);
-                    return;
-                }
-                g.attempts++;
-                int remain = g.maxAttempts - g.attempts;
-                if (guess == g.targetNumber) {
-                    reply_text("\U0001F389 Ch\u00FAc m\u1EEBng! \u0110\u00FAng r\u1ED3i! S\u1ED1 l\u00E0 " + std::to_string(g.targetNumber) + ".\nB\u1EA1n \u0111o\u00E1n sau " + std::to_string(g.attempts) + " l\u01B0\u1EE3t.", thread_id, thread_type);
-                    g_mini_games.erase(thread_id);
-                    return;
-                }
-                if (g.attempts >= g.maxAttempts) {
-                    reply_text("\U0001F480 H\u1EBFt l\u01B0\u1EE3t! S\u1ED1 c\u1EA7n \u0111o\u00E1n l\u00E0 " + std::to_string(g.targetNumber) + ".\nG\u00F5 /doanso <min> <max> \u0111\u1EC3 ch\u01A1i l\u1EA1i.", thread_id, thread_type);
-                    g_mini_games.erase(thread_id);
-                    return;
-                }
-                std::string hint = (guess < g.targetNumber) ? "\U0001F4C8 Cao h\u01A1n" : "\U0001F4C9 Th\u1EA5p h\u01A1n";
-                reply_text(hint + " (c\u00F2n " + std::to_string(remain) + " l\u01B0\u1EE3t)", thread_id, thread_type);
+    if (g.type == "guessNumber") {
+        try {
+            size_t pos_end = 0;
+            int guess = std::stoi(text, &pos_end);
+            if (pos_end != text.size()) return;
+            if (guess < g.range_min || guess > g.range_max) {
+                reply_text("❌ Số phải trong khoảng " + std::to_string(g.range_min) + " → " + std::to_string(g.range_max), thread_id, thread_type);
                 return;
-            } catch (...) {}
-        }
-    else if (g.type == "wordGuess") {
+            }
+            g.attempts++;
+            int remain = g.maxAttempts - g.attempts;
+            if (guess == g.targetNumber) {
+                reply_text("🎉 Chúc mừng! Đúng rồi! Số là " + std::to_string(g.targetNumber) + ".\nBạn đoán sau " + std::to_string(g.attempts) + " lượt.", thread_id, thread_type);
+                g_mini_games.erase(thread_id);
+                return;
+            }
+            if (g.attempts >= g.maxAttempts) {
+                reply_text("💀 Hết lượt! Số cần đoán là " + std::to_string(g.targetNumber) + ".\nGõ /doanso <min> <max> để chơi lại.", thread_id, thread_type);
+                g_mini_games.erase(thread_id);
+                return;
+            }
+            std::string hint = (guess < g.targetNumber) ? "📈 Cao hơn" : "📉 Thấp hơn";
+            reply_text(hint + " (còn " + std::to_string(remain) + " lượt)", thread_id, thread_type);
+            return;
+        } catch (...) {}
+    } else if (g.type == "wordGuess") {
         g.attempts++;
         if (lower == g.targetWord) {
-            reply_text("Chúc mừng! Bạn đã đoán đúng từ \"" + g.targetWord + "\" sau " + std::to_string(g.attempts) + " lần thử.", thread_id, thread_type);
+            reply_text("🎉 Chúc mừng! Bạn đã đoán đúng từ \"" + g.targetWord + "\" sau " + std::to_string(g.attempts) + " lần thử.", thread_id, thread_type);
+            g_mini_games.erase(thread_id);
+            return;
+        }
+        if (g.attempts >= 10) {
+            reply_text("💀 Trò chơi kết thúc! Từ cần đoán là \"" + g.targetWord + "\".", thread_id, thread_type);
             g_mini_games.erase(thread_id);
         } else {
-            reply_text("Đoán sai rồi! Hãy thử lại.", thread_id, thread_type);
-        }
-        if (g.attempts >= 10 && g_mini_games.count(thread_id)) {
-            reply_text("Trò chơi kết thúc! Từ cần đoán là \"" + g.targetWord + "\".", thread_id, thread_type);
-            g_mini_games.erase(thread_id);
-        }
-    }
-    else if (g.type == "wordChain") {
-        std::string clean = "";
-        for(char c : lower) if (std::isalnum((unsigned char)c) || c == ' ') clean += c;
-        
-        std::vector<std::string> words;
-        std::istringstream iss(clean); std::string w;
-        while(iss >> w) words.push_back(w);
-        
-        if (words.size() > 2) {
-            reply_text("Bạn đã thua! Cụm từ vượt quá 2 từ cho phép.", thread_id, thread_type);
-            g_mini_games.erase(thread_id); return;
-        }
-        if (!words.empty()) {
-            if (g.lastPhrase != "") {
-                std::vector<std::string> lastWords;
-                std::istringstream iss2(g.lastPhrase); std::string w2;
-                while(iss2 >> w2) lastWords.push_back(w2);
-                char lastChar = lastWords.back().back();
-                char firstChar = words[0].front();
-                if (std::tolower(static_cast<unsigned char>(firstChar)) != std::tolower(static_cast<unsigned char>(lastChar))) {
-                    reply_text("Cụm từ không hợp lệ! Phải bắt đầu bằng \"" + std::string(1, lastChar) + "\".", thread_id, thread_type);
-                    return;
-                }
-            }
-            g.lastPhrase = clean;
-            char lastChar = clean.back();
-            std::string botWord = std::string(1, lastChar) + "u"; // Fake API nối từ
-            g.lastPhrase = botWord;
-            reply_text("Bot: " + botWord + "\nCụm từ tiếp theo phải bắt đầu bằng \"" + std::string(1, botWord.back()) + "\".", thread_id, thread_type);
+            reply_text("❌ Đoán sai rồi! Còn " + std::to_string(10 - g.attempts) + " lượt.", thread_id, thread_type);
         }
     }
 }
-

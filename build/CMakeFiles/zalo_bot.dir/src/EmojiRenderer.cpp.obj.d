@@ -143,6 +143,21 @@ CMakeFiles/zalo_bot.dir/src/EmojiRenderer.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ext/atomicity.h \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/atomic_word.h \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/TextRenderer.hpp \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cmath \
+ E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/math.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/specfun.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/gamma.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/special_function_util.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/bessel_function.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/beta_function.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/ell_integral.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/exp_integral.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/hypergeometric.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/legendre_function.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/modified_bessel_func.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/poly_hermite.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/poly_laguerre.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/riemann_zeta.tcc \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/iostream \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ostream \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ios \
@@ -169,4 +184,9 @@ CMakeFiles/zalo_bot.dir/src/EmojiRenderer.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/basic_ios.tcc \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/ostream.tcc \
  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/istream \
- E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/istream.tcc
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/istream.tcc \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/unordered_set \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/unordered_set.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/hashtable.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/hashtable_policy.h \
+ E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/enable_special_members.h

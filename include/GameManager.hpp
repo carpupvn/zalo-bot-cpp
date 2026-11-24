@@ -33,8 +33,12 @@ struct CaroBoard {
     std::string player1_id;
     std::string player2_id;
     int current_turn = 1;      // 1 hoặc 2
+    int last_r = -1;
+    int last_c = -1;
+    int move_count = 0;
+    bool vs_bot = false;
     bool is_active = false;
-    cpp_int bet_amount = 0;  // <-- đã thêm
+    cpp_int bet_amount = 0;
 };
 
 class GameManager {
@@ -62,6 +66,9 @@ public:
                           const std::string& thread_id, int thread_type,
                           cpp_int bet_amount);
     bool caro_move(const std::string& user_id, int row, int col);
+    CaroBoard* get_caro_game(const std::string& thread_id);
+    bool cancel_caro_game(const std::string& thread_id);
+    std::pair<int,int> pick_caro_ai_move(const std::string& thread_id);
     bool check_caro_win(const std::string& thread_id, int row, int col, char player);
     std::string format_board(const CaroBoard& board);
 

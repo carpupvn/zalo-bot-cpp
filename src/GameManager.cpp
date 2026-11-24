@@ -282,6 +282,10 @@ void GameManager::create_caro_game(const std::string& p1_id, const std::string& 
     board.player1_id = p1_id;
     board.player2_id = p2_id;
     board.current_turn = 1;
+    board.last_r = -1;
+    board.last_c = -1;
+    board.move_count = 0;
+    board.vs_bot = (p2_id == "__BOT__");
     board.is_active = true;
     board.bet_amount = bet_amount;
 
@@ -310,15 +314,108 @@ bool GameManager::caro_move(const std::string& user_id, int row, int col) {
     if (current_player != user_id) return false;
 
     board.board[row][col] = player;
+    board.last_r = row;
+    board.last_c = col;
+    board.move_count++;
 
     if (check_caro_win(thread_id, row, col, player)) {
         board.is_active = false;
-        economy.add_winnings(user_id, board.bet_amount * 2);
+        if (board.bet_amount > 0) {
+            if (user_id != "__BOT__") {
+                economy.add_winnings(user_id, board.bet_amount * 2);
+            }
+            std::string loser = (user_id == board.player1_id) ? board.player2_id : board.player1_id;
+            if (loser != "__BOT__") {
+                economy.record_loss(loser, board.bet_amount);
+            }
+        }
         return true;
+    }
+
+    if (board.move_count >= 15 * 15) {
+        board.is_active = false;
+        if (board.bet_amount > 0) {
+            economy.refund(board.player1_id, board.bet_amount);
+            if (!board.vs_bot) economy.refund(board.player2_id, board.bet_amount);
+        }
+        return false;
     }
 
     board.current_turn = 3 - board.current_turn;
     return false;
+}
+
+CaroBoard* GameManager::get_caro_game(const std::string& thread_id) {
+    auto it = caro_games.find(thread_id);
+    if (it == caro_games.end() || !it->second.is_active) return nullptr;
+    return &it->second;
+}
+
+bool GameManager::cancel_caro_game(const std::string& thread_id) {
+    auto it = caro_games.find(thread_id);
+    if (it == caro_games.end()) return false;
+    if (it->second.is_active && it->second.bet_amount > 0) {
+        economy.refund(it->second.player1_id, it->second.bet_amount);
+        if (!it->second.vs_bot) economy.refund(it->second.player2_id, it->second.bet_amount);
+    }
+    caro_games.erase(it);
+    return true;
+}
+
+std::pair<int,int> GameManager::pick_caro_ai_move(const std::string& thread_id) {
+    auto it = caro_games.find(thread_id);
+    if (it == caro_games.end()) return {7, 7};
+    const CaroBoard& b = it->second;
+    if (b.move_count == 0) return {7, 7};
+
+    auto score_dir = [&](int r, int c, int dr, int dc, char ch) -> int {
+        int cnt = 0, open_ends = 0;
+        int rr = r + dr, cc = c + dc;
+        while (rr >= 0 && rr < 15 && cc >= 0 && cc < 15 && b.board[rr][cc] == ch) {
+            cnt++; rr += dr; cc += dc;
+        }
+        if (rr >= 0 && rr < 15 && cc >= 0 && cc < 15 && b.board[rr][cc] == '.') open_ends++;
+        rr = r - dr; cc = c - dc;
+        while (rr >= 0 && rr < 15 && cc >= 0 && cc < 15 && b.board[rr][cc] == ch) {
+            cnt++; rr -= dr; cc -= dc;
+        }
+        if (rr >= 0 && rr < 15 && cc >= 0 && cc < 15 && b.board[rr][cc] == '.') open_ends++;
+        if (cnt >= 4) return 100000;
+        if (cnt == 3) return open_ends == 2 ? 12000 : (open_ends == 1 ? 3000 : 100);
+        if (cnt == 2) return open_ends == 2 ? 1500 : (open_ends == 1 ? 350 : 20);
+        if (cnt == 1) return open_ends == 2 ? 120 : 25;
+        return 2;
+    };
+
+    const int dirs[4][2] = {{0,1},{1,0},{1,1},{1,-1}};
+    int best_r = -1, best_c = -1, best_score = -1;
+    for (int r = 0; r < 15; r++) {
+        for (int c = 0; c < 15; c++) {
+            if (b.board[r][c] != '.') continue;
+            bool near_stone = false;
+            for (int dr = -2; dr <= 2 && !near_stone; dr++) {
+                for (int dc = -2; dc <= 2; dc++) {
+                    int nr = r + dr, nc = c + dc;
+                    if (nr >= 0 && nr < 15 && nc >= 0 && nc < 15 && b.board[nr][nc] != '.') {
+                        near_stone = true; break;
+                    }
+                }
+            }
+            if (!near_stone) continue;
+            int atk = 0, def = 0;
+            for (auto& d : dirs) {
+                atk += score_dir(r, c, d[0], d[1], 'O');
+                def += score_dir(r, c, d[0], d[1], 'X');
+            }
+            int s = std::max(atk * 11 / 10, def) + (14 - std::abs(r - 7) - std::abs(c - 7));
+            if (s > best_score) { best_score = s; best_r = r; best_c = c; }
+        }
+    }
+    if (best_r >= 0) return {best_r, best_c};
+    for (int r = 0; r < 15; r++)
+        for (int c = 0; c < 15; c++)
+            if (b.board[r][c] == '.') return {r, c};
+    return {7, 7};
 }
 
 bool GameManager::check_caro_win(const std::string& thread_id, int row, int col, char player) {

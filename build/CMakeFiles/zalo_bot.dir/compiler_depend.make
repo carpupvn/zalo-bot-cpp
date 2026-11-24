@@ -2063,6 +2063,7 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: E:/zalo-bot-cpp-main/zalo-bo
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/CommandHandler.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EconomyManager.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EmojiRenderer.hpp \
+  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ExtraRender.inc \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/GameManager.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/GameRender.inc \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Gradient.hpp \
@@ -2088,8 +2089,7 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: E:/zalo-bot-cpp-main/zalo-bo
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/json.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/nativeHTTP.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/sqlite/sqlite3.h \
-  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/stb_image_write.h \
-  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/stb_truetype.h
+  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/stb_image_write.h
 
 CMakeFiles/zalo_bot.dir/src/Database.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/Database.cpp \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/backward/binders.h \
@@ -2788,6 +2788,7 @@ CMakeFiles/zalo_bot.dir/src/EmojiRenderer.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/cpp_type_traits.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/cxxabi_forced.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/cxxabi_init_exception.h \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/enable_special_members.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/erase_if.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/exception.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/exception_defines.h \
@@ -2795,6 +2796,8 @@ CMakeFiles/zalo_bot.dir/src/EmojiRenderer.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/functexcept.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/functional_hash.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/hash_bytes.h \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/hashtable.h \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/hashtable_policy.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/invoke.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/ios_base.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/istream.tcc \
@@ -2818,6 +2821,7 @@ CMakeFiles/zalo_bot.dir/src/EmojiRenderer.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/range_access.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/refwrap.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/requires_hosted.h \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/specfun.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/std_abs.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/std_mutex.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_algobase.h \
@@ -2838,6 +2842,7 @@ CMakeFiles/zalo_bot.dir/src/EmojiRenderer.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/string_view.tcc \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stringfwd.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/unique_lock.h \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/unordered_set.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/uses_allocator.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/uses_allocator_args.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/utility.h \
@@ -2846,6 +2851,7 @@ CMakeFiles/zalo_bot.dir/src/EmojiRenderer.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cctype \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cerrno \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/clocale \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cmath \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/concepts \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cstddef \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/cstdint \
@@ -2881,9 +2887,22 @@ CMakeFiles/zalo_bot.dir/src/EmojiRenderer.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/string \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/string_view \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/system_error \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/bessel_function.tcc \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/beta_function.tcc \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/ell_integral.tcc \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/exp_integral.tcc \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/gamma.tcc \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/hypergeometric.tcc \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/legendre_function.tcc \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/modified_bessel_func.tcc \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/poly_hermite.tcc \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/poly_laguerre.tcc \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/riemann_zeta.tcc \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tr1/special_function_util.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/tuple \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/type_traits \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/typeinfo \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/unordered_set \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/vector \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/atomic_word.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/x86_64-w64-mingw32/bits/c++allocator.h \
@@ -2917,6 +2936,7 @@ CMakeFiles/zalo_bot.dir/src/EmojiRenderer.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot
   E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/limits.h \
   E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/locale.h \
   E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/malloc.h \
+  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/math.h \
   E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/process.h \
   E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pthread.h \
   E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/pthread_compat.h \
@@ -5291,6 +5311,7 @@ CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/refwrap.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/requires_hosted.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/specfun.h \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/sstream.tcc \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/std_abs.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/std_mutex.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/bits/stl_algo.h \
@@ -5362,6 +5383,7 @@ CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/pstl/pstl_config.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/random \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/ratio \
+  E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/sstream \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/stdexcept \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/stdlib.h \
   E:/Program\ Files/CodeBlocks/MinGW/include/c++/14.2.0/streambuf \
@@ -5450,6 +5472,7 @@ CMakeFiles/zalo_bot.dir/src/TextRenderer.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-
   E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/wchar.h \
   E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/wctype.h \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/AssetManager.hpp \
+  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EmojiRenderer.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/TextRenderer.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/stb_image_write.h \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/stb_truetype.h
@@ -7792,16 +7815,20 @@ CMakeFiles/zalo_bot.dir/src/main.cpp.obj: E:/zalo-bot-cpp-main/zalo-bot-cpp-main
   E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/wow64apiset.h \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/AccountManager.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/AssetManager.hpp \
+  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Color.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/CommandHandler.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Database.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EconomyManager.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EmojiRenderer.hpp \
+  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ExtraRender.inc \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/GameManager.hpp \
+  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Gradient.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/GroupManager.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/NongTraiManager.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/PermissionManager.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/RuntimeState.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/TextRenderer.hpp \
+  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Utils.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ZaloApi.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ZaloBridge.hpp \
   E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/paths.hpp \
@@ -7916,6 +7943,8 @@ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/ZaloBridge.cpp:
 
 E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/Utils.cpp:
 
+E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/stb_truetype.h:
+
 E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/RuntimeState.cpp:
 
 E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/NongTraiManager.cpp:
@@ -7925,8 +7954,6 @@ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/Gradient.cpp:
 E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/GameManager.cpp:
 
 E:/zalo-bot-cpp-main/zalo-bot-cpp-main/src/Database.cpp:
-
-E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/stb_truetype.h:
 
 E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/random.h:
 
@@ -7951,6 +7978,8 @@ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/NongTraiManager.hpp:
 E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/GameRender.inc:
 
 E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/GameManager.hpp:
+
+E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ExtraRender.inc:
 
 E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EconomyManager.hpp:
 

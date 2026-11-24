@@ -1,4 +1,3 @@
-// TaiXiuRender.inc - Port tu tai-xiu.js (createTaiXiuResultImage + createWaitingImage)
 #pragma once
 #include <boost/multiprecision/cpp_int.hpp>
 using cpp_int = boost::multiprecision::cpp_int;
@@ -22,9 +21,11 @@ inline std::mt19937& rng() {
     static std::mt19937 g(std::random_device{}());
     return g;
 }
+
 inline int ri(int lo, int hi) {
     return std::uniform_int_distribution<int>(lo, hi)(rng());
 }
+
 inline float rf(float lo, float hi) {
     return std::uniform_real_distribution<float>(lo, hi)(rng());
 }
@@ -37,79 +38,29 @@ inline void text_efx(std::vector<uint8_t>& canvas, int W, int H,
 {
     int tw = TextRenderer::measure_text_width(size, text);
     int tx = cx - tw / 2;
-    int ty = cy - size / 2;
+    int ty = cy + size / 3;
     for (int dx = -outline; dx <= outline; dx++) {
         for (int dy = -outline; dy <= outline; dy++) {
-            if (dx == 0 && dy == 0) continue;
-            if (dx*dx + dy*dy > outline*outline) continue;
-            TextRenderer::draw_text_on_canvas(canvas, W, H,
-                tx + dx, ty + dy, size, 0, 0, 0, text);
+            if ((dx == 0 && dy == 0) || dx * dx + dy * dy > outline * outline + 1) continue;
+            TextRenderer::draw_text_on_canvas(canvas, W, H, tx + dx, ty + dy, size, 0, 0, 0, text);
         }
     }
-    TextRenderer::draw_text_gradient(canvas, W, H, tx, ty, size,
-        r1, g1, b1, r2, g2, b2, text);
+    TextRenderer::draw_text_gradient(canvas, W, H, tx, ty, size, r1, g1, b1, r2, g2, b2, text);
 }
 
-inline void draw_dice_rotated(std::vector<uint8_t>& canvas, int W, int H,
-                              ImageRGBA* img, int cx, int cy, int size, float angle)
-{
-    if (!img || !img->valid()) return;
-    float ca = std::cos(angle), sa = std::sin(angle);
-    int half = size / 2;
-    int bound = (int)(size * 0.75f) + 2;
-    for (int dy = -bound; dy <= bound; dy++) {
-        for (int dx = -bound; dx <= bound; dx++) {
-            int px = cx + dx, py = cy + dy;
-            if (px < 0 || px >= W || py < 0 || py >= H) continue;
-            float sx_f = dx * ca + dy * sa;
-            float sy_f = -dx * sa + dy * ca;
-            if (sx_f < -half || sx_f >= half) continue;
-            if (sy_f < -half || sy_f >= half) continue;
-            int img_x = (int)(sx_f + half);
-            int img_y = (int)(sy_f + half);
-            if (img_x < 0 || img_x >= size || img_y < 0 || img_y >= size) continue;
-            int src_x = img_x * img->width / size;
-            int src_y = img_y * img->height / size;
-            if (src_x < 0 || src_x >= img->width) continue;
-            if (src_y < 0 || src_y >= img->height) continue;
-            int src_i = (src_y * img->width + src_x) * 4;
-            render::color::blend_pixel(canvas, W, H, px, py,
-                render::color::RGBA(img->data[src_i], img->data[src_i+1],
-                                    img->data[src_i+2], img->data[src_i+3]));
-        }
-    }
-}
-
-inline void draw_sparkles(std::vector<uint8_t>& canvas, int W, int H, int count)
-{
+inline void draw_sparkles(std::vector<uint8_t>& canvas, int W, int H, int count) {
     for (int i = 0; i < count; i++) {
         int x = ri(0, W - 1);
         int y = ri(0, H - 1);
-        int rr = (int)rf(0.0f, 1.5f);
-        unsigned char a = (unsigned char)(rf(0.0f, 0.7f) * 255);
-        for (int py = y - rr; py <= y + rr; py++) {
-            for (int px = x - rr; px <= x + rr; px++) {
-                int dx = px - x, dy = py - y;
-                if (dx*dx + dy*dy <= rr*rr + 1)
-                    render::color::blend_pixel(canvas, W, H, px, py,
-                        render::color::RGBA(255, 255, 255, a));
-            }
-        }
+        int rr = (int)rf(1.0f, 2.0f);
+        unsigned char a = (unsigned char)(rf(0.15f, 0.65f) * 255);
+        TextRenderer::draw_circle_filled(canvas, W, H, x, y, rr, 255, 255, 255, a);
     }
 }
 
-inline void draw_disc_outline(std::vector<uint8_t>& canvas, int W, int H,
-                              int cx, int cy, int radius)
-{
-    for (int s = 0; s < 360; s++) {
-        float rad = s * 3.14159265f / 180.0f;
-        for (int t = 0; t < 3; t++) {
-            int px = cx + (int)(std::cos(rad) * (radius - t));
-            int py = cy + (int)(std::sin(rad) * (radius - t));
-            render::color::blend_pixel(canvas, W, H, px, py,
-                render::color::RGBA(255, 255, 255, 128));
-        }
-    }
+inline void draw_disc_outline(std::vector<uint8_t>& canvas, int W, int H, int cx, int cy, int radius) {
+    TextRenderer::draw_rounded_rect_outline(canvas, W, H, cx - radius, cy - radius,
+                                            radius * 2, radius * 2, radius, 3, 255, 255, 255, 150);
 }
 
 inline void render_result(
@@ -122,119 +73,75 @@ inline void render_result(
     const cpp_int& jackpot_amount,
     const std::string& out_path)
 {
-    const int W = 800;
+    const int W = 820;
     const int H = has_jackpot ? 360 : 300;
     const int cx = W / 2, cy = H / 2;
-    const int lc = W / 4, rc = W * 3 / 4;
-    const int radius = 100;
+    const int lc = W / 4 - 20, rc = W * 3 / 4 + 20;
+    const int radius = 98;
 
     std::vector<uint8_t> canvas;
-    TextRenderer::init_canvas(canvas, W, H, 42, 0, 0);
+    TextRenderer::init_canvas(canvas, W, H, 40, 0, 0);
 
-    {
-        // Fill nen radial bang vong lap thu cong - dam bao 100%
-        for (int py = 0; py < H; py++) {
-            for (int px = 0; px < W; px++) {
-                float dx = (float)(px - cx), dy = (float)(py - cy);
-                float t = std::sqrt(dx*dx + dy*dy) / (W / 2.0f);
-                if (t > 1.0f) t = 1.0f;
-                unsigned char rr, gg, bb;
-                if (has_jackpot) {
-                    rr = (unsigned char)(184 + (101 - 184) * t);
-                    gg = (unsigned char)(134 + (69 - 134) * t);
-                    bb = (unsigned char)(11 + (33 - 11) * t);
-                } else {
-                    rr = (unsigned char)(76 + (50 - 76) * t);
-                    gg = (unsigned char)(0 + (2 - 0) * t);
-                    bb = (unsigned char)(0 + (2 - 0) * t);
-                }
-                render::color::set_pixel(canvas, W, H, px, py,
-                    render::color::RGBA(rr, gg, bb, 255));
+    for (int py = 0; py < H; py++) {
+        for (int px = 0; px < W; px++) {
+            float dx = (float)(px - cx), dy = (float)(py - cy);
+            float t = std::min(1.0f, std::sqrt(dx * dx + dy * dy) / (W * 0.55f));
+            unsigned char rr, gg, bb;
+            if (has_jackpot) {
+                rr = (unsigned char)(184 + (101 - 184) * t);
+                gg = (unsigned char)(134 + (67 - 134) * t);
+                bb = (unsigned char)(11 + (33 - 11) * t);
+            } else {
+                rr = (unsigned char)(90 + (32 - 90) * t);
+                gg = (unsigned char)(10 + (4 - 10) * t);
+                bb = (unsigned char)(14 + (10 - 14) * t);
             }
+            render::color::set_pixel(canvas, W, H, px, py, render::color::RGBA(rr, gg, bb, 255));
         }
     }
 
-    {
-        // Overlay sang nhe bang blend_pixel (khong dung RadialGradient vi no ghi de)
-        for (int py = 0; py < H; py++) {
-            for (int px = 0; px < W; px++) {
-                float dx = (float)(px - cx), dy = (float)(py - cy);
-                float t = std::sqrt(dx*dx + dy*dy) / (W / 2.0f);
-                if (t > 1.0f) t = 1.0f;
-                unsigned char a;
-                if (has_jackpot) {
-                    a = (unsigned char)(77 * (1.0f - t));
-                } else {
-                    a = (unsigned char)(38 * (1.0f - t));
-                }
-                if (a == 0) continue;
-                render::color::blend_pixel(canvas, W, H, px, py,
-                    render::color::RGBA(255, 255, 255, a));
-            }
-        }
-    }
+    draw_sparkles(canvas, W, H, has_jackpot ? 90 : 60);
 
-    draw_sparkles(canvas, W, H, 70);
-
-    TextRenderer::draw_circle_filled(canvas, W, H, cx, cy, radius, 255, 255, 255, 51);
+    // Center plate
+    TextRenderer::draw_circle_filled(canvas, W, H, cx, cy, radius + 6, 0, 0, 0, 80);
+    TextRenderer::draw_circle_filled(canvas, W, H, cx, cy, radius, 255, 255, 255, 48);
     draw_disc_outline(canvas, W, H, cx, cy, radius);
 
-    const int dice_size = 40;
-    // 3 diem co dinh chia goc 0/120/240 + jitter -> khong bao gio overlap
+    // 3 dice with bilinear rotation
+    const int dsz = 52;
+    const float safe_r = radius - dsz * 0.65f;
     const float base_angles[3] = { -1.5708f, 0.5236f, 2.6180f };
-    std::vector<std::pair<int,int>> positions;
-    for (int i = 0; i < (int)dice.size() && i < 3; i++) {
-        float ang = base_angles[i] + rf(-0.35f, 0.35f);
-        float dist = rf(0.40f, 0.60f) * (float)(radius - dice_size / 2);
-        int px = cx + (int)(std::cos(ang) * dist);
-        int py = cy + (int)(std::sin(ang) * dist);
-        positions.push_back({px, py});
-
-        std::string key = "dice_" + std::to_string(dice[i]);
-        ImageRGBA* im = AssetManager::get(key);
-        if (!im) im = AssetManager::load(key, "assets/repo/taixiu/" + key + ".png");
+    for (int i = 0; i < 3 && i < (int)dice.size(); i++) {
+        float ang = base_angles[i] + rf(-0.25f, 0.25f);
+        float rr = rf(0.68f, 0.90f);
+        int px = cx + (int)(std::cos(ang) * safe_r * rr);
+        int py = cy + (int)(std::sin(ang) * safe_r * rr);
+        ImageRGBA* im = AssetManager::get("dice_" + std::to_string(dice[i]));
         if (im && im->valid()) {
-            float rot = rf(0.0f, 6.2831853f);
-            draw_dice_rotated(canvas, W, H, im, px, py, dice_size, rot);
+            TextRenderer::draw_image_rotated(canvas, W, H, im, px, py, dsz, rf(-0.6f, 0.6f));
         }
     }
 
     bool is_tai = (result == "tai");
-    unsigned char r1, g1, b1, r2, g2, b2;
-    if (is_tai) { r1=255; g1=0;   b1=0;   r2=235; g2=21;  b2=66;  }
-    else        { r1=0;   g1=255; b1=255; r2=0;   g2=206; b2=209; }
+    unsigned char tr1 = is_tai ? 255 : 160, tg1 = is_tai ? 225 : 175, tb1 = is_tai ? 65 : 195;
+    unsigned char tr2 = is_tai ? 255 : 120, tg2 = is_tai ? 140 : 135, tb2 = is_tai ? 40 : 155;
+    unsigned char xr1 = !is_tai ? 56 : 160,  xg1 = !is_tai ? 235 : 175, xb1 = !is_tai ? 255 : 195;
+    unsigned char xr2 = !is_tai ? 96 : 120,  xg2 = !is_tai ? 165 : 135, xb2 = !is_tai ? 250 : 155;
 
-    std::string rtext = is_tai ? "T\u00C0I" : "X\u1EC8U";
-    text_efx(canvas, W, H, cx, cy - radius + 30, 48, r1, g1, b1, r2, g2, b2, rtext, 4);
+    text_efx(canvas, W, H, lc, cy - 26, 44, tr1, tg1, tb1, tr2, tg2, tb2, "TÀI", 3);
+    text_efx(canvas, W, H, lc, cy + 26, 28, tr1, tg1, tb1, tr2, tg2, tb2,
+             render::utils::format_number(tai_total) + " đ", 2);
 
-    unsigned char wt1, wg1, wb1, wt2, wg2, wb2;
-    unsigned char lt1, lg1, lb1, lt2, lg2, lb2;
-    if (is_tai) {
-        wt1=255; wg1=255; wb1=0;   wt2=255; wg2=165; wb2=0;
-        lt1=169; lg1=169; lb1=169; lt2=105; lg2=105; lb2=105;
-    } else {
-        wt1=169; wg1=169; wb1=169; wt2=105; wg2=105; wb2=105;
-        lt1=255; lg1=255; lb1=0;   lt2=255; lg2=165; lb2=0;
-    }
+    text_efx(canvas, W, H, rc, cy - 26, 44, xr1, xg1, xb1, xr2, xg2, xb2, "XỈU", 3);
+    text_efx(canvas, W, H, rc, cy + 26, 28, xr1, xg1, xb1, xr2, xg2, xb2,
+             render::utils::format_number(xiu_total) + " đ", 2);
 
-    text_efx(canvas, W, H, lc - radius/2, cy - 20, 40, wt1, wg1, wb1, wt2, wg2, wb2,
-             "T\u00E0i", 3);
-    std::string tai_str = render::utils::format_number(tai_total);
-    text_efx(canvas, W, H, lc - radius/2, cy + 20, 34, wt1, wg1, wb1, wt2, wg2, wb2,
-             tai_str, 2);
-
-    text_efx(canvas, W, H, rc + radius/2, cy - 20, 40, lt1, lg1, lb1, lt2, lg2, lb2,
-             "X\u1EC9u", 3);
-    std::string xiu_str = render::utils::format_number(xiu_total);
-    text_efx(canvas, W, H, rc + radius/2, cy + 20, 34, lt1, lg1, lb1, lt2, lg2, lb2,
-             xiu_str, 2);
-
-    std::string total_str = std::to_string(total);
-    text_efx(canvas, W, H, cx, cy + radius/2 + 45, 40, r1, g1, b1, r2, g2, b2, total_str, 4);
+    text_efx(canvas, W, H, cx, cy + radius + 24, 34, 255, 255, 255, 255, 215, 0,
+             "Tổng: " + std::to_string(total), 3);
 
     if (has_jackpot) {
-        std::string jtext = "N\u1ED4 H\u0168: " + render::utils::format_number(jackpot_amount) + " VN\u0110";
-        text_efx(canvas, W, H, cx, H - 25, 34, 255, 215, 0, 255, 248, 220, jtext, 3);
+        std::string jtext = "💥 NỔ HŨ: " + render::utils::format_number(jackpot_amount) + " VNĐ";
+        text_efx(canvas, W, H, cx, H - 28, 30, 255, 230, 80, 255, 255, 220, jtext, 3);
     }
 
     TextRenderer::save_canvas(canvas, W, H, out_path);
@@ -246,10 +153,10 @@ inline void render_waiting(
     const cpp_int& xiu_total,
     const std::string& out_path)
 {
-    const int W = 800, H = 300;
-    const int cx = W/2, cy = H/2;
-    const int lc = W/4, rc = W*3/4;
-    const int radius = 100;
+    const int W = 820, H = 300;
+    const int cx = W / 2, cy = H / 2;
+    const int lc = W / 4 - 20, rc = W * 3 / 4 + 20;
+    const int radius = 96;
 
     std::vector<uint8_t> canvas;
     TextRenderer::init_canvas(canvas, W, H, 42, 0, 0);
@@ -257,47 +164,32 @@ inline void render_waiting(
     for (int py = 0; py < H; py++) {
         for (int px = 0; px < W; px++) {
             float dx = (float)(px - cx), dy = (float)(py - cy);
-            float t = std::sqrt(dx*dx + dy*dy) / (W / 2.0f);
-            if (t > 1.0f) t = 1.0f;
-            unsigned char rr = (unsigned char)(76 + (50 - 76) * t);
-            unsigned char gg = (unsigned char)(0 + (2 - 0) * t);
-            unsigned char bb = (unsigned char)(0 + (2 - 0) * t);
-            render::color::set_pixel(canvas, W, H, px, py,
-                render::color::RGBA(rr, gg, bb, 255));
+            float t = std::min(1.0f, std::sqrt(dx * dx + dy * dy) / (W * 0.55f));
+            unsigned char rr = (unsigned char)(85 + (32 - 85) * t);
+            unsigned char gg = (unsigned char)(12 + (4 - 12) * t);
+            unsigned char bb = (unsigned char)(28 + (16 - 28) * t);
+            render::color::set_pixel(canvas, W, H, px, py, render::color::RGBA(rr, gg, bb, 255));
         }
     }
 
-    for (int py = 0; py < H; py++) {
-        for (int px = 0; px < W; px++) {
-            float dx = (float)(px - cx), dy = (float)(py - cy);
-            float t = std::sqrt(dx*dx + dy*dy) / (W / 2.0f);
-            if (t > 1.0f) t = 1.0f;
-            unsigned char a = (unsigned char)(38 * (1.0f - t));
-            if (a == 0) continue;
-            render::color::blend_pixel(canvas, W, H, px, py,
-                render::color::RGBA(255, 255, 255, a));
-        }
-    }
+    draw_sparkles(canvas, W, H, 50);
 
-    draw_sparkles(canvas, W, H, 70);
-
-    TextRenderer::draw_circle_filled(canvas, W, H, cx, cy, radius, 100, 100, 100, 179);
+    TextRenderer::draw_circle_filled(canvas, W, H, cx, cy, radius, 255, 255, 255, 42);
     draw_disc_outline(canvas, W, H, cx, cy, radius);
 
-    std::string sec_str = std::to_string(remaining_sec);
-    text_efx(canvas, W, H, cx, cy, 70, 255, 255, 255, 221, 221, 221, sec_str, 4);
+    text_efx(canvas, W, H, cx, cy, 56, 255, 235, 100, 255, 150, 50,
+             std::to_string(remaining_sec) + "s", 4);
 
-    text_efx(canvas, W, H, lc - radius/2, cy - 28, 48, 255, 153, 153, 255, 51, 51,
-             "T\u00E0i", 3);
-    std::string tt = render::utils::format_number(tai_total);
-    text_efx(canvas, W, H, lc - radius/2, cy + 28, 40, 255, 153, 153, 255, 51, 51,
-             tt, 2);
+    text_efx(canvas, W, H, lc, cy - 24, 42, 255, 215, 0, 255, 130, 40, "TÀI", 3);
+    text_efx(canvas, W, H, lc, cy + 24, 28, 255, 230, 140, 255, 255, 255,
+             render::utils::format_number(tai_total) + " đ", 2);
 
-    text_efx(canvas, W, H, rc + radius/2, cy - 28, 48, 224, 255, 255, 135, 206, 235,
-             "X\u1EC9u", 3);
-    std::string xt = render::utils::format_number(xiu_total);
-    text_efx(canvas, W, H, rc + radius/2, cy + 28, 40, 224, 255, 255, 135, 206, 235,
-             xt, 2);
+    text_efx(canvas, W, H, rc, cy - 24, 42, 56, 235, 255, 59, 130, 246, "XỈU", 3);
+    text_efx(canvas, W, H, rc, cy + 24, 28, 180, 235, 255, 255, 255, 255,
+             render::utils::format_number(xiu_total) + " đ", 2);
+
+    text_efx(canvas, W, H, cx, H - 24, 22, 220, 220, 240, 255, 255, 255,
+             "Đang nhận cược... Gõ /taixiu tai|xiu <tiền>", 2);
 
     TextRenderer::save_canvas(canvas, W, H, out_path);
 }

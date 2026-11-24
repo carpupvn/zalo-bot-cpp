@@ -10,26 +10,26 @@
 using json = nlohmann::json;
 
 static std::map<std::string, CropDef> g_crops = {
-    {"LUA",           {"LUA","L1","Lua","", 60*60,   20000, 1800000,"1"}},
-    {"CACHUA",        {"CACHUA","C1","Ca Chua","",90*60,30000, 2700000,"2"}},
-    {"CAROT",         {"CAROT","C2","Ca Rot","",120*60,35000, 3200000,"3"}},
-    {"THOM",          {"THOM","T1","Thom","",180*60, 70000, 6300000,"4"}},
-    {"DUAHAU",        {"DUAHAU","D1","Dua Hau","",150*60,50000,4750000,"5"}},
+    {"LUA",           {"LUA","L1","Lúa","", 60*60,   20000, 1800000,"1"}},
+    {"CACHUA",        {"CACHUA","C1","Cà Chua","",90*60,30000, 2700000,"2"}},
+    {"CAROT",         {"CAROT","C2","Cà Rốt","",120*60,35000, 3200000,"3"}},
+    {"THOM",          {"THOM","T1","Thơm","",180*60, 70000, 6300000,"4"}},
+    {"DUAHAU",        {"DUAHAU","D1","Dưa Hấu","",150*60,50000,4750000,"5"}},
     {"NHO",           {"NHO","N1","Nho","",210*60,   90000, 8100000,"6"}},
-    {"HOAHONG",       {"HOAHONG","H1","Hoa Hong","",120*60,40000,3600000,"7"}},
-    {"XOAI",          {"XOAI","X1","Xoai","",240*60, 110000, 9900000,"8"}},
+    {"HOAHONG",       {"HOAHONG","H1","Hoa Hồng","",120*60,40000,3600000,"7"}},
+    {"XOAI",          {"XOAI","X1","Xoài","",240*60, 110000, 9900000,"8"}},
     {"THANHLONG",     {"THANHLONG","T2","Thanh Long","",180*60,60000,5400000,"9"}},
-    {"HOAHUONGDUONG", {"HOAHUONGDUONG","H2","Hoa Huong Duong","",150*60,45000,4050000,"10"}},
+    {"HOAHUONGDUONG", {"HOAHUONGDUONG","H2","Hướng Dương","",150*60,45000,4050000,"10"}},
     {"HOATULIP",      {"HOATULIP","H3","Hoa Tulip","",165*60,55000,4950000,"11"}},
 };
 
 static std::map<std::string, ShopItemDef> g_shop_items = {
-    {"WATER",             {"WATER","W1","Binh Nuoc","", "Tuoi nuoc cho cay, tang do am len 60%", 10000, 0.60}},
-    {"SHOVEL",            {"SHOVEL","S1","Cuoc","", "Dung de cuoc dat kho can", 15000, 1.0}},
-    {"LAND",              {"LAND","L0","Manh Dat","", "Mo rong nong trai (gia tang theo so luong dat)", 10000000,1.0}},
-    {"FERTILIZER",        {"FERTILIZER","F1","Phan Bon So Cap","", "Giam 20% thoi gian phat trien", 20000, 0.20}},
-    {"MEDIUM_FERTILIZER", {"MEDIUM_FERTILIZER","MF1","Phan Bon Trung Cap","", "Giam 30% thoi gian phat trien", 35000, 0.30}},
-    {"SUPER_FERTILIZER",  {"SUPER_FERTILIZER","SF1","Phan Bon Cao Cap","", "Giam 40% thoi gian phat trien", 50000, 0.40}},
+    {"WATER",             {"WATER","W1","Bình Nước","", "Tưới nước cho cây, tăng độ ẩm +60%", 10000, 0.60}},
+    {"SHOVEL",            {"SHOVEL","S1","Cuốc Đất","", "Cuốc lại đất khô cằn nứt nẻ", 15000, 1.0}},
+    {"LAND",              {"LAND","L0","Mảnh Đất","", "Mở rộng nông trại thêm 1 ô đất mới", 10000000,1.0}},
+    {"FERTILIZER",        {"FERTILIZER","F1","Phân Sơ Cấp","", "Giảm 20% thời gian sinh trưởng", 20000, 0.20}},
+    {"MEDIUM_FERTILIZER", {"MEDIUM_FERTILIZER","MF1","Phân Trung Cấp","", "Giảm 30% thời gian sinh trưởng", 35000, 0.30}},
+    {"SUPER_FERTILIZER",  {"SUPER_FERTILIZER","SF1","Phân Siêu Cấp","", "Giảm 40% thời gian sinh trưởng", 50000, 0.40}},
 };
 
 const std::map<std::string, CropDef>& get_crops() { return g_crops; }
@@ -104,36 +104,36 @@ std::string NongTraiManager::format_status_text(const std::string& user_id) {
     refresh_soil(farm);
 
     std::ostringstream os;
-    os << "NONG TRAI CUA BAN\n\n";
+    os << "🌾 NÔNG TRẠI CỦA BẠN\n\n";
     long long now = now_ms();
     for (size_t i = 0; i < farm.plots.size(); ++i) {
         auto& p = farm.plots[i];
         os << "O " << (i + 1) << ": ";
         if (p.crop_key.empty()) {
-            os << "Chua trong cay\n";
+            os << "Chưa trồng cây\n";
         } else {
             const CropDef* cd = find_crop_by_key(p.crop_key);
             if (cd) {
                 long long elapsed = now - p.planted_at;
                 long long total = (long long)cd->growth_time_sec * 1000;
                 long long left = std::max(0LL, total - elapsed);
-                os << "Dang trong " << cd->name << " : ";
-                if (left == 0) os << "CO THE THU HOACH\n";
-                else os << "Con " << fmt_seconds(left / 1000) << "\n";
+                os << "Đang trồng " << cd->name << " : ";
+                if (left == 0) os << "CÓ THỂ THU HOẠCH ✅\n";
+                else os << "Còn " << fmt_seconds(left / 1000) << "\n";
             }
         }
         if (!p.fertilized.empty()) {
-            os << "  Da bon: ";
+            os << "  Đã bón: ";
             for (size_t k = 0; k < p.fertilized.size(); ++k) {
                 if (k) os << ", ";
                 os << p.fertilized[k];
             }
             os << "\n";
         }
-        os << "  Do am: " << p.water_level << "% (";
-        if (p.status == "dry") os << "Kho can";
-        else if (p.status == "low") os << "Thieu nuoc";
-        else os << "Dat tot";
+        os << "  Độ ẩm: " << p.water_level << "% (";
+        if (p.status == "dry") os << "Khô cằn";
+        else if (p.status == "low") os << "Thiếu nước";
+        else os << "Đất tốt";
         os << ")\n\n";
     }
     return os.str();
@@ -168,7 +168,7 @@ void NongTraiManager::bag_add(const std::string& user_id, const std::string& ite
 bool NongTraiManager::load(const std::string& path) {
     std::ifstream f(path);
     if (!f.good()) {
-        std::cout << "[Farm] Chua co " << path << ", se tao moi khi co nguoi choi\n";
+        std::cout << "[Farm] Chưa có dữ liệu " << path << ", se tao moi khi co nguoi choi\n";
         return true;
     }
     try {
@@ -299,8 +299,8 @@ std::vector<int> NongTraiManager::parse_slots(const std::string& s) {
 std::string NongTraiManager::cmd_shop(const std::string& uid) {
     auto& farm = get_or_create(uid);
     std::ostringstream os;
-    os << "NONG TRAI SHOP\n\n";
-    os << "VAT PHAM:\n";
+    os << "🛒 CỬA HÀNG NÔNG TRẠI\n\n";
+    os << "VẬT PHẨM:\n";
     for (auto& kv : g_shop_items) {
         const auto& it = kv.second;
         long long price = (it.key == "LAND") ? calculate_land_price((int)farm.plots.size()) : it.price;
@@ -312,31 +312,31 @@ std::string NongTraiManager::cmd_shop(const std::string& uid) {
         os << c.code << " " << c.name << ": " << fmt_money(c.seed_price) << " VND";
         os << " (thu " << fmt_money(c.harvest_value) << " sau " << (c.growth_time_sec/60) << "p)\n";
     }
-    os << "\nDung: nongtrai buy <code> [qty]";
+    os << "\nℹ️ Cú pháp: nongtrai buy <mã> [số lượng]";
     return os.str();
 }
 
 std::string NongTraiManager::cmd_buy(const std::string& uid, const std::string& code_in, int qty) {
     if (qty <= 0) qty = 1;
     ProductInfo pi = resolve_product_code(code_in);
-    if (!pi.valid) return "Ma san pham khong hop le!";
-    if (pi.type == "PRODUCT") return "Khong the mua san pham thu hoach!";
+    if (!pi.valid) return "❌ Mã sản phẩm không hợp lệ!";
+    if (pi.type == "PRODUCT") return "❌ Không thể mua thành phẩm thu hoạch!";
 
     long long price = 0;
     if (pi.type == "CROP") price = pi.crop->seed_price;
     else if (pi.type == "ITEM") price = (pi.item->key == "LAND") ? calculate_land_price((int)get_or_create(uid).plots.size()) : pi.item->price;
 
-    if (pi.type == "ITEM" && pi.item->key == "LAND" && qty != 1) return "Chi mua 1 manh dat moi lan!";
+    if (pi.type == "ITEM" && pi.item->key == "LAND" && qty != 1) return "❌ Chỉ mua tối đa 1 mảnh đất mỗi lần!";
 
     long long total = price * qty;
     UserEconomy e = econ_.get_user_economy(uid);
-    if (e.bank < total) return "Khong du tien! Can " + fmt_money(total) + " VND";
+    if (e.bank < total) return "❌ Không đủ tiền! Cần " + fmt_money(total) + " VND";
 
     econ_.set_full_data(uid, e.wallet, e.bank - total, e.debt, e.games_played, e.games_won);
 
     if (pi.type == "CROP") {
         bag_add(uid, pi.code, qty);
-        return "Da mua " + std::to_string(qty) + " hat " + pi.crop->name + " - " + fmt_money(total) + " VND";
+        return "✅ Đã mua " + std::to_string(qty) + " hạt " + pi.crop->name + " - " + fmt_money(total) + " VND";
     }
     if (pi.type == "ITEM") {
         if (pi.item->key == "LAND") {
@@ -344,69 +344,69 @@ std::string NongTraiManager::cmd_buy(const std::string& uid, const std::string& 
             Plot p; p.water_level = 100; p.last_watered_at = now_ms(); p.status = "good";
             farm.plots.push_back(std::move(p));
             set_dirty();
-            return "Da mua manh dat - " + fmt_money(total) + " VND. So o: " + std::to_string(farm.plots.size());
+            return "✅ Đã mở rộng 1 mảnh đất mới - " + fmt_money(total) + " VNĐ. Tổng số ô đất: " + std::to_string(farm.plots.size());
         }
         bag_add(uid, pi.code, qty);
-        return "Da mua " + std::to_string(qty) + " " + pi.item->name + " - " + fmt_money(total) + " VND";
+        return "✅ Đã mua " + std::to_string(qty) + " " + pi.item->name + " - " + fmt_money(total) + " VND";
     }
-    return "Loi khong xac dinh.";
+    return "❌ Lỗi không xác định.";
 }
 
 std::string NongTraiManager::cmd_sell(const std::string& uid, const std::string& code_in, int qty) {
     ProductInfo pi = resolve_product_code(code_in);
-    if (!pi.valid) return "Ma san pham khong hop le!";
+    if (!pi.valid) return "❌ Mã sản phẩm không hợp lệ!";
     auto& farm = get_or_create(uid);
     auto bit = farm.bag.find(pi.code);
     int have = (bit == farm.bag.end()) ? 0 : bit->second;
-    if (have <= 0) return "Khong co san pham nay!";
+    if (have <= 0) return "❌ Bạn không có sản phẩm này!";
     if (qty < 0) qty = have;
     if (qty > have) qty = have;
 
     long long price_per = 0;
     std::string name;
     if (pi.type == "PRODUCT") { price_per = pi.crop->harvest_value; name = pi.crop->name + " (TP)"; }
-    else if (pi.type == "CROP") { price_per = (long long)(pi.crop->seed_price * 0.9); name = "hat " + pi.crop->name; }
+    else if (pi.type == "CROP") { price_per = (long long)(pi.crop->seed_price * 0.9); name = "hạt " + pi.crop->name; }
     else if (pi.type == "ITEM") { price_per = (long long)(pi.item->price * 0.9); name = pi.item->name; }
-    else return "Khong the ban!";
+    else return "❌ Không thể bán vật phẩm này!";
 
     long long revenue = price_per * qty;
     bag_add(uid, pi.code, -qty);
     UserEconomy e = econ_.get_user_economy(uid);
     econ_.set_full_data(uid, e.wallet, e.bank + revenue, e.debt, e.games_played, e.games_won);
-    return "Da ban " + std::to_string(qty) + " " + name + " - " + fmt_money(revenue) + " VND";
+    return "💰 Đã bán " + std::to_string(qty) + " " + name + " - " + fmt_money(revenue) + " VND";
 }
 
 std::string NongTraiManager::cmd_bag(const std::string& uid) {
     auto& farm = get_or_create(uid);
     std::ostringstream os;
-    os << "TUI DO CUA BAN\n\n";
-    if (farm.bag.empty()) { os << "Tui do trong!"; return os.str(); }
+    os << "🎒 TÚI ĐỒ CỦA BẠN\n\n";
+    if (farm.bag.empty()) { os << "Túi đồ đang trống!"; return os.str(); }
     std::vector<std::string> seeds, products, items;
     for (auto& kv : farm.bag) {
         ProductInfo pi = resolve_product_code(kv.first);
         if (!pi.valid) continue;
         std::string line = "  " + pi.code + " ";
-        if (pi.type == "CROP") line += pi.crop->name + " (hat): " + std::to_string(kv.second);
+        if (pi.type == "CROP") line += pi.crop->name + " (hạt): " + std::to_string(kv.second);
         else if (pi.type == "PRODUCT") line += pi.crop->name + " (TP): " + std::to_string(kv.second);
         else line += pi.item->name + ": " + std::to_string(kv.second);
         if (pi.type == "CROP") seeds.push_back(line);
         else if (pi.type == "PRODUCT") products.push_back(line);
         else items.push_back(line);
     }
-    if (!seeds.empty()) { os << "HAT GIONG:\n"; for (auto& s : seeds) os << s << "\n"; os << "\n"; }
-    if (!products.empty()) { os << "THANH PHAM:\n"; for (auto& s : products) os << s << "\n"; os << "\n"; }
-    if (!items.empty()) { os << "VAT PHAM:\n"; for (auto& s : items) os << s << "\n"; }
+    if (!seeds.empty()) { os << "HẠT GIỐNG:\n"; for (auto& s : seeds) os << s << "\n"; os << "\n"; }
+    if (!products.empty()) { os << "THÀNH PHẨM:\n"; for (auto& s : products) os << s << "\n"; os << "\n"; }
+    if (!items.empty()) { os << "VẬT PHẨM:\n"; for (auto& s : items) os << s << "\n"; }
     return os.str();
 }
 
 std::string NongTraiManager::cmd_gieohat(const std::string& uid, const std::string& code_in, const std::vector<int>& slots) {
-    if (slots.empty()) return "Chon o dat! Vi du: nongtrai gieohat L1 1-4";
+    if (slots.empty()) return "❌ Chọn ô đất! VD: /nongtrai gieohat L1 1-4";
     ProductInfo pi = resolve_product_code(code_in);
-    if (!pi.valid || pi.type != "CROP") return "Ma hat giong khong hop le!";
+    if (!pi.valid || pi.type != "CROP") return "❌ Mã hạt giống không hợp lệ!";
     auto& farm = get_or_create(uid);
     auto bit = farm.bag.find(pi.code);
     int have = (bit == farm.bag.end()) ? 0 : bit->second;
-    if (have < (int)slots.size()) return "Chi co " + std::to_string(have) + " hat, khong du!";
+    if (have < (int)slots.size()) return "❌ Bạn chỉ có " + std::to_string(have) + " hạt giống, không đủ để gieo!";
 
     int ok = 0, fail = 0;
     for (int idx : slots) {
@@ -421,16 +421,16 @@ std::string NongTraiManager::cmd_gieohat(const std::string& uid, const std::stri
         ok++;
     }
     set_dirty();
-    return "Trong " + std::to_string(ok) + "/" + std::to_string(slots.size()) + " o. Hat con: " + std::to_string(bag_count(uid, pi.code));
+    return "🌱 Đã gieo " + std::to_string(ok) + "/" + std::to_string(slots.size()) + " ô đất. Hạt giống còn lại: " + std::to_string(bag_count(uid, pi.code));
 }
 
 std::string NongTraiManager::cmd_tuoinuoc(const std::string& uid, const std::vector<int>& slots) {
-    if (slots.empty()) return "Chon o dat! Vi du: nongtrai tuoinuoc 1-4";
+    if (slots.empty()) return "❌ Chọn ô đất! VD: /nongtrai tuoinuoc 1-4";
     auto& farm = get_or_create(uid);
     refresh_soil(farm);
     auto& bag = farm.bag;
     int have = bag.count("W1") ? bag["W1"] : 0;
-    if (have < (int)slots.size()) return "Khong du binh nuoc! Co " + std::to_string(have);
+    if (have < (int)slots.size()) return "❌ Không đủ bình nước (W1)! Hiện có " + std::to_string(have);
 
     int ok = 0, fail = 0;
     for (int idx : slots) {
@@ -447,16 +447,16 @@ std::string NongTraiManager::cmd_tuoinuoc(const std::string& uid, const std::vec
         ok++;
     }
     set_dirty();
-    return "Tuoi " + std::to_string(ok) + "/" + std::to_string(slots.size()) + " o. Con: " + std::to_string(bag_count(uid, "W1")) + " W1";
+    return "💧 Đã tưới nước " + std::to_string(ok) + "/" + std::to_string(slots.size()) + " ô đất. Bình nước còn lại: " + std::to_string(bag_count(uid, "W1"));
 }
 
 std::string NongTraiManager::cmd_cuocdat(const std::string& uid, const std::vector<int>& slots) {
-    if (slots.empty()) return "Chon o dat! Vi du: nongtrai cuocdat 1-4";
+    if (slots.empty()) return "❌ Chọn ô đất! VD: /nongtrai cuocdat 1-4";
     auto& farm = get_or_create(uid);
     refresh_soil(farm);
     auto& bag = farm.bag;
     int have = bag.count("S1") ? bag["S1"] : 0;
-    if (have < (int)slots.size()) return "Khong du cuoc! Co " + std::to_string(have);
+    if (have < (int)slots.size()) return "❌ Không đủ cuốc (S1)! Hiện có " + std::to_string(have);
 
     int ok = 0, fail = 0;
     for (int idx : slots) {
@@ -471,11 +471,11 @@ std::string NongTraiManager::cmd_cuocdat(const std::string& uid, const std::vect
         ok++;
     }
     set_dirty();
-    return "Cuoc " + std::to_string(ok) + "/" + std::to_string(slots.size()) + " o. Con: " + std::to_string(bag_count(uid, "S1")) + " S1";
+    return "⛏️ Đã cuốc " + std::to_string(ok) + "/" + std::to_string(slots.size()) + " ô đất khô cằn. Cuốc còn lại: " + std::to_string(bag_count(uid, "S1"));
 }
 
 std::string NongTraiManager::cmd_thuhoach(const std::string& uid, const std::vector<int>& slots) {
-    if (slots.empty()) return "Chon o dat! Vi du: nongtrai thuhoach 1-4";
+    if (slots.empty()) return "❌ Chọn ô đất! VD: /nongtrai thuhoach 1-4";
     auto& farm = get_or_create(uid);
     long long now = now_ms();
     int ok = 0, fail = 0;
@@ -498,18 +498,18 @@ std::string NongTraiManager::cmd_thuhoach(const std::string& uid, const std::vec
     }
     set_dirty();
     std::ostringstream os;
-    os << "THU HOACH: " << ok << "/" << slots.size() << " o\n";
+    os << "🧺 THU HOẠCH: " << ok << "/" << slots.size() << " ô đất\n";
     if (!harvested.empty()) {
-        os << "San pham:\n";
+        os << "Thành phẩm:\n";
         for (auto& kv : harvested) os << "  " << kv.first << " x" << kv.second << "\n";
     }
-    if (fail > 0) os << "(That bai: " << fail << " o)";
+    if (fail > 0) os << "(Thất bại hoặc chưa chín: " << fail << " ô)";
     return os.str();
 }
 
 std::string NongTraiManager::cmd_use(const std::string& uid, const std::string& code_in, const std::vector<int>& slots) {
     ProductInfo pi = resolve_product_code(code_in);
-    if (!pi.valid) return "Ma khong hop le!";
+    if (!pi.valid) return "❌ Mã vật phẩm không hợp lệ!";
     if (pi.type == "CROP") return cmd_gieohat(uid, code_in, slots);
     if (pi.type == "ITEM") {
         if (pi.item->key == "WATER") return cmd_tuoinuoc(uid, slots);
@@ -517,7 +517,7 @@ std::string NongTraiManager::cmd_use(const std::string& uid, const std::string& 
         auto& farm = get_or_create(uid);
         auto& bag = farm.bag;
         int have = bag.count(pi.code) ? bag[pi.code] : 0;
-        if (have < (int)slots.size()) return "Khong du phan bon!";
+        if (have < (int)slots.size()) return "❌ Không đủ phân bón!";
         double effect = pi.item->effect;
         int ok = 0, fail = 0;
         long long now = now_ms();
@@ -541,7 +541,7 @@ std::string NongTraiManager::cmd_use(const std::string& uid, const std::string& 
             ok++;
         }
         set_dirty();
-        return "Bon " + std::to_string(ok) + "/" + std::to_string(slots.size()) + " o. Con: " + std::to_string(bag_count(uid, pi.code));
+        return "✨ Đã bón phân " + std::to_string(ok) + "/" + std::to_string(slots.size()) + " ô đất. Phân bón còn lại: " + std::to_string(bag_count(uid, pi.code));
     }
-    return "Khong the su dung!";
+    return "❌ Không thể sử dụng vật phẩm này vào ô đất!";
 }

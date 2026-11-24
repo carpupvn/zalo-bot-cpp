@@ -229,14 +229,37 @@ void GroupManager::warn_user(const std::string& group_id, const std::string& use
 }
 
 void GroupManager::mute_user(const std::string& group_id, const std::string& user_id, int minutes) {
-    muted_users[user_id] = std::chrono::steady_clock::now() + std::chrono::minutes(minutes);
-    api.send_message("🔇 " + user_id + " bị cấm chat " + std::to_string(minutes) + " phút.",
-                     group_id, 1);
+    std::string key = group_id + "|" + user_id;
+    if (minutes <= 0) {
+        muted_users[key] = std::chrono::steady_clock::now() + std::chrono::hours(24 * 365);
+    } else {
+        muted_users[key] = std::chrono::steady_clock::now() + std::chrono::minutes(minutes);
+    }
 }
 
 void GroupManager::unmute_user(const std::string& group_id, const std::string& user_id) {
-    muted_users.erase(user_id);
-    api.send_message("🔊 " + user_id + " được bỏ cấm chat.", group_id, 1);
+    std::string key = group_id + "|" + user_id;
+    muted_users.erase(key);
+}
+
+bool GroupManager::is_muted(const std::string& group_id, const std::string& user_id) {
+    std::string key = group_id + "|" + user_id;
+    auto it = muted_users.find(key);
+    if (it == muted_users.end()) return false;
+    if (std::chrono::steady_clock::now() >= it->second) {
+        muted_users.erase(it);
+        return false;
+    }
+    return true;
+}
+
+void GroupManager::on_member_kick(const std::string& group_id, const std::string& /*user_id*/,
+                                  const std::string& user_name, const std::string& actor_name) {
+    if (!goodbye_enabled[group_id]) return;
+    std::string msg = "🚫 " + user_name + " đã bị mời ra khỏi nhóm";
+    if (!actor_name.empty()) msg += " bởi " + actor_name;
+    msg += ".";
+    api.send_message_async(msg, group_id, 1);
 }
 // ============================================================
 // Đếm tin nhắn — xếp hạng

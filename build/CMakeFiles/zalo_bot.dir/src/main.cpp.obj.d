@@ -699,4 +699,8 @@ CMakeFiles/zalo_bot.dir/src/main.cpp.obj: \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/TextRenderer.hpp \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/AssetManager.hpp \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/EmojiRenderer.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ExtraRender.inc \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Gradient.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Color.hpp \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/Utils.hpp \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/paths.hpp

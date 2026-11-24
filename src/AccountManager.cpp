@@ -5,6 +5,7 @@
 #include <vector>
 #include <cstdio>
 #include <cctype>
+#include <algorithm>
 #include <windows.h>
 #include <bcrypt.h>
 
@@ -37,6 +38,18 @@ bool AccountManager::init(const std::string& db_path) {
         std::cerr << "[Account] Lỗi tạo bảng: " << (err ? err : "?") << "\n";
         sqlite3_free(err);
         return false;
+    }
+
+    const char* migrations[] = {
+        "ALTER TABLE accounts ADD COLUMN total_won TEXT DEFAULT '0';",
+        "ALTER TABLE accounts ADD COLUMN total_lost TEXT DEFAULT '0';",
+        "ALTER TABLE accounts ADD COLUMN last_daily INTEGER DEFAULT 0;"
+    };
+    for (const char* msql : migrations) {
+        char* merr = nullptr;
+        if (sqlite3_exec(db_, msql, nullptr, nullptr, &merr) != SQLITE_OK) {
+            if (merr) sqlite3_free(merr);
+        }
     }
 
     std::cout << "[Account] DB khởi tạo OK: " << db_path << "\n";
@@ -227,37 +240,40 @@ std::string AccountManager::get_uid_by_username(const std::string& username) con
 // ============================================================
 // ============================================================
 // Top user giàu nhất (theo wallet) — wallet lưu TEXT (cpp_int)
-// ============================================================
+// ========================================
 bool AccountManager::get_top_wallet(int limit,
                                     std::vector<std::pair<std::string, cpp_int>>& out) const {
     if (!db_) return false;
+    out.clear();
     if (limit <= 0) return true;
     const char* sql =
-        "SELECT username, bank FROM accounts WHERE username != "" AND username IS NOT NULL WHERE username != "" AND username IS NOT NULL "
-        "WHERE bank IS NOT NULL AND bank != '' "
-        "ORDER BY LENGTH(bank) DESC, bank DESC LIMIT ?;";
+        "SELECT username, bank FROM accounts "
+        "WHERE username IS NOT NULL AND username != '' "
+        "AND bank IS NOT NULL AND bank != '';";
     sqlite3_stmt* stmt = nullptr;
     if (sqlite3_prepare_v2(db_, sql, -1, &stmt, nullptr) != SQLITE_OK) return false;
-    sqlite3_bind_int(stmt, 1, limit);
+    std::vector<std::pair<std::string, cpp_int>> all_rows;
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         const char* u = (const char*)sqlite3_column_text(stmt, 0);
         const char* w = (const char*)sqlite3_column_text(stmt, 1);
-        if (!u) continue;
+        if (!u || !*u) continue;
         cpp_int val = 0;
         if (w && *w) {
             try { val = cpp_int(std::string(w)); } catch (...) { val = 0; }
         }
-        out.emplace_back(std::string(u), val);
+        all_rows.emplace_back(std::string(u), val);
     }
     sqlite3_finalize(stmt);
+    std::sort(all_rows.begin(), all_rows.end(),
+              [](const auto& a, const auto& b) { return a.second > b.second; });
+    if ((int)all_rows.size() > limit) all_rows.resize(limit);
+    out = std::move(all_rows);
     return true;
 }
-// ============================================================
-// Economy persistence
-// ============================================================
+
 bool AccountManager::load_economy(const std::string& username, AccountEconomyData& out) const {
     if (!db_) return false;
-    const char* sql = "SELECT wallet, bank, debt, games_played, games_won "
+    const char* sql = "SELECT wallet, bank, debt, games_played, games_won, total_won, total_lost, last_daily "
                       "FROM accounts WHERE username = ?;";
     sqlite3_stmt* stmt = nullptr;
     if (sqlite3_prepare_v2(db_, sql, -1, &stmt, nullptr) != SQLITE_OK) return false;
@@ -267,11 +283,20 @@ bool AccountManager::load_economy(const std::string& username, AccountEconomyDat
         const char* w = (const char*)sqlite3_column_text(stmt, 0);
         const char* b = (const char*)sqlite3_column_text(stmt, 1);
         const char* d = (const char*)sqlite3_column_text(stmt, 2);
-        out.wallet = (w && *w) ? cpp_int(std::string(w)) : cpp_int(0);
-        out.bank   = (b && *b) ? cpp_int(std::string(b)) : cpp_int(0);
-        out.debt   = (d && *d) ? cpp_int(std::string(d)) : cpp_int(0);
+        const char* tw = (const char*)sqlite3_column_text(stmt, 5);
+        const char* tl = (const char*)sqlite3_column_text(stmt, 6);
+        auto safe_int = [](const char* s) -> cpp_int {
+            if (!s || !*s) return cpp_int(0);
+            try { return cpp_int(std::string(s)); } catch (...) { return cpp_int(0); }
+        };
+        out.wallet = safe_int(w);
+        out.bank   = safe_int(b);
+        out.debt   = safe_int(d);
         out.games_played = sqlite3_column_int(stmt, 3);
         out.games_won    = sqlite3_column_int(stmt, 4);
+        out.total_won    = safe_int(tw);
+        out.total_lost   = safe_int(tl);
+        out.last_daily   = sqlite3_column_int64(stmt, 7);
         found = true;
     }
     sqlite3_finalize(stmt);
@@ -281,18 +306,24 @@ bool AccountManager::load_economy(const std::string& username, AccountEconomyDat
 bool AccountManager::save_economy(const std::string& username, const AccountEconomyData& in) {
     if (!db_) return false;
     const char* sql = "UPDATE accounts SET wallet=?, bank=?, debt=?, "
-                      "games_played=?, games_won=? WHERE username=?;";
+                      "games_played=?, games_won=?, total_won=?, total_lost=?, last_daily=? "
+                      "WHERE username=?;";
     sqlite3_stmt* stmt = nullptr;
     if (sqlite3_prepare_v2(db_, sql, -1, &stmt, nullptr) != SQLITE_OK) return false;
-    std::string ws = in.wallet.convert_to<std::string>();
-    std::string bs = in.bank.convert_to<std::string>();
-    std::string ds = in.debt.convert_to<std::string>();
+    std::string ws  = in.wallet.convert_to<std::string>();
+    std::string bs  = in.bank.convert_to<std::string>();
+    std::string ds  = in.debt.convert_to<std::string>();
+    std::string tws = in.total_won.convert_to<std::string>();
+    std::string tls = in.total_lost.convert_to<std::string>();
     sqlite3_bind_text(stmt, 1, ws.c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_text(stmt, 2, bs.c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_text(stmt, 3, ds.c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_int(stmt, 4, in.games_played);
     sqlite3_bind_int(stmt, 5, in.games_won);
-    sqlite3_bind_text(stmt, 6, username.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 6, tws.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 7, tls.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int64(stmt, 8, (sqlite3_int64)in.last_daily);
+    sqlite3_bind_text(stmt, 9, username.c_str(), -1, SQLITE_TRANSIENT);
     bool ok = (sqlite3_step(stmt) == SQLITE_DONE);
     sqlite3_finalize(stmt);
     return ok;
@@ -303,23 +334,27 @@ std::map<std::string, std::string> AccountManager::get_logged_in_map() const {
     return uid_to_username_;
 }
 
-
-
 void AccountManager::export_to_txt(const std::string& path) {
     std::lock_guard<std::mutex> lk(mtx_);
+    if (!db_) return;
     std::ofstream f(path);
     if (!f.is_open()) return;
-    f << "=== DANH SACH TAI KHOAN ZALO BOT ===\n";
-    f << "Format: Username | UID | Wallet | Bank | Debt\n\n";
-    
-    sqlite3_stmt* stmt;
-    if (sqlite3_prepare_v2(db_, "SELECT username, uid, wallet, bank, debt FROM accounts", -1, &stmt, nullptr) == SQLITE_OK) {
+    f << "=== DANH SÁCH TÀI KHOẢN ZALO BOT ===\n";
+    f << "Định dạng: Username | UID | Ví | Ngân hàng | Nợ\n\n";
+
+    sqlite3_stmt* stmt = nullptr;
+    if (sqlite3_prepare_v2(db_, "SELECT username, wallet, bank, debt FROM accounts", -1, &stmt, nullptr) == SQLITE_OK) {
         while (sqlite3_step(stmt) == SQLITE_ROW) {
-            std::string un = (const char*)sqlite3_column_text(stmt, 0);
-            std::string uid = (const char*)sqlite3_column_text(stmt, 1);
-            std::string w = (const char*)sqlite3_column_text(stmt, 2);
-            std::string b = (const char*)sqlite3_column_text(stmt, 3);
-            std::string d = (const char*)sqlite3_column_text(stmt, 4);
+            const char* c0 = (const char*)sqlite3_column_text(stmt, 0);
+            const char* c1 = (const char*)sqlite3_column_text(stmt, 1);
+            const char* c2 = (const char*)sqlite3_column_text(stmt, 2);
+            const char* c3 = (const char*)sqlite3_column_text(stmt, 3);
+            std::string un = c0 ? c0 : "";
+            std::string w  = c1 ? c1 : "0";
+            std::string b  = c2 ? c2 : "0";
+            std::string d  = c3 ? c3 : "0";
+            auto it = username_to_uid_.find(un);
+            std::string uid = (it != username_to_uid_.end()) ? it->second : "-";
             f << un << " | " << uid << " | " << w << " | " << b << " | " << d << "\n";
         }
         sqlite3_finalize(stmt);
@@ -328,5 +363,7 @@ void AccountManager::export_to_txt(const std::string& path) {
 }
 
 void AccountManager::restore_session(const std::string& uid, const std::string& username) {
+    std::lock_guard<std::mutex> lk(mtx_);
     uid_to_username_[uid] = username;
+    username_to_uid_[username] = uid;
 }

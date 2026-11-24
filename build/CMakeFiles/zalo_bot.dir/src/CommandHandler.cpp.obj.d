@@ -765,9 +765,9 @@ CMakeFiles/zalo_bot.dir/src/CommandHandler.cpp.obj: \
  E:/Program\ Files/CodeBlocks/MinGW/x86_64-w64-mingw32/include/setjmp.h \
  E:/Program\ Files/CodeBlocks/MinGW/lib/gcc/x86_64-w64-mingw32/14.2.0/include/cpuid.h \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/stb_image_write.h \
- E:/zalo-bot-cpp-main/zalo-bot-cpp-main/lib/stb_truetype.h \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/NongTraiRender.inc \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ShopRender.inc \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/BauCuaKbbRender.inc \
+ E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/ExtraRender.inc \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/paths.hpp \
  E:/zalo-bot-cpp-main/zalo-bot-cpp-main/include/SafeMemory.hpp

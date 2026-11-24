@@ -67,6 +67,9 @@ public:
     void warn_user(const std::string& group_id, const std::string& user_id);
     void mute_user(const std::string& group_id, const std::string& user_id, int minutes);
     void unmute_user(const std::string& group_id, const std::string& user_id);
+    bool is_muted(const std::string& group_id, const std::string& user_id);
+    void on_member_kick(const std::string& group_id, const std::string& user_id,
+                        const std::string& user_name, const std::string& actor_name = "");
 
     // Đếm tin nhắn để xếp hạng
     void increment_message(const std::string& thread_id, const std::string& user_id);

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <string>
 #include <map>
 #include <mutex>
@@ -35,6 +35,7 @@ public:
     // Game
     bool place_bet(const std::string& user_id, cpp_int amount);
     void add_winnings(const std::string& user_id, cpp_int amount);
+    void refund(const std::string& user_id, cpp_int amount);
     void record_loss(const std::string& user_id, cpp_int amount);
 
     // Admin
@@ -47,8 +48,8 @@ public:
     cpp_int get_bank(const std::string& user_id);
     cpp_int get_debt(const std::string& user_id);
     UserEconomy get_user_economy(const std::string& user_id);
-
-    void set_full_data(const std::string& user_id, cpp_int wallet, cpp_int bank, cpp_int debt, int gp, int gw);
+    void set_full_data(const std::string& user_id, cpp_int wallet, cpp_int bank, cpp_int debt, int gp, int gw,
+                       cpp_int total_won = -1, cpp_int total_lost = -1);
 
     // Hu game
     void set_husk(const std::string& game_name, cpp_int amount);
@@ -58,6 +59,9 @@ public:
 
     // Daily
     std::string claim_daily(const std::string& user_id, cpp_int reward);
+    bool has_claimed_daily(const std::string& user_id);
+    std::time_t get_last_daily(const std::string& user_id);
+    void set_last_daily(const std::string& user_id, std::time_t ts);
 
 private:
     std::map<std::string, UserEconomy> users;
